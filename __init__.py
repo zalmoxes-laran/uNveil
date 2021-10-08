@@ -31,7 +31,7 @@ bl_info = {
 
 if "bpy" in locals():
     import importlib
-    importlib.reload(import_3DSC)
+    importlib.reload(import_uNveil)
 #    importlib.reload(functions)
 #    importlib.reload(mesh_helpers)
 else:
@@ -56,11 +56,11 @@ else:
 
     from . import (
             UI,
-            import_3DSC,
-            export_3DSC,
+            import_uNveil,
+            export_uNveil,
             functions,
             shift,
-            PanoramaSuite,
+            POV_manager,
             addon_updater_ops
             )
 
@@ -136,71 +136,6 @@ class CAMTypeList(PropertyGroup):
             description="A name for this item",
             default="Untitled")
 
-class AnalysisListItem(PropertyGroup):
-    """ Group of properties representing an item in the list """
-
-    res_tex : IntProperty(
-            name = "Res",
-            default = 0,
-            description = "Resolution of Image Texture")
-
-    res_counter : IntProperty(
-            name = "Number of instances",
-            default = 0,
-            description = "Number of instances for a given resolution")
-
-class StatisticsListItem(PropertyGroup):
-    """ Group of properties representing an item in the list """
-
-    name : StringProperty(
-            name="Name",
-            description="Name of the object",
-            default="Untitled")
-
-    context_col : StringProperty(
-            name="context_col",
-            description="Name of the context",
-            default="Untitled")
-
-    tiles_num : IntProperty(
-            name = "Tiles",
-            default = 0,
-            description = "Number of tiles")    
-
-    area_mesh : FloatProperty(
-            name = "Area",
-            default = 0,
-            description = "Area of mesh")
-
-    poly_num : IntProperty(
-            name = "Polygons",
-            default = 0,
-            description = "Number of polygons")
-    
-    poly_res : FloatProperty(
-            name = "Polyres",
-            default = 0,
-            description = "Area of mesh")
-
-    res_tex : IntProperty(
-            name = "Res",
-            default = 0,
-            description = "Resolution of Image Texture")
-
-    res_counter : IntProperty(
-            name = "Number of instances",
-            default = 0,
-            description = "Number of instances for a given resolution")
-    
-    uv_ratio : FloatProperty(
-            name = "UVratio",
-            default = 0.6,
-            description = "Ratio coverage for UV")
-    
-    mean_res_tex : FloatProperty(
-            name = "meanrestex",
-            default = 0.0,
-            description = "Mean texture resolution of this group")
 
 class PANOListItem(PropertyGroup):
     """ Group of properties representing an item in the list """
@@ -225,153 +160,45 @@ class PANO_UL_List(bpy.types.UIList):
         #scene = context.scene
         layout.label(text = item.name, icon = item.icon)
 
-class InterfaceVars(PropertyGroup):
-    cc_nodes: EnumProperty(
-        items=[
-            ('RGB', 'RGB', 'RGB Curve', '', 0),
-            ('BC', 'BC', 'Bright/Contrast', '', 1),
-            ('HS', 'HS', 'Hue/Saturation', '', 2),
-        ],
-        default='RGB'
-    )
 
-class SuffixVars(PropertyGroup):
-    suffixnum: EnumProperty(
-        items=[
-            ('.001', '.001', '.001', '', 0),
-            ('.002', '.002', '.002', '', 1),
-            ('.003', '.003', '.003', '', 2),
-        ],
-        default='.001'
-    )
-
-class ccToolViewVar(PropertyGroup):
-    cc_view: EnumProperty(
-        items=[
-            ('original', 'original', 'original texture', '', 0),
-            ('cc_node', 'cc_node', 'dynamic editing', '', 1),
-            ('cc_image', 'cc_image', 'final texture', '', 2),
-        ],
-        default='cc_node'
-    )
-
-class LODitemListItem(PropertyGroup):
-    """ Group of properties representing an item in the list """
-
-    name : StringProperty(
-            name="object",
-            description="object name",
-            default="Untitled")
-
-    libreria_lod : StringProperty(
-            name="library",
-            description="library name",
-            default="Untitled")
 
 classes = (
     UI.VIEW3D_PT_Shift_ToolBar,
     UI.VIEW3D_PT_Import_ToolBar,
     UI.VIEW3D_PT_Export_ToolBar,
     UI.VIEW3D_PT_QuickUtils_ToolBar,
-    UI.VIEW3D_PT_segmentation_pan,
-    UI.VIEW3D_PT_LODgenerator,
-    UI.VIEW3D_PT_LODmanager,
-    UI.VIEW3D_PT_ccTool,
-    UI.VIEW3D_PT_PhotogrTool,
     UI.Camera_menu,
     UI.Res_menu,
-    UI.VIEW3D_PT_TexPatcher,
-    UI.VIEW3D_PT_SetupPanel,
-    UI.VIEW3D_PT_mesh_analyze,
-    import_3DSC.ImportMultipleObjs,
-    import_3DSC.OBJECT_OT_IMPORTPOINTS,
-    import_3DSC.ImportCoorPoints,
-    export_3DSC.ExportCoordinates,
-    import_3DSC.OBJECT_OT_IMPORTAGIXML,
-    import_3DSC.ImportCamAgiXML,
-    export_3DSC.OBJECT_OT_ExportButtonName,
-    export_3DSC.OBJECT_OT_ExportObjButton,
-    export_3DSC.OBJECT_OT_fbxexp,
-    export_3DSC.OBJECT_OT_fbxexportbatch,
-    export_3DSC.OBJECT_OT_objexportbatch,
-    export_3DSC.OBJECT_OT_osgtexportbatch,
-    export_3DSC.OBJECT_OT_gltfexportbatch,
-    export_3DSC.OBJECT_OT_glbexportbatch,
+    import_uNveil.ImportMultipleObjs,
+    import_uNveil.OBJECT_OT_IMPORTPOINTS,
+    import_uNveil.ImportCoorPoints,
+    export_uNveil.ExportCoordinates,
+    import_uNveil.OBJECT_OT_IMPORTAGIXML,
+    import_uNveil.ImportCamAgiXML,
+    export_uNveil.OBJECT_OT_ExportButtonName,
+    export_uNveil.OBJECT_OT_ExportObjButton,
+    export_uNveil.OBJECT_OT_fbxexp,
+    export_uNveil.OBJECT_OT_fbxexportbatch,
+    export_uNveil.OBJECT_OT_objexportbatch,
+    export_uNveil.OBJECT_OT_osgtexportbatch,
+    export_uNveil.OBJECT_OT_gltfexportbatch,
+    export_uNveil.OBJECT_OT_glbexportbatch,
     functions.OBJECT_OT_createcyclesmat,
     functions.OBJECT_OT_savepaintcam,
     shift.OBJECT_OT_IMPORTPOINTS,
-    segmentation.OBJECT_OT_projectsegmentation,
-    segmentation.OBJECT_OT_projectsegmentationinversed,
-    segmentation.OBJECT_OT_setcutter,
-    QuickUtils.OBJECT_OT_activatematerial,
-    QuickUtils.OBJECT_OT_CenterMass,
-    QuickUtils.OBJECT_OT_CorrectMaterial,
-    QuickUtils.OBJECT_OT_createpersonalgroups,
-    QuickUtils.OBJECT_OT_cycles2bi,
-    QuickUtils.OBJECT_OT_deactivatematerial,
-    QuickUtils.OBJECT_OT_lightoff,
-    QuickUtils.OBJECT_OT_LocalTexture,
-    QuickUtils.OBJECT_OT_LOD0polyreducer,
-    QuickUtils.OBJECT_OT_multimateriallayout,
-    QuickUtils.OBJECT_OT_objectnamefromfilename,
-    QuickUtils.OBJECT_OT_removealluvexcept1,
-    QuickUtils.OBJECT_OT_removefromallgroups,
-    QuickUtils.OBJECT_OT_renameGEobject,
-    QuickUtils.OBJECT_OT_tiff2pngrelink,
-    QuickUtils.OBJECT_OT_circumcenter,
-    QuickUtils.OBJECT_OT_remove_suffixnumber,
-    QuickUtils.OBJECT_OT_setmaterial_blend,
-    QuickUtils.OBJECT_OT_diffuseprincipled,
-    QuickUtils.OBJECT_OT_setroughness,
-    QuickUtils.OBJECT_OT_setmetalness,
-    LODgenerator.OBJECT_OT_CreateGroupsLOD,
-    LODgenerator.OBJECT_OT_ExportGroupsLOD,
-    LODgenerator.OBJECT_OT_LOD,
-    LODgenerator.OBJECT_OT_LOD0,
-    LODgenerator.OBJECT_OT_RemoveGroupsLOD,
-    LODgenerator.OBJECT_OT_changeLOD,
-    PhotogrTool.OBJECT_OT_applypaintcam,
-    PhotogrTool.OBJECT_OT_BetterCameras,
-    PhotogrTool.OBJECT_OT_NoBetterCameras,
-    PhotogrTool.OBJECT_OT_paintcam,
-    PhotogrTool.OBJECT_OT_CreateCameraImagePlane,
-    PhotogrTool.XML_CAM_parse,
-    PhotogrTool.set_camera_type,
-    PhotogrTool.set_background_cam,
-    ccTool.OBJECT_OT_createccsetup,
-    ccTool.OBJECT_OT_bakecyclesdiffuse,
-    ccTool.OBJECT_OT_removeccsetup,
-    ccTool.OBJECT_OT_applyccsetup,
-    ccTool.OBJECT_OT_setccview,
-    TexPatcher.OBJECT_OT_applyoritexset,
-    TexPatcher.OBJECT_OT_applysptexset,
-    TexPatcher.OBJECT_OT_exitsetup,
-    TexPatcher.OBJECT_OT_paintsetup,
-    TexPatcher.OBJECT_OT_removepaintsetup,
-    TexPatcher.OBJECT_OT_textransfer,
-    InterfaceVars,
-    SuffixVars,
-    ccToolViewVar,
-    PanoramaSuite.REMOVE_pano,
-    PanoramaSuite.VIEW_pano,
-    PanoramaSuite.VIEW_alignquad,
-    PanoramaSuite.VIEW_setlens,
-    PanoramaSuite.PANO_import,
-    PanoramaSuite.ubermat_create,
-    PanoramaSuite.ubermat_update,
-    PanoramaSuite.SETpanoRES,
-    qualitycheck.MESH_OT_info_area,
-    qualitycheck.MESH_OT_info_texs,
-    qualitycheck.MESH_OT_info_texres,
-    qualitycheck.ExportStatistics,
+    POV_manager.REMOVE_pano,
+    POV_manager.VIEW_pano,
+    POV_manager.VIEW_alignquad,
+    POV_manager.VIEW_setlens,
+    POV_manager.PANO_import,
+    POV_manager.ubermat_create,
+    POV_manager.ubermat_update,
+    POV_manager.SETpanoRES,
     PANO_UL_List,
     PANOListItem,
     CAMTypeList,
     RES_list,
-    LODitemListItem,
-    DemPreferences,
-    AnalysisListItem,
-    StatisticsListItem,
+    DemPreferences
 )
 
 def register():
@@ -380,70 +207,6 @@ def register():
 
     for cls in classes:
         bpy.utils.register_class(cls)
-
-    bpy.types.WindowManager.interface_vars = bpy.props.PointerProperty(type=InterfaceVars)
-    bpy.types.WindowManager.ccToolViewVar = bpy.props.PointerProperty(type=ccToolViewVar)
-    bpy.types.WindowManager.suffix_num = bpy.props.PointerProperty(type=SuffixVars)    
-
-#def initSceneProperties(scn):
-    bpy.types.Scene.LODnum = IntProperty(
-        name = "LODs",
-        default = 1,
-        min = 1,
-        max = 3,
-        description = "Enter desired number of LOD (Level of Detail)")
-
-    bpy.types.Scene.setLODnum = IntProperty(
-        name = "LOD",
-        default = 0,
-        min = 0,
-        max = 3,
-        description = "Enter desired number of LOD (Level of Detail)")
-
-    bpy.types.Scene.LOD1_tex_res = IntProperty(
-        name = "Resolution Texture of the LOD1",
-        default = 2048,
-        description = "Enter the resolution for the texture of the LOD1")
-
-    bpy.types.Scene.LOD2_tex_res = IntProperty(
-        name = "Resolution Texture of the LOD2",
-        default = 512,
-        description = "Enter the resolution for the texture of the LOD2")
-
-    bpy.types.Scene.LOD3_tex_res = IntProperty(
-        name = "Resolution Texture of the LOD3",
-        default = 128,
-        description = "Enter the resolution for the texture of the LOD3")
-
-    bpy.types.Scene.LOD_pad_on = BoolProperty(
-        name = "Padding ratio of the LOD",
-        default = True,
-        description = "Enter the paddin ratio for the LOD")
-
-    bpy.types.Scene.LOD1_dec_ratio = FloatProperty(
-        name = "LOD1 decimation ratio",
-        default = 0.5,
-        description = "Define the decimation ratio of the LOD 1",
-        )
-
-    bpy.types.Scene.LOD2_dec_ratio = FloatProperty(
-        name = "LOD2 decimation ratio",
-        default = 0.1,
-        description = "Define the decimation ratio of the LOD 2",
-        )
-
-    bpy.types.Scene.LOD3_dec_ratio = FloatProperty(
-        name = "LOD3 decimation ratio",
-        default = 0.035,
-        description = "Define the decimation ratio of the LOD 3",
-        )
-
-    bpy.types.Scene.BL_undistorted_path = StringProperty(
-      name = "Undistorted Path",
-      default = "",
-      description = "Define the root path of the undistorted images",
-      subtype = 'DIR_PATH'
-      )
 
     bpy.types.Scene.BL_x_shift = FloatProperty(
       name = "X shift",
@@ -486,9 +249,6 @@ def register():
     bpy.types.Scene.resolution_list = CollectionProperty(type = RES_list)
     bpy.types.Scene.pano_list = CollectionProperty(type = PANOListItem)
     bpy.types.Scene.pano_list_index = IntProperty(name = "Index for my_list", default = 0)
-    bpy.types.Scene.lod_list_item = CollectionProperty(type = LODitemListItem)
-    bpy.types.Scene.analysis_list = CollectionProperty(type = AnalysisListItem)
-    bpy.types.Scene.statistics_list = CollectionProperty(type = StatisticsListItem)
 
     bpy.types.Scene.PANO_file = StringProperty(
     name = "TXT",
@@ -510,19 +270,6 @@ def register():
     description = "Define the lens of the cameras",
     )
 
-    bpy.types.Scene.FBX_export_dir = StringProperty(
-    name = "Export folder",
-    default = "",
-    description = "Define the path to the FBX export folder",
-    subtype = 'DIR_PATH'
-    )
-
-
-    bpy.types.Scene.TILE_square_meters = IntProperty(
-    name="Tile square meters",
-    default=100,
-    description="Define the area of the tiles",
-    )
 
 def unregister():
 
@@ -534,18 +281,7 @@ def unregister():
                 pass
 
     del bpy.types.Scene.setLODnum
-    del bpy.types.WindowManager.interface_vars
-    del bpy.types.WindowManager.suffix_num
-    del bpy.types.WindowManager.ccToolViewVar
-    del bpy.types.Scene.LODnum
-    del bpy.types.Scene.LOD1_tex_res
-    del bpy.types.Scene.LOD2_tex_res
-    del bpy.types.Scene.LOD3_tex_res
-    del bpy.types.Scene.LOD1_dec_ratio
-    del bpy.types.Scene.LOD2_dec_ratio
-    del bpy.types.Scene.LOD3_dec_ratio
     del bpy.types.Scene.LOD_pad_on
-    del bpy.types.Scene.BL_undistorted_path
     del bpy.types.Scene.BL_x_shift
     del bpy.types.Scene.BL_y_shift
     del bpy.types.Scene.BL_z_shift
@@ -557,8 +293,4 @@ def unregister():
     del bpy.types.Scene.PANO_file
     del bpy.types.Scene.PANO_dir
     del bpy.types.Scene.PANO_cam_lens
-    del bpy.types.Scene.lod_list_item
-    del bpy.types.Scene.analysis_list
-    del bpy.types.Scene.statistics_list
-    del bpy.types.Scene.FBX_export_dir
-    del bpy.types.Scene.TILE_square_meters
+

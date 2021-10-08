@@ -16,8 +16,6 @@ from bpy.props import (BoolProperty,
                        CollectionProperty
                        )
 
-from .import_Agisoft_xml import *
-
 from .functions import *
 
 # import points section ----------------------------------------------------------

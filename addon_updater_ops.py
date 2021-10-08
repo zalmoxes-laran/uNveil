@@ -52,7 +52,7 @@ except Exception as e:
 # Must declare this before classes are loaded
 # otherwise the bl_idname's will not match and have errors.
 # Must be all lowercase and no spaces
-updater.addon = "addon_updater_3dsc"
+updater.addon = "addon_updater_uNveil"
 
 
 # -----------------------------------------------------------------------------
@@ -1271,12 +1271,12 @@ def register(bl_info):
 	updater.user = "zalmoxes-laran"
 
 	# choose your own repository, must match git name
-	updater.repo = "3D-survey-collection"
+	updater.repo = "uNveil"
 
 	#updater.addon = # define at top of module, MUST be done first
 
 	# Website for manual addon download, optional but recommended to set
-	updater.website = "https://github.com/zalmoxes-laran/3D-survey-collection/"
+	updater.website = "https://github.com/zalmoxes-laran/uNveil/"
 
 	# Addon subfolder path
 	# "sample/path/to/addon"
