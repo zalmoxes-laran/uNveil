@@ -11,7 +11,7 @@ from bpy.props import (BoolProperty,
                        )
 
 class ImportCoordinateShift(Operator, ImportHelper):
-    """Tool to import panoramas from a txt file"""
+    """Tool to import shift coordinates from a txt file"""
     bl_idname = "import_fromfile.shift_valcoor"  # important since its how bpy.ops.import_file.pano_data is constructed
     bl_label = "Import positions"
 

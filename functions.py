@@ -1141,7 +1141,7 @@ def setup_mat_panorama_3DSC(matname, img):
 def create_mat(ob):
     context = bpy.context
     scene = context.scene
-    ob = context.active_object
+    #ob = context.active_object
     mat = bpy.data.materials.new(name="MAT_"+ob.name) #set new material to variable
     ob.data.materials.append(mat)
     #mat.use_transparency = True
@@ -1157,7 +1157,7 @@ def readfile(filename):
 def remove_extension(string):
     return string.replace(".jpg", "")
 
-def flipnormals():
+def flipnormals(context):
     bpy.ops.object.mode_set(mode='EDIT', toggle=False)
     bpy.ops.mesh.reveal()
     bpy.ops.mesh.select_all(action='SELECT')
@@ -1166,7 +1166,7 @@ def flipnormals():
     bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
 
-def create_cam(name,pos_x,pos_y,pos_z):
+def create_pano_cam(name,pos_x,pos_y,pos_z, collection):
   # create camera data
     context = bpy.context
     cam_data = bpy.data.cameras.new('CAM_'+name)
@@ -1175,13 +1175,14 @@ def create_cam(name,pos_x,pos_y,pos_z):
     # create object camera data and insert the camera data
     cam_ob = bpy.data.objects.new('CAM_'+name, cam_data)
     # link into scene
-    coll = context.view_layer.active_layer_collection.collection
-    coll.objects.link(cam_ob)
+    #coll = context.view_layer.active_layer_collection.collection
+    collection.objects.link(cam_ob)
     #bpy.context.scene.objects.link(cam_ob)
     cam_ob.location.x = pos_x
     cam_ob.location.y = pos_y
     cam_ob.location.z = pos_z
     cam_ob.rotation_euler.x = e2d(90)
+    return cam_ob
 
 def read_pano_dir(sPath):
     scene = bpy.context.scene

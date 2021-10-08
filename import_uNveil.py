@@ -42,14 +42,22 @@ def create_new_col_from_file_name(filename):
         bpy.context.collection.children.link(newcol)
         return newcol
 
-def read_pano_data(context, filepath, shift, name_col, x_col, y_col, z_col, omega_col, phi_col, kappa_col, separator):
+def is_collection(name_col):
+        there_is = False
+        for coll in bpy.data.collections:
+                if coll.name == name_col:
+                        there_is = True
+        return there_is
+
+def read_pano_data(context, filepath, shift, name_col, x_col, y_col, z_col, omega_col, phi_col, kappa_col, separator, clear_list):
         data = bpy.data
         scene = context.scene
         #minimum_sChildPath, folder_list = read_pano_dir(context)
         folder_pano_txt_file, file_name_txt = os.path.split(filepath)
         img_pano_folder = read_pano_dir(folder_pano_txt_file)
         lines_in_file = readfile(filepath)
-        PANO_list_clear(context)
+        if clear_list:
+                PANO_list_clear(context)
         pano_list_index_counter = 0
         counter = 0
         # Parse the array:
@@ -68,16 +76,20 @@ def read_pano_data(context, filepath, shift, name_col, x_col, y_col, z_col, omeg
                         if model.name == remove_extension(ItemName) or model.name == "CAM_"+remove_extension(ItemName):
                                 data.objects.remove(model)
 
+                collection_name = namefile_from_path(filepath) 
+                if is_collection(collection_name):
+                        if bpy.data.collections[collection_name].users < 0:
+                                context.collection.children.link(collection_name)
+                else:
+                        newcol = create_new_col_from_file_name(collection_name)
+                             
+                context.view_layer.active_layer_collection = context.view_layer.layer_collection.children[collection_name]
+                
                 sph = bpy.ops.mesh.primitive_uv_sphere_add(calc_uvs=True, radius=0.2, location=(pos_x,pos_y,pos_z))
                 just_created_obj = context.active_object
                 just_created_obj.name = remove_extension(ItemName)
-
-                if counter == 0:
-                        newcol = create_new_col_from_file_name(namefile_from_path(filepath))
-                        counter += 1
-
-                newcol.objects.link(just_created_obj)
-                
+                #context.view_layer.active_layer_collection.collection.objects.unlink(just_created_obj)
+               
                 just_created_obj.rotation_euler[2] = e2d(-90.0)
                 bpy.ops.object.transform_apply(rotation = True, location = False)
 
@@ -97,6 +109,9 @@ def read_pano_data(context, filepath, shift, name_col, x_col, y_col, z_col, omeg
                         just_created_obj.rotation_euler[2] = e2d(180.0+phi)
                 else:
                         just_created_obj.rotation_euler[2] = e2d(180-phi)
+                
+                context.view_layer.objects.active = just_created_obj
+                
 
                 uvMapName = 'UVMap'
                 obj, uvMap = GetObjectAndUVMap( just_created_obj.name, uvMapName )
@@ -117,11 +132,12 @@ def read_pano_data(context, filepath, shift, name_col, x_col, y_col, z_col, omeg
                 scene.pano_list.add()
                 scene.pano_list[pano_list_index_counter].name = just_created_obj.name
                 
-                flipnormals()
-                create_cam(just_created_obj.name,pos_x,pos_y,pos_z)
+                flipnormals(context)
+                create_pano_cam(just_created_obj.name,pos_x,pos_y,pos_z,bpy.data.collections[collection_name])
+
                 pano_list_index_counter += 1
 
-        return
+        return {'FINISHED'}
 
 def read_point_data(context, filepath, shift, name_col, x_col, y_col, z_col, omega_col, phi_col, kappa_col, separator):
     print("running read point file...")
@@ -184,11 +200,11 @@ class ImportCoorPanorami(Operator, ImportHelper):
             default=True,
             )
 
-#     shift: BoolProperty(
-#             name="Panoramas in sub-folder",
-#             description="Activate if images are in a subfolder",
-#             default=True,
-#             )
+    clear_previous: BoolProperty(
+            name="Clear previous list",
+            description="Clear previous list",
+            default=False,
+            )
 
     col_name: EnumProperty(
             name="Name",
@@ -292,7 +308,7 @@ class ImportCoorPanorami(Operator, ImportHelper):
             )
 
     def execute(self, context):
-        return read_pano_data(context, self.filepath, self.shift, int(self.col_name), int(self.col_x), int(self.col_y), int(self.col_z), int(self.col_Omega), int(self.col_Phi), int(self.col_Kappa), self.separator)
+        return read_pano_data(context, self.filepath, self.shift, int(self.col_name), int(self.col_x), int(self.col_y), int(self.col_z), int(self.col_Omega), int(self.col_Phi), int(self.col_Kappa), self.separator, self.clear_previous)
 
 # Only needed if you want to add into a dynamic menu
 def menu_func_import(self, context):
