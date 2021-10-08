@@ -1,46 +1,48 @@
-#'''
-# CC-BY-NC 2018 EMANUEL DEMETRESCU
-# emanuel.demetrescu@gmail.com
+'''
+CC-BY-NC 2018 EMANUEL DEMETRESCU
+emanuel.demetrescu@gmail.com
 
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#'''
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
 
 bl_info = {
-    "name": "unveil",
+    "name": "uNveil per Blender",
     "author": "Emanuel Demetrescu",
     "version": (0,9,10),
     "blender": (2, 93, 4),
     "location": "3D View > Toolbox",
     "description": "Multitemporal storytelling",
     "warning": "alpha",
-    "wiki_url": "",
-#    "tracker_url": "",
+    #"wiki_url": "",
+    #"tracker_url": "",
     "category": "Tools"
     }
 
-if "bpy" in locals():
-    import importlib
-    importlib.reload(import_unveil)
-#    importlib.reload(functions)
-#    importlib.reload(mesh_helpers)
-else:
-    import math
-    import bpy
+# if "bpy" in locals():
+#     import importlib
+#     importlib.reload(import_uNveil)
+ 
+# else:
+import math
+import bpy
 
-    import bpy.props as prop
+# import sys, os
+# sys.path.append(os.path.dirname(__file__)) 
 
-    from bpy.props import (
+import bpy.props as prop
+
+from bpy.props import (
             StringProperty,
             BoolProperty,
             FloatProperty,
@@ -49,22 +51,21 @@ else:
             PointerProperty,
             CollectionProperty,
             )
-    from bpy.types import (
-            AddonPreferences,
-            PropertyGroup,
-            )
+from bpy.types import (
+    AddonPreferences,
+    PropertyGroup,
+    )
 
-    from . import (
-            UI,
-            import_unveil,
-            export_unveil,
-            functions,
-            shift,
-            POV_manager,
-            addon_updater_ops
-            )
+from . import (
+    UI,
+    import_uNveil,
+    export_uNveil,
+    functions,
+    shift,
+    POV_manager,
+    addon_updater_ops
+    )
 
-# demo bare-bones preferences
 @addon_updater_ops.make_annotations
 class DemPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
@@ -150,23 +151,22 @@ classes = (
     UI.VIEW3D_PT_Shift_ToolBar,
     UI.VIEW3D_PT_Import_ToolBar,
     UI.VIEW3D_PT_Export_ToolBar,
-    UI.VIEW3D_PT_QuickUtils_ToolBar,
-    UI.Camera_menu,
     UI.Res_menu,
-    import_unveil.ImportMultipleObjs,
-    import_unveil.OBJECT_OT_IMPORTPOINTS,
-    import_unveil.ImportCoorPoints,
-    export_unveil.ExportCoordinates,
-    import_unveil.OBJECT_OT_IMPORTAGIXML,
-    import_unveil.ImportCamAgiXML,
-    export_unveil.OBJECT_OT_ExportButtonName,
-    export_unveil.OBJECT_OT_ExportObjButton,
-    export_unveil.OBJECT_OT_fbxexp,
-    export_unveil.OBJECT_OT_fbxexportbatch,
-    export_unveil.OBJECT_OT_objexportbatch,
-    export_unveil.OBJECT_OT_osgtexportbatch,
-    export_unveil.OBJECT_OT_gltfexportbatch,
-    export_unveil.OBJECT_OT_glbexportbatch,
+    UI.VIEW3D_PT_SetupPanel,
+    import_uNveil.ImportMultipleObjs,
+    import_uNveil.OBJECT_OT_IMPORTPOINTS,
+    import_uNveil.ImportCoorPoints,
+    export_uNveil.ExportCoordinates,
+    import_uNveil.OBJECT_OT_IMPORTAGIXML,
+    import_uNveil.ImportCamAgiXML,
+    export_uNveil.OBJECT_OT_ExportButtonName,
+    export_uNveil.OBJECT_OT_ExportObjButton,
+    export_uNveil.OBJECT_OT_fbxexp,
+    export_uNveil.OBJECT_OT_fbxexportbatch,
+    export_uNveil.OBJECT_OT_objexportbatch,
+    export_uNveil.OBJECT_OT_osgtexportbatch,
+    export_uNveil.OBJECT_OT_gltfexportbatch,
+    export_uNveil.OBJECT_OT_glbexportbatch,
     functions.OBJECT_OT_createcyclesmat,
     functions.OBJECT_OT_savepaintcam,
     shift.OBJECT_OT_IMPORTPOINTS,
@@ -187,7 +187,7 @@ classes = (
 
 def register():
 
-    addon_updater_ops.register(bl_info)
+    # addon_updater_ops.register(bl_info)
 
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -257,15 +257,14 @@ def register():
 
 def unregister():
 
-    addon_updater_ops.unregister(bl_info)
+    # addon_updater_ops.unregister(bl_info)
     for cls in classes:
         try:
                 bpy.utils.unregister_class(cls)
         except RuntimeError:
                 pass
 
-    del bpy.types.Scene.setLODnum
-    del bpy.types.Scene.LOD_pad_on
+    
     del bpy.types.Scene.BL_x_shift
     del bpy.types.Scene.BL_y_shift
     del bpy.types.Scene.BL_z_shift

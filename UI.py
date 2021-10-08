@@ -7,7 +7,7 @@ from bpy.types import PropertyGroup
 from bpy.types import Menu, UIList
 
 from .functions import *
-from . import report_data
+#from . import report_data
 from . import addon_updater_ops
 
 import os
@@ -112,20 +112,19 @@ class ToolsPanelSHIFT:
 ##################################################################################################################
 
 class VIEW3D_PT_Import_ToolBar(Panel, ToolsPanelImport):
-    bl_category = "unveil"
+    bl_category = "uNveil"
     bl_idname = "VIEW3D_PT_Import_ToolBar"
     bl_context = "objectmode"
 
 class VIEW3D_PT_Export_ToolBar(Panel, ToolsPanelExport):
-    bl_category = "unveil"
+    bl_category = "uNveil"
     bl_idname = "VIEW3D_PT_Export_ToolBar"
     bl_context = "objectmode"
 
 class VIEW3D_PT_Shift_ToolBar(Panel, ToolsPanelSHIFT):
-    bl_category = "unveil"
+    bl_category = "uNveil"
     bl_idname = "VIEW3D_PT_Shift_ToolBar"
     bl_context = "objectmode"
-
 
 class Res_menu(bpy.types.Menu):
     bl_label = "Custom Menu"
@@ -234,6 +233,6 @@ class PANOToolsPanel:
         col.operator("set.lens", icon="FILE_TICK", text='SL')
 
 class VIEW3D_PT_SetupPanel(Panel, PANOToolsPanel):
-    bl_category = "unveil"
+    bl_category = "uNveil"
     bl_idname = "VIEW3D_PT_SetupPanel"
     #bl_context = "objectmode"
