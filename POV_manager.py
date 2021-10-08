@@ -91,6 +91,13 @@ def json_writer(base_dir):
 
     return
 
+def clear_panolist():
+    data = bpy.data
+    context = bpy.context
+    scene = context.scene
+    PANO_list_clear(context)
+    pano_list_index_counter = 0    
+    return
 
 class PANO_import(bpy.types.Operator):
     bl_idname = "import.pano"
@@ -104,8 +111,8 @@ class PANO_import(bpy.types.Operator):
         #minimum_sChildPath, folder_list = read_pano_dir(context)
         read_pano_dir(context)
         lines_in_file = readfile(scene.PANO_file)
-        PANO_list_clear(context)
-        pano_list_index_counter = 0
+        # PANO_list_clear(context)
+        # pano_list_index_counter = 0
         
         # Parse the array:
         for p in lines_in_file:

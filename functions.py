@@ -1183,14 +1183,14 @@ def create_cam(name,pos_x,pos_y,pos_z):
     cam_ob.location.z = pos_z
     cam_ob.rotation_euler.x = e2d(90)
 
-def read_pano_dir(context):
-    scene = context.scene
-    sPath = scene.PANO_dir
+def read_pano_dir(sPath):
+    scene = bpy.context.scene
     scene.resolution_list.clear()
     minimum_sChildPath = ""
     folder_list = []
     folder_presence = False
     min_len = 100
+    max_len = 0
     idx = 0
     for sChild in os.listdir(sPath):
             sChildPath = os.path.join(sPath,sChild)
@@ -1203,8 +1203,12 @@ def read_pano_dir(context):
                 idx += 1
 
                 if currentnumber < min_len:
-                    #print(str(currentnumber))
                     min_len = currentnumber
+                    #min_folder = sChild
+
+                if currentnumber > max_len:
+                    max_len = currentnumber
+                    max_folder = sChild
 
 
     if folder_presence is False:
@@ -1214,7 +1218,7 @@ def read_pano_dir(context):
     #scene["RES_pano_folder_list"] = sorted(scene.resolution_list, key = getnumber_in_name)
     scene["RES_pano_folder_list"] = sorted(folder_list, key = getnumber_in_name)
     print(scene["RES_pano_folder_list"])
-    return
+    return max_folder
 
 def getnumber_in_name(string):
     temp = re.findall(r'\d+', str(string))

@@ -20,64 +20,62 @@ from bpy.props import (BoolProperty,
                        CollectionProperty
                        )
 
-class ToolsPanelImport:
-    bl_label = "Importers"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
+# class ToolsPanelImport:
+#     bl_label = "Import"
+#     bl_space_type = 'VIEW_3D'
+#     bl_region_type = 'UI'
 
-    def draw(self, context):
-        layout = self.layout
-        obj = context.object
+#     def draw(self, context):
+#         layout = self.layout
+#         obj = context.object
 
-        row = layout.row()
-        self.layout.operator("import_points.txt", icon="STICKY_UVS_DISABLE", text='Coordinates')
-        row = layout.row()
-        self.layout.operator("import_scene.multiple_objs", icon="DUPLICATE", text='Multiple objs')
-        row = layout.row()
+#         row = layout.row()
+#         self.layout.operator("import_panorami.txt", icon="STICKY_UVS_DISABLE", text='import pano(s)')
+
         #self.layout.operator("import_cam.agixml", icon="DUPLICATE", text='Agisoft xml cams')
 
-class ToolsPanelExport:
-    bl_label = "Exporters"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_options = {'DEFAULT_CLOSED'}
+# class ToolsPanelExport:
+#     bl_label = "Exporters"
+#     bl_space_type = 'VIEW_3D'
+#     bl_region_type = 'UI'
+#     bl_options = {'DEFAULT_CLOSED'}
 
-    def draw(self, context):
-        layout = self.layout
-        obj = context.object
-        row = layout.row()
-        if obj is not None:
-            self.layout.operator("export.coordname", icon="STICKY_UVS_DISABLE", text='Coordinates')
-            row = layout.row()
+#     def draw(self, context):
+#         layout = self.layout
+#         obj = context.object
+#         row = layout.row()
+#         if obj is not None:
+#             self.layout.operator("export.coordname", icon="STICKY_UVS_DISABLE", text='Coordinates')
+#             row = layout.row()
 
-            box = layout.box()
-            row = box.row()
-            row.label(text= "Export object(s) in one file:")
-            row = box.row()
-            row.operator("export.object", icon="OBJECT_DATA", text='obj')
-            #row = box.row()
-            row.operator("fbx.exp", icon="OBJECT_DATA", text='fbx')
-            row = box.row()
-            row.label(text= "-> "+obj.name + ".obj/.fbx")
+#             box = layout.box()
+#             row = box.row()
+#             row.label(text= "Export object(s) in one file:")
+#             row = box.row()
+#             row.operator("export.object", icon="OBJECT_DATA", text='obj')
+#             #row = box.row()
+#             row.operator("fbx.exp", icon="OBJECT_DATA", text='fbx')
+#             row = box.row()
+#             row.label(text= "-> "+obj.name + ".obj/.fbx")
 
-            box = layout.box()
-            row = box.row()
-            row.label(text= "Export objects in several files:")
-            row = box.row()
-            row.operator("obj.exportbatch", icon="DUPLICATE", text='obj')
-            row.operator("fbx.exportbatch", icon="DUPLICATE", text='fbx')
-            row.operator("gltf.exportbatch", icon="DUPLICATE", text='gltf')
-            row.operator("glb.exportbatch", icon="DUPLICATE", text='glb')
-            row = box.row()
-            if not bpy.context.scene.FBX_export_dir:
-                row.label(text= "-> /objectname.obj")
-                row = box.row()
-                row.label(text= "-> /FBX/objectname.fbx")
-            row = box.row()
-            row.prop(context.scene, 'FBX_export_dir', toggle = True, text='Export to')
-        else:
-            row.label(text="Select object(s) to see tools here.")
-            row = layout.row()
+#             box = layout.box()
+#             row = box.row()
+#             row.label(text= "Export objects in several files:")
+#             row = box.row()
+#             row.operator("obj.exportbatch", icon="DUPLICATE", text='obj')
+#             row.operator("fbx.exportbatch", icon="DUPLICATE", text='fbx')
+#             row.operator("gltf.exportbatch", icon="DUPLICATE", text='gltf')
+#             row.operator("glb.exportbatch", icon="DUPLICATE", text='glb')
+#             row = box.row()
+#             if not bpy.context.scene.FBX_export_dir:
+#                 row.label(text= "-> /objectname.obj")
+#                 row = box.row()
+#                 row.label(text= "-> /FBX/objectname.fbx")
+#             row = box.row()
+#             row.prop(context.scene, 'FBX_export_dir', toggle = True, text='Export to')
+#         else:
+#             row.label(text="Select object(s) to see tools here.")
+#             row = layout.row()
 
 class ToolsPanelSHIFT:
     bl_label = "Shifting"
@@ -93,6 +91,7 @@ class ToolsPanelSHIFT:
 
         row = layout.row()
         row.label(text="Shift values:")
+        row.operator("shiftval_from.txtfile", icon="STICKY_UVS_DISABLE", text='import')
         row = layout.row()
         row.prop(context.scene, 'BL_x_shift', toggle = True)
         row = layout.row()
@@ -100,30 +99,28 @@ class ToolsPanelSHIFT:
         row = layout.row()
         row.prop(context.scene, 'BL_z_shift', toggle = True)
         row = layout.row()
+        row.prop(context.scene, 'BL_epsg', toggle = True)
+        row = layout.row()        
+
         # if scene['crs x'] is not None and scene['crs y'] is not None:
         #     if scene['crs x'] > 0 or scene['crs y'] > 0:
         #         self.layout.operator("shift_from.blendergis", icon="PASTEDOWN", text='from Bender GIS')
 
         addon_updater_ops.update_notice_box_ui(self, context)
 
+# class VIEW3D_PT_un_Import_ToolBar(Panel, ToolsPanelImport):
+#     bl_category = "uNveil"
+#     bl_idname = "VIEW3D_PT_un_Import_ToolBar"
+#     bl_context = "objectmode"
 
-##################################################################################################################
-###################################### classes ###################################################################
-##################################################################################################################
+# class VIEW3D_PT_un_Export_ToolBar(Panel, ToolsPanelExport):
+#     bl_category = "uNveil"
+#     bl_idname = "VIEW3D_PT_un_Export_ToolBar"
+#     bl_context = "objectmode"
 
-class VIEW3D_PT_Import_ToolBar(Panel, ToolsPanelImport):
+class VIEW3D_PT_un_Shift_ToolBar(Panel, ToolsPanelSHIFT):
     bl_category = "uNveil"
-    bl_idname = "VIEW3D_PT_Import_ToolBar"
-    bl_context = "objectmode"
-
-class VIEW3D_PT_Export_ToolBar(Panel, ToolsPanelExport):
-    bl_category = "uNveil"
-    bl_idname = "VIEW3D_PT_Export_ToolBar"
-    bl_context = "objectmode"
-
-class VIEW3D_PT_Shift_ToolBar(Panel, ToolsPanelSHIFT):
-    bl_category = "uNveil"
-    bl_idname = "VIEW3D_PT_Shift_ToolBar"
+    bl_idname = "VIEW3D_PT_un_Shift_ToolBar"
     bl_context = "objectmode"
 
 class Res_menu(bpy.types.Menu):
@@ -153,7 +150,8 @@ class PANOToolsPanel:
         resolution_pano = scene.RES_pano
 
         row = layout.row()
-        row.label(text="PANO file")
+        row.label(text="POV")
+        row.operator("import_panorami.txt", icon="STICKY_UVS_DISABLE", text='import')
         row = layout.row()
         row.prop(context.scene, 'PANO_file', toggle = True)
         row = layout.row()
@@ -232,7 +230,7 @@ class PANOToolsPanel:
         col.label(text="Apply")
         col.operator("set.lens", icon="FILE_TICK", text='SL')
 
-class VIEW3D_PT_SetupPanel(Panel, PANOToolsPanel):
+class VIEW3D_PT_un_SetupPanel(Panel, PANOToolsPanel):
     bl_category = "uNveil"
-    bl_idname = "VIEW3D_PT_SetupPanel"
+    bl_idname = "VIEW3D_PT_un_SetupPanel"
     #bl_context = "objectmode"

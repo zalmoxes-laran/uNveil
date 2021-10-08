@@ -20,14 +20,15 @@ from .functions import *
 
 # import points section ----------------------------------------------------------
 
-class OBJECT_OT_IMPORTPOINTS(Operator):
+class OBJECT_OT_PANORAMI(Operator):
     """Import points as empty objects from a txt file"""
-    bl_idname = "import_points.txt"
-    bl_label = "ImportPoints"
+    bl_idname = "import_panorami.txt"
+    bl_label = "ImportPanorami"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
-        bpy.ops.import_test.some_data('INVOKE_DEFAULT')
+        bpy.ops.import_file.pano_data('INVOKE_DEFAULT')
+
         return {'FINISHED'}
 
 def namefile_from_path(filepath):
@@ -41,10 +42,90 @@ def create_new_col_from_file_name(filename):
         bpy.context.collection.children.link(newcol)
         return newcol
 
-def read_point_data(context, filepath, shift, name_col, x_col, y_col, z_col, separator):
+def read_pano_data(context, filepath, shift, name_col, x_col, y_col, z_col, omega_col, phi_col, kappa_col, separator):
+        data = bpy.data
+        scene = context.scene
+        #minimum_sChildPath, folder_list = read_pano_dir(context)
+        folder_pano_txt_file, file_name_txt = os.path.split(filepath)
+        img_pano_folder = read_pano_dir(folder_pano_txt_file)
+        lines_in_file = readfile(filepath)
+        PANO_list_clear(context)
+        pano_list_index_counter = 0
+        counter = 0
+        # Parse the array:
+        for p in lines_in_file:
+                p0 = p.split(separator)  # use separator
+                print(p0[0])
+                ItemName = p0[name_col]
+                pos_x = float(p0[x_col])-scene.BL_x_shift
+                pos_y = float(p0[y_col])-scene.BL_y_shift
+                pos_z = (float(p0[z_col]))-scene.BL_z_shift
+                omega = float(p0[omega_col])
+                phi = float(p0[phi_col])
+                kappa = float(p0[kappa_col])
+
+                for model in data.objects:
+                        if model.name == remove_extension(ItemName) or model.name == "CAM_"+remove_extension(ItemName):
+                                data.objects.remove(model)
+
+                sph = bpy.ops.mesh.primitive_uv_sphere_add(calc_uvs=True, radius=0.2, location=(pos_x,pos_y,pos_z))
+                just_created_obj = context.active_object
+                just_created_obj.name = remove_extension(ItemName)
+
+                if counter == 0:
+                        newcol = create_new_col_from_file_name(namefile_from_path(filepath))
+                        counter += 1
+
+                newcol.objects.link(just_created_obj)
+                
+                just_created_obj.rotation_euler[2] = e2d(-90.0)
+                bpy.ops.object.transform_apply(rotation = True, location = False)
+
+                #print(f"Il panorama {just_created_obj.name} ha rotazione z: {e2d(180.0+phi)}")
+                #just_created_obj.rotation_euler[0] = e2d(-(omega-90.0))
+                #just_created_obj.rotation_euler[1] = e2d(kappa)
+                #just_created_obj.rotation_euler[2] = e2d(180.0+phi)
+
+                if omega>0:
+                        just_created_obj.rotation_euler[1] = e2d((omega-90.0))
+                else:
+                        just_created_obj.rotation_euler[1] = e2d(-(omega-90.0))
+                
+                just_created_obj.rotation_euler[0] = e2d(-kappa)
+                
+                if omega>0:
+                        just_created_obj.rotation_euler[2] = e2d(180.0+phi)
+                else:
+                        just_created_obj.rotation_euler[2] = e2d(180-phi)
+
+                uvMapName = 'UVMap'
+                obj, uvMap = GetObjectAndUVMap( just_created_obj.name, uvMapName )
+                scale = Vector( (-1, 1) )
+                pivot = Vector( (0.5, 0.5) )
+                ScaleUV( uvMap, scale, pivot )
+
+                #ItemName_res = (remove_extension(ItemName)+"-"+str(scene.RES_pano)+"k.jpg")
+                ItemName_res = (remove_extension(ItemName)+".jpg")
+                current_panores_foldername = img_pano_folder#str(scene.RES_pano)+"k"
+                
+                minimum_sChildPath = os.path.join(folder_pano_txt_file,current_panores_foldername)
+
+                diffTex, img = create_tex_from_file(ItemName_res,minimum_sChildPath)
+                mat = create_mat(just_created_obj)
+                setup_mat_panorama_3DSC(mat.name, img)
+                
+                scene.pano_list.add()
+                scene.pano_list[pano_list_index_counter].name = just_created_obj.name
+                
+                flipnormals()
+                create_cam(just_created_obj.name,pos_x,pos_y,pos_z)
+                pano_list_index_counter += 1
+
+        return
+
+def read_point_data(context, filepath, shift, name_col, x_col, y_col, z_col, omega_col, phi_col, kappa_col, separator):
     print("running read point file...")
     f = open(filepath, 'r', encoding='utf-8')
-#    data = f.read()
     arr=f.readlines()  # store the entire file in a variable
     f.close()
     
@@ -53,7 +134,9 @@ def read_point_data(context, filepath, shift, name_col, x_col, y_col, z_col, sep
     for p in arr:
         p0 = p.split(separator)  # use separator variable as separator
         ItemName = p0[int(name_col)]
-        x_coor = float(p0[int(x_col)])
+        print(str(ItemName))
+        print(str(p0[1]))
+        x_coor = float(p0[1])
         y_coor = float(p0[int(y_col)])
         z_coor = float(p0[int(z_col)])
          
@@ -79,10 +162,10 @@ def read_point_data(context, filepath, shift, name_col, x_col, y_col, z_col, sep
 
     return {'FINISHED'}
 
-class ImportCoorPoints(Operator, ImportHelper):
-    """Tool to import coordinate points from a txt file"""
-    bl_idname = "import_test.some_data"  # important since its how bpy.ops.import_test.some_data is constructed
-    bl_label = "Import Coordinate Points"
+class ImportCoorPanorami(Operator, ImportHelper):
+    """Tool to import panoramas from a txt file"""
+    bl_idname = "import_file.pano_data"  # important since its how bpy.ops.import_file.pano_data is constructed
+    bl_label = "Import positions"
 
     # ImportHelper mixin class uses this
     filename_ext = ".txt"
@@ -96,10 +179,16 @@ class ImportCoorPoints(Operator, ImportHelper):
     # List of operator properties, the attributes will be assigned
     # to the class instance from the operator settings before calling.
     shift: BoolProperty(
-            name="Shift coordinates",
+            name="Shift world coordinates",
             description="Shift coordinates using the General Shift Value (GSV)",
-            default=False,
+            default=True,
             )
+
+#     shift: BoolProperty(
+#             name="Panoramas in sub-folder",
+#             description="Activate if images are in a subfolder",
+#             default=True,
+#             )
 
     col_name: EnumProperty(
             name="Name",
@@ -107,7 +196,10 @@ class ImportCoorPoints(Operator, ImportHelper):
             items=(('0', "Column 1", "Column 1"),
                    ('1', "Column 2", "Column 2"),
                    ('2', "Column 3", "Column 3"),
-                   ('3', "Column 4", "Column 4")),
+                   ('3', "Column 4", "Column 4"),
+                   ('4', "Column 5", "Column 5"),
+                   ('5', "Column 6", "Column 6"),
+                   ('6', "Column 7", "Column 7")),
             default='0',
             )
   
@@ -117,7 +209,10 @@ class ImportCoorPoints(Operator, ImportHelper):
             items=(('0', "Column 1", "Column 1"),
                    ('1', "Column 2", "Column 2"),
                    ('2', "Column 3", "Column 3"),
-                   ('3', "Column 4", "Column 4")),
+                   ('3', "Column 4", "Column 4"),
+                   ('4', "Column 5", "Column 5"),
+                   ('5', "Column 6", "Column 6"),
+                   ('6', "Column 7", "Column 7")),
             default='1',
             ) 
 
@@ -127,7 +222,10 @@ class ImportCoorPoints(Operator, ImportHelper):
             items=(('0', "Column 1", "Column 1"),
                    ('1', "Column 2", "Column 2"),
                    ('2', "Column 3", "Column 3"),
-                   ('3', "Column 4", "Column 4")),
+                   ('3', "Column 4", "Column 4"),
+                   ('4', "Column 5", "Column 5"),
+                   ('5', "Column 6", "Column 6"),
+                   ('6', "Column 7", "Column 7")),
             default='2',
             )
 
@@ -137,237 +235,67 @@ class ImportCoorPoints(Operator, ImportHelper):
             items=(('0', "Column 1", "Column 1"),
                    ('1', "Column 2", "Column 2"),
                    ('2', "Column 3", "Column 3"),
-                   ('3', "Column 4", "Column 4")),
+                   ('3', "Column 4", "Column 4"),
+                   ('4', "Column 5", "Column 5"),
+                   ('5', "Column 6", "Column 6"),
+                   ('6', "Column 7", "Column 7")),
             default='3',
             )     
+
+    col_Omega: EnumProperty(
+            name="Omega",
+            description="Column with rotation Omega",
+            items=(('0', "Column 1", "Column 1"),
+                   ('1', "Column 2", "Column 2"),
+                   ('2', "Column 3", "Column 3"),
+                   ('3', "Column 4", "Column 4"),
+                   ('4', "Column 5", "Column 5"),
+                   ('5', "Column 6", "Column 6"),
+                   ('6', "Column 7", "Column 7")),
+            default='4',
+            )
+
+    col_Phi: EnumProperty(
+            name="Phi",
+            description="Column with rotation Phi",
+            items=(('0', "Column 1", "Column 1"),
+                   ('1', "Column 2", "Column 2"),
+                   ('2', "Column 3", "Column 3"),
+                   ('3', "Column 4", "Column 4"),
+                   ('4', "Column 5", "Column 5"),
+                   ('5', "Column 6", "Column 6"),
+                   ('6', "Column 7", "Column 7")),
+            default='5',
+            )
+
+    col_Kappa: EnumProperty(
+            name="Kappa",
+            description="Column with rotation Kappa",
+            items=(('0', "Column 1", "Column 1"),
+                   ('1', "Column 2", "Column 2"),
+                   ('2', "Column 3", "Column 3"),
+                   ('3', "Column 4", "Column 4"),
+                   ('4', "Column 5", "Column 5"),
+                   ('5', "Column 6", "Column 6"),
+                   ('6', "Column 7", "Column 7")),
+            default='6',
+            )
 
     separator: EnumProperty(
             name="separator",
             description="Separator type",
             items=((',', "comma", "comma"),
                    (' ', "space", "space"),
-                   (';', "semicolon", "semicolon")),
-            default=',',
+                   (';', "semicolon", "semicolon"),
+                   ('	', "tab", "tab")),
+            default='	',
             )
 
     def execute(self, context):
-        return read_point_data(context, self.filepath, self.shift, self.col_name, self.col_x, self.col_y, self.col_z, self.separator)
-
+        return read_pano_data(context, self.filepath, self.shift, int(self.col_name), int(self.col_x), int(self.col_y), int(self.col_z), int(self.col_Omega), int(self.col_Phi), int(self.col_Kappa), self.separator)
 
 # Only needed if you want to add into a dynamic menu
 def menu_func_import(self, context):
-    self.layout.operator(ImportCoorPoints.bl_idname, text="Coordinate points Import Operator")
+    self.layout.operator(ImportCoorPanorami.bl_idname, text="Coordinate Panoramas Import Operator")
 
-    bpy.ops.import_test.some_data('INVOKE_DEFAULT')
-
-
-# import multiple objs section ---------------------------------------------------
-
-class ImportMultipleObjs(Operator, ImportHelper):
-    """This appears in the tooltip of the operator and in the generated docs"""
-    bl_idname = "import_scene.multiple_objs"
-    bl_label = "Import multiple OBJ's"
-    bl_options = {'PRESET', 'UNDO'}
-
-    # ImportHelper mixin class uses this
-    filename_ext = ".obj"
-
-    filter_glob: StringProperty(
-            default="*.obj",
-            options={'HIDDEN'},
-            )
-
-    # Selected files
-    files: CollectionProperty(type=PropertyGroup)
-
-    # List of operator properties, the attributes will be assigned
-    # to the class instance from the operator settings before calling.
-    ngons_setting: BoolProperty(
-            name="NGons",
-            description="Import faces with more than 4 verts as ngons",
-            default=True,
-            )
-    edges_setting: BoolProperty(
-            name="Lines",
-            description="Import lines and faces with 2 verts as edge",
-            default=True,
-            )
-    smooth_groups_setting: BoolProperty(
-            name="Smooth Groups",
-            description="Surround smooth groups by sharp edges",
-            default=True,
-            )
-
-    split_objects_setting: BoolProperty(
-            name="Object",
-            description="Import OBJ Objects into Blender Objects",
-            default=True,
-            )
-    split_groups_setting: BoolProperty(
-            name="Group",
-            description="Import OBJ Groups into Blender Objects",
-            default=True,
-            )
-
-    groups_as_vgroups_setting: BoolProperty(
-            name="Poly Groups",
-            description="Import OBJ groups as vertex groups",
-            default=False,
-            )
-
-    image_search_setting: BoolProperty(
-            name="Image Search",
-            description="Search subdirs for any associated images "
-                        "(Warning, may be slow)",
-            default=True,
-            )
-
-    split_mode_setting: EnumProperty(
-            name="Split",
-            items=(('ON', "Split", "Split geometry, omits unused verts"),
-                   ('OFF', "Keep Vert Order", "Keep vertex order from file"),
-                   ),
-            )
-
-    clamp_size_setting: FloatProperty(
-            name="Clamp Size",
-            description="Clamp bounds under this value (zero to disable)",
-            min=0.0, max=1000.0,
-            soft_min=0.0, soft_max=1000.0,
-            default=0.0,
-            )
-    axis_forward_setting: EnumProperty(
-            name="Forward",
-            items=(('X', "X Forward", ""),
-                   ('Y', "Y Forward", ""),
-                   ('Z', "Z Forward", ""),
-                   ('-X', "-X Forward", ""),
-                   ('-Y', "-Y Forward", ""),
-                   ('-Z', "-Z Forward", ""),
-                   ),
-            default='Y',
-            )
-
-    axis_up_setting: EnumProperty(
-            name="Up",
-            items=(('X', "X Up", ""),
-                   ('Y', "Y Up", ""),
-                   ('Z', "Z Up", ""),
-                   ('-X', "-X Up", ""),
-                   ('-Y', "-Y Up", ""),
-                   ('-Z', "-Z Up", ""),
-                   ),
-            default='Z',
-            )
-
-    def draw(self, context):
-        layout = self.layout
-
-        row = layout.row(align=True)
-        row.prop(self, "ngons_setting")
-        row.prop(self, "edges_setting")
-
-        layout.prop(self, "smooth_groups_setting")
-
-        box = layout.box()
-        row = box.row()
-        row.prop(self, "split_mode_setting", expand=True)
-
-        row = box.row()
-        if self.split_mode_setting == 'ON':
-            row.label(text="Split by:")
-            row.prop(self, "split_objects_setting")
-            row.prop(self, "split_groups_setting")
-        else:
-            row.prop(self, "groups_as_vgroups_setting")
-
-#        layout = self.layout.column_flow(2)
-
-        row.prop(self, "clamp_size_setting")
-        layout.prop(self, "axis_forward_setting")
-        layout.prop(self, "axis_up_setting")
-
-        layout.prop(self, "image_search_setting")
-
-    def execute(self, context):
-
-        # get the folder
-        folder = (os.path.dirname(self.filepath))
-
-        # iterate through the selected files
-        for i in self.files:
-        
-            print(i)
-            path_to_file = (os.path.join(folder, i.name))
-
-            bpy.ops.import_scene.obj(filepath= path_to_file,filter_glob='*.obj;*.mtl', axis_forward = self.axis_forward_setting, axis_up = self.axis_up_setting, use_edges = self.edges_setting, use_smooth_groups = self.smooth_groups_setting, use_split_objects = self.split_objects_setting, use_split_groups = self.split_groups_setting, use_groups_as_vgroups = self.groups_as_vgroups_setting, use_image_search = self.image_search_setting, split_mode = self.split_mode_setting)
-
-
-        return {'FINISHED'}
-
-
-# import agisoft xml section ----------------------------------------------------------
-
-class OBJECT_OT_IMPORTAGIXML(Operator):
-    """Import cams from an xml file"""
-    bl_idname = "import_cams.agixml"
-    bl_label = "ImportAgiXML"
-    bl_options = {"REGISTER", "UNDO"}
-
-    def execute(self, context):
-        bpy.ops.import_cam.agixml('INVOKE_DEFAULT')
-        return {'FINISHED'}
-
-
-def read_agixml_data(context, filepath, shift, chunk, allchunks):
-    print("reading agisoft xml file...")
-    load_create_cameras(filepath)
-    
-
-    return {'FINISHED'}
-
-class ImportCamAgiXML(Operator, ImportHelper):
-    """Tool to import cams and cams parameters from an Agisoft xml file"""
-    bl_idname = "import_cam.agixml"  # important since its how bpy.ops.import_test.some_data is constructed
-    bl_label = "Import Agisoft XML cams"
-
-    # ImportHelper mixin class uses this
-    filename_ext = ".xml"
-
-    filter_glob: StringProperty(
-            default="*.xml",
-            options={'HIDDEN'},
-            maxlen=255,  # Max internal buffer length, longer would be clamped.
-            )
-
-    # List of operator properties, the attributes will be assigned
-    # to the class instance from the operator settings before calling.
-    shift: BoolProperty(
-            name="Shift coordinates",
-            description="Shift coordinates using the General Shift Value (GSV)",
-            default=False,
-            )
-
-    allchunks: BoolProperty(
-            name="from all chunks",
-            description="Import cams from all the chunks",
-            default=False,
-            )
-
-    PSchunks: IntProperty(
-            name="chunk number",
-            default=1,
-            description="number of chunk",
-            )
-
-
-    def execute(self, context):
-        return read_agixml_data(context, self.filepath, self.shift, self.PSchunks, self.allchunks)
-
-# Only needed if you want to add into a dynamic menu
-def menu_func_import(self, context):
-    self.layout.operator(ImportCoorPoints.bl_idname, text="Coordinate points Import Operator")
-
-    bpy.ops.import_cam.agixml('INVOKE_DEFAULT')
-
-
+    bpy.ops.import_file.pano_data('INVOKE_DEFAULT')

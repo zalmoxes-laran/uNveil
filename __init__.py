@@ -148,17 +148,12 @@ class PANO_UL_List(bpy.types.UIList):
         layout.label(text = item.name, icon = item.icon)
 
 classes = (
-    UI.VIEW3D_PT_Shift_ToolBar,
-    UI.VIEW3D_PT_Import_ToolBar,
-    UI.VIEW3D_PT_Export_ToolBar,
+    UI.VIEW3D_PT_un_Shift_ToolBar,
     UI.Res_menu,
-    UI.VIEW3D_PT_SetupPanel,
-    import_uNveil.ImportMultipleObjs,
-    import_uNveil.OBJECT_OT_IMPORTPOINTS,
-    import_uNveil.ImportCoorPoints,
+    UI.VIEW3D_PT_un_SetupPanel,
+    import_uNveil.OBJECT_OT_PANORAMI,
+    import_uNveil.ImportCoorPanorami,
     export_uNveil.ExportCoordinates,
-    import_uNveil.OBJECT_OT_IMPORTAGIXML,
-    import_uNveil.ImportCamAgiXML,
     export_uNveil.OBJECT_OT_ExportButtonName,
     export_uNveil.OBJECT_OT_ExportObjButton,
     export_uNveil.OBJECT_OT_fbxexp,
@@ -170,6 +165,8 @@ classes = (
     functions.OBJECT_OT_createcyclesmat,
     functions.OBJECT_OT_savepaintcam,
     shift.OBJECT_OT_IMPORTPOINTS,
+    shift.OBJECT_OT_IMPORTUNSHIFT,
+    shift.ImportCoordinateShift,
     POV_manager.REMOVE_pano,
     POV_manager.VIEW_pano,
     POV_manager.VIEW_alignquad,
@@ -219,6 +216,12 @@ def register():
         name = "Camera type",
         default = "Not set",
         description = "Current camera type"
+        )
+
+    bpy.types.Scene.BL_epsg = StringProperty(
+        name = "EPSG",
+        default = "Not set",
+        description = "Epsg code"
         )
 
     bpy.types.Scene.camera_lens = IntProperty(
@@ -276,4 +279,5 @@ def unregister():
     del bpy.types.Scene.PANO_file
     del bpy.types.Scene.PANO_dir
     del bpy.types.Scene.PANO_cam_lens
+    del bpy.types.Scene.BL_epsg
 
