@@ -17,21 +17,21 @@
 #'''
 
 bl_info = {
-    "name": "uNveil",
+    "name": "unveil",
     "author": "Emanuel Demetrescu",
     "version": (0,9,10),
     "blender": (2, 93, 4),
     "location": "3D View > Toolbox",
     "description": "Multitemporal storytelling",
-#    "warning": "",
+    "warning": "alpha",
     "wiki_url": "",
 #    "tracker_url": "",
-    "category": "Tools",
+    "category": "Tools"
     }
 
 if "bpy" in locals():
     import importlib
-    importlib.reload(import_uNveil)
+    importlib.reload(import_unveil)
 #    importlib.reload(functions)
 #    importlib.reload(mesh_helpers)
 else:
@@ -56,8 +56,8 @@ else:
 
     from . import (
             UI,
-            import_uNveil,
-            export_uNveil,
+            import_unveil,
+            export_unveil,
             functions,
             shift,
             POV_manager,
@@ -103,22 +103,9 @@ class DemPreferences(bpy.types.AddonPreferences):
                 )
     def draw(self, context):
         layout = self.layout
-        # col = layout.column() # works best if a column, or even just self.layout
         mainrow = layout.row()
         col = mainrow.column()
-        # updater draw function
-        # could also pass in col as third arg
         addon_updater_ops.update_settings_ui(self, context)
-        # Alternate draw function, which is more condensed and can be
-        # placed within an existing draw function. Only contains:
-        #   1) check for update/update now buttons
-        #   2) toggle for auto-check (interval will be equal to what is set above)
-        # addon_updater_ops.update_settings_ui_condensed(self, context, col)
-        # Adding another column to help show the above condensed ui as one column
-        # col = mainrow.column()
-        # col.scale_y = 2
-        # col.operator("wm.url_open","Open webpage ").url=addon_updater_ops.updater.website
-
 
 class RES_list(PropertyGroup):
     """ List of resolutions """
@@ -135,7 +122,6 @@ class CAMTypeList(PropertyGroup):
             name="Name",
             description="A name for this item",
             default="Untitled")
-
 
 class PANOListItem(PropertyGroup):
     """ Group of properties representing an item in the list """
@@ -160,8 +146,6 @@ class PANO_UL_List(bpy.types.UIList):
         #scene = context.scene
         layout.label(text = item.name, icon = item.icon)
 
-
-
 classes = (
     UI.VIEW3D_PT_Shift_ToolBar,
     UI.VIEW3D_PT_Import_ToolBar,
@@ -169,20 +153,20 @@ classes = (
     UI.VIEW3D_PT_QuickUtils_ToolBar,
     UI.Camera_menu,
     UI.Res_menu,
-    import_uNveil.ImportMultipleObjs,
-    import_uNveil.OBJECT_OT_IMPORTPOINTS,
-    import_uNveil.ImportCoorPoints,
-    export_uNveil.ExportCoordinates,
-    import_uNveil.OBJECT_OT_IMPORTAGIXML,
-    import_uNveil.ImportCamAgiXML,
-    export_uNveil.OBJECT_OT_ExportButtonName,
-    export_uNveil.OBJECT_OT_ExportObjButton,
-    export_uNveil.OBJECT_OT_fbxexp,
-    export_uNveil.OBJECT_OT_fbxexportbatch,
-    export_uNveil.OBJECT_OT_objexportbatch,
-    export_uNveil.OBJECT_OT_osgtexportbatch,
-    export_uNveil.OBJECT_OT_gltfexportbatch,
-    export_uNveil.OBJECT_OT_glbexportbatch,
+    import_unveil.ImportMultipleObjs,
+    import_unveil.OBJECT_OT_IMPORTPOINTS,
+    import_unveil.ImportCoorPoints,
+    export_unveil.ExportCoordinates,
+    import_unveil.OBJECT_OT_IMPORTAGIXML,
+    import_unveil.ImportCamAgiXML,
+    export_unveil.OBJECT_OT_ExportButtonName,
+    export_unveil.OBJECT_OT_ExportObjButton,
+    export_unveil.OBJECT_OT_fbxexp,
+    export_unveil.OBJECT_OT_fbxexportbatch,
+    export_unveil.OBJECT_OT_objexportbatch,
+    export_unveil.OBJECT_OT_osgtexportbatch,
+    export_unveil.OBJECT_OT_gltfexportbatch,
+    export_unveil.OBJECT_OT_glbexportbatch,
     functions.OBJECT_OT_createcyclesmat,
     functions.OBJECT_OT_savepaintcam,
     shift.OBJECT_OT_IMPORTPOINTS,
@@ -199,7 +183,7 @@ classes = (
     CAMTypeList,
     RES_list,
     DemPreferences
-)
+    )
 
 def register():
 
@@ -244,7 +228,7 @@ def register():
         )
     bpy.types.Scene.info_log = []
 
-# panoramic
+    # panoramic
     bpy.types.Scene.camera_list = CollectionProperty(type = CAMTypeList)
     bpy.types.Scene.resolution_list = CollectionProperty(type = RES_list)
     bpy.types.Scene.pano_list = CollectionProperty(type = PANOListItem)

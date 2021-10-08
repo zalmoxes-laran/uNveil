@@ -52,7 +52,7 @@ except Exception as e:
 # Must declare this before classes are loaded
 # otherwise the bl_idname's will not match and have errors.
 # Must be all lowercase and no spaces
-updater.addon = "addon_updater_uNveil"
+updater.addon = "addon_updater_unveil"
 
 
 # -----------------------------------------------------------------------------
@@ -1271,7 +1271,7 @@ def register(bl_info):
 	updater.user = "zalmoxes-laran"
 
 	# choose your own repository, must match git name
-	updater.repo = "uNveil"
+	updater.repo = "unveil"
 
 	#updater.addon = # define at top of module, MUST be done first
 
