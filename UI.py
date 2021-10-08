@@ -138,7 +138,7 @@ class Res_menu(bpy.types.Menu):
             idx +=1
 
 class PANOToolsPanel:
-    bl_label = "Panorama suite"
+    bl_label = "POV manager"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_options = {'DEFAULT_CLOSED'}
@@ -150,14 +150,14 @@ class PANOToolsPanel:
         resolution_pano = scene.RES_pano
 
         row = layout.row()
-        row.label(text="POV")
-        row.operator("import_panorami.txt", icon="STICKY_UVS_DISABLE", text='import')
+        row.label(text="Import")
+        row.operator("import_panorami.txt", icon="STICKY_UVS_DISABLE", text='')
         row = layout.row()
-        row.prop(context.scene, 'PANO_file', toggle = True)
-        row = layout.row()
-        row.prop(context.scene, 'PANO_dir', toggle = True)
-        row = layout.row()
-        self.layout.operator("import.pano", icon="GROUP_UVS", text='Read/Refresh PANO file')
+        #row.prop(context.scene, 'PANO_file', toggle = True)
+        #row = layout.row()
+        #row.prop(context.scene, 'PANO_dir', toggle = True)
+        #row = layout.row()
+        #self.layout.operator("import.pano", icon="GROUP_UVS", text='Read/Refresh PANO file')
 
         if context.active_object:
             if obj.type not in ['MESH']:
