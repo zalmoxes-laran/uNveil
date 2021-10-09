@@ -13,23 +13,22 @@ from bpy.types import Operator
 ############## from here operators to export text ########################
 
 
-class OBJECT_OT_ExportButtonName(bpy.types.Operator):
-    bl_idname = "export.coordname"
+class OBJECT_OT_ExportShiftFile(bpy.types.Operator):
+    bl_idname = "export.coordshift"
     bl_label = "Export coord name"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
 
-        bpy.ops.export_test.some_data('INVOKE_DEFAULT')
+        bpy.ops.export_shift.file_data('INVOKE_DEFAULT')
             
         return {'FINISHED'}
 
-def write_some_data(context, filepath, shift, rot, cam, nam):
+def write_gsv_data(context, filepath, shift, rot, cam, nam, aton):
     print("running write some data...")
     
     selection = bpy.context.selected_objects
     bpy.ops.object.select_all(action='DESELECT')
-
 
     f = open(filepath, 'w', encoding='utf-8')
         
@@ -42,11 +41,6 @@ def write_some_data(context, filepath, shift, rot, cam, nam):
         x_coor = obj.location[0]
         y_coor = obj.location[1]
         z_coor = obj.location[2]
-        
-        if rot == True or cam == True:
-            rotation_grad_x = math.degrees(obj.rotation_euler[0])
-            rotation_grad_y = math.degrees(obj.rotation_euler[1])
-            rotation_grad_z = math.degrees(obj.rotation_euler[2])
 
         if shift == True:
             shift_x = context.scene.BL_x_shift
@@ -56,31 +50,38 @@ def write_some_data(context, filepath, shift, rot, cam, nam):
             y_coor = y_coor+shift_y
             z_coor = z_coor+shift_z
 
-        # Generate UV sphere at x = lon and y = lat (and z = 0 )
+        if aton:
+            pass
 
-        if rot == True:
-            if nam == True:
-                f.write("%s %s %s %s %s %s %s\n" % (obj.name, x_coor, y_coor, z_coor, rotation_grad_x, rotation_grad_y, rotation_grad_z))
-            else:    
-                f.write("%s %s %s %s %s %s\n" % (x_coor, y_coor, z_coor, rotation_grad_x, rotation_grad_y, rotation_grad_z))
-        if cam == True:
-            if obj.type == 'CAMERA':
-                f.write("%s %s %s %s %s %s %s %s\n" % (obj.name, x_coor, y_coor, z_coor, rotation_grad_x, rotation_grad_y, rotation_grad_z, obj.data.lens))        
-        if rot == False and cam == False:
-            if nam == True:
-                f.write("%s %s %s %s\n" % (obj.name, x_coor, y_coor, z_coor))
-            else:
-                f.write("%s %s %s\n" % (x_coor, y_coor, z_coor))
-        
-    f.close()    
-    
+        else:
+            if rot == True or cam == True:
+                rotation_grad_x = math.degrees(obj.rotation_euler[0])
+                rotation_grad_y = math.degrees(obj.rotation_euler[1])
+                rotation_grad_z = math.degrees(obj.rotation_euler[2])
 
+            # Generate UV sphere at x = lon and y = lat (and z = 0 )
+
+            if rot == True:
+                if nam == True:
+                    f.write("%s %s %s %s %s %s %s\n" % (obj.name, x_coor, y_coor, z_coor, rotation_grad_x, rotation_grad_y, rotation_grad_z))
+                else:    
+                    f.write("%s %s %s %s %s %s\n" % (x_coor, y_coor, z_coor, rotation_grad_x, rotation_grad_y, rotation_grad_z))
+            if cam == True:
+                if obj.type == 'CAMERA':
+                    f.write("%s %s %s %s %s %s %s %s\n" % (obj.name, x_coor, y_coor, z_coor, rotation_grad_x, rotation_grad_y, rotation_grad_z, obj.data.lens))        
+            if rot == False and cam == False:
+                if nam == True:
+                    f.write("%s %s %s %s\n" % (obj.name, x_coor, y_coor, z_coor))
+                else:
+                    f.write("%s %s %s\n" % (x_coor, y_coor, z_coor))
+            
+    f.close()
     return {'FINISHED'}
 
-class ExportCoordinates(Operator, ExportHelper):
+class ExportEpsgShift(Operator, ExportHelper):
     """This appears in the tooltip of the operator and in the generated docs"""
-    bl_idname = "export_test.some_data"  # important since its how bpy.ops.import_test.some_data is constructed
-    bl_label = "Export Coordinate Data"
+    bl_idname = "export_shift.file_data"  # important since its how bpy.ops.import_test.some_data is constructed
+    bl_label = "Export Coordinate shift file"
 
     # ExportHelper mixin class uses this
     filename_ext = ".txt"
@@ -118,8 +119,14 @@ class ExportCoordinates(Operator, ExportHelper):
             default=False,
             )
 
+    aton: BoolProperty(
+            name="Export json for Aton3",
+            description="Export a json file compatible with Aton3 framework",
+            default=True,
+            )
+
     def execute(self, context):
-        return write_some_data(context, self.filepath, self.shift, self.rot, self.cam, self.nam)
+        return write_gsv_data(context, self.filepath, self.shift, self.rot, self.cam, self.nam, self.aton)
 
 # Only needed if you want to add into a dynamic menu
 def menu_func_export(self, context):

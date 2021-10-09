@@ -92,6 +92,7 @@ class ToolsPanelSHIFT:
         row = layout.row()
         row.label(text="Shift values:")
         row.operator("shiftval_from.txtfile", icon="STICKY_UVS_DISABLE", text='import')
+        row.operator("export.coordshift", icon="STICKY_UVS_DISABLE", text='export')
         row = layout.row()
         row.prop(context.scene, 'BL_x_shift', toggle = True)
         row = layout.row()
