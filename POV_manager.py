@@ -208,12 +208,22 @@ class REMOVE_pano(bpy.types.Operator):
         data = bpy.data
         context = bpy.context
         scene = context.scene
-        ob_pano = data.objects[scene.pano_list[scene.pano_list_index].name]
-        cam_pano = data.objects['CAM_'+scene.pano_list[scene.pano_list_index].name]
-        data.objects.remove(ob_pano)
-        data.objects.remove(cam_pano)
-        scene.pano_list.remove(scene.pano_list_index)
-        scene.pano_list_index = scene.pano_list_index - 1
+        if scene.pano_list[scene.pano_list_index].name == "Untitled":
+            scene.pano_list.remove(scene.pano_list_index)
+            scene.pano_list_index = scene.pano_list_index - 1            
+        else:
+            try:
+                ob_pano = data.objects[scene.pano_list[scene.pano_list_index].name]
+                data.objects.remove(ob_pano)
+            except:
+                pass
+            try:
+                cam_pano = data.objects['CAM_'+scene.pano_list[scene.pano_list_index].name]
+                data.objects.remove(cam_pano)
+            except:
+                pass
+            scene.pano_list.remove(scene.pano_list_index)
+            scene.pano_list_index = scene.pano_list_index - 1
         return {'FINISHED'}
 
 class VIEW_pano(bpy.types.Operator):

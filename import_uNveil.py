@@ -49,7 +49,7 @@ def is_collection(name_col):
                         there_is = True
         return there_is
 
-def read_pano_data(context, filepath, shift, name_col, x_col, y_col, z_col, omega_col, phi_col, kappa_col, separator, clear_list):
+def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col, omega_col, phi_col, kappa_col, separator, clear_list):
         data = bpy.data
         scene = context.scene
         #minimum_sChildPath, folder_list = read_pano_dir(context)
@@ -61,11 +61,15 @@ def read_pano_data(context, filepath, shift, name_col, x_col, y_col, z_col, omeg
         pano_list_index_counter = 0
         counter = 0
         # Parse the array:
-        for p in lines_in_file:
-                p0 = p.split(separator)  # use separator
-                print(p0[0])
+        for p in lines_in_file:                      
+                p0 = p.split(separator)  # use separator                         
                 ItemName = p0[name_col]
-                pos_x = float(p0[x_col])-scene.BL_x_shift
+                try:
+                        pos_x = float(p0[x_col])-scene.BL_x_shift
+                except IndexError:
+                        self.report({'ERROR'}, "Uncorrect field separator ?")
+                        #print("")
+                        return {'FINISHED'}
                 pos_y = float(p0[y_col])-scene.BL_y_shift
                 pos_z = (float(p0[z_col]))-scene.BL_z_shift
                 omega = float(p0[omega_col])
@@ -112,7 +116,6 @@ def read_pano_data(context, filepath, shift, name_col, x_col, y_col, z_col, omeg
                 
                 context.view_layer.objects.active = just_created_obj
                 
-
                 uvMapName = 'UVMap'
                 obj, uvMap = GetObjectAndUVMap( just_created_obj.name, uvMapName )
                 scale = Vector( (-1, 1) )
@@ -308,7 +311,7 @@ class ImportCoorPanorami(Operator, ImportHelper):
             )
 
     def execute(self, context):
-        return read_pano_data(context, self.filepath, self.shift, int(self.col_name), int(self.col_x), int(self.col_y), int(self.col_z), int(self.col_Omega), int(self.col_Phi), int(self.col_Kappa), self.separator, self.clear_previous)
+        return read_pano_data(self,context, self.filepath, self.shift, int(self.col_name), int(self.col_x), int(self.col_y), int(self.col_z), int(self.col_Omega), int(self.col_Phi), int(self.col_Kappa), self.separator, self.clear_previous)
 
 # Only needed if you want to add into a dynamic menu
 def menu_func_import(self, context):

@@ -1172,6 +1172,7 @@ def create_pano_cam(name,pos_x,pos_y,pos_z, collection):
     cam_data = bpy.data.cameras.new('CAM_'+name)
     cam_data.display_size = 0.15
     cam_data.lens = bpy.context.scene.PANO_cam_lens
+    cam_data.type = 'PANO'
     # create object camera data and insert the camera data
     cam_ob = bpy.data.objects.new('CAM_'+name, cam_data)
     # link into scene
