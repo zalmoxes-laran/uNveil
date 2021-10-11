@@ -151,6 +151,7 @@ classes = (
     UI.VIEW3D_PT_un_Shift_ToolBar,
     UI.Res_menu,
     UI.VIEW3D_PT_un_SetupPanel,
+    UI.VIEW3D_PT_metadata,
     import_uNveil.OBJECT_OT_PANORAMI,
     import_uNveil.ImportCoorPanorami,
     export_uNveil.ExportEpsgShift,
@@ -210,8 +211,7 @@ def register():
     bpy.types.Scene.RES_pano = IntProperty(
         name = "Res",
         default = 1,
-        description = "Resolution of Panoramic image for bubbles"#,
-#        update = functions.switch_paradata_lists
+        description = "Resolution of Panoramic image for bubbles"
         )
 
 
@@ -261,7 +261,6 @@ def register():
     description = "Define the lens of the cameras",
     )
 
-
 def unregister():
 
     # addon_updater_ops.unregister(bl_info)
@@ -271,7 +270,7 @@ def unregister():
         except RuntimeError:
                 pass
 
-    
+
     del bpy.types.Scene.BL_x_shift
     del bpy.types.Scene.BL_y_shift
     del bpy.types.Scene.BL_z_shift

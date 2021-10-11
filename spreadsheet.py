@@ -21,13 +21,13 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
 SAMPLE_RANGE_NAME = 'Class Data!A2:E'
 
-def main():
+def init_spreadsheet_service(credenziali):
     """Shows basic usage of the Sheets API.
     Prints values from a sample spreadsheet.
     """
@@ -36,7 +36,7 @@ def main():
     # created automatically when the authorization flow completes for the first
     # time.
     if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        creds = Credentials.from_authorized_user_file(credenziali, SCOPES)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
@@ -66,5 +66,5 @@ def main():
             print('%s, %s' % (row[0], row[4]))
 
 if __name__ == '__main__':
-    main()
+    init_spreadsheet_service()
 # [END sheets_quickstart]

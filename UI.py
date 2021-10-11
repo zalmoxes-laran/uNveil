@@ -235,3 +235,24 @@ class VIEW3D_PT_un_SetupPanel(Panel, PANOToolsPanel):
     bl_category = "uNveil"
     bl_idname = "VIEW3D_PT_un_SetupPanel"
     #bl_context = "objectmode"
+ 
+class ToolsPanelMetadata:
+    bl_label = "Metadata manager"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        obj = context.active_object
+        #resolution_pano = scene.RES_pano
+
+        row = layout.row()
+        row.label(text="Activate service")
+        row.operator("activate.spreadsheetservice", icon="STICKY_UVS_DISABLE", text='')
+
+class VIEW3D_PT_metadata(Panel, ToolsPanelMetadata):
+    bl_category = "uNveil"
+    bl_idname = "VIEW3D_PT_metadata"
+    #bl_context = "objectmode"   
