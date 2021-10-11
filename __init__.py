@@ -210,7 +210,10 @@ def register():
     bpy.types.Scene.RES_pano = IntProperty(
         name = "Res",
         default = 1,
-        description = "Resolution of Panoramic image for bubbles")
+        description = "Resolution of Panoramic image for bubbles"#,
+#        update = functions.switch_paradata_lists
+        )
+
 
     bpy.types.Scene.camera_type = StringProperty(
         name = "Camera type",
@@ -229,6 +232,7 @@ def register():
         default = 35,
         description = "Lens camera",
         )
+
     bpy.types.Scene.info_log = []
 
     # panoramic
