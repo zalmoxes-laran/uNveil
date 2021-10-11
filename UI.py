@@ -9,6 +9,7 @@ from bpy.types import Menu, UIList
 from .functions import *
 #from . import report_data
 from . import addon_updater_ops
+from .external_modules_install import *
 
 import os
 from bpy_extras.io_utils import ImportHelper, axis_conversion
@@ -250,7 +251,10 @@ class ToolsPanelMetadata:
 
         row = layout.row()
         row.label(text="Activate service")
-        row.operator("activate.spreadsheetservice", icon="STICKY_UVS_DISABLE", text='')
+        #row.operator("activate.spreadsheetservice", icon="STICKY_UVS_DISABLE", text='')
+        row = layout.row()
+        row.label(text="Update modules")
+        row.operator("install_missing.modules", icon="STICKY_UVS_DISABLE", text='')
 
 class VIEW3D_PT_metadata(Panel, ToolsPanelMetadata):
     bl_category = "uNveil"

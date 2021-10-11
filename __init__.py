@@ -63,7 +63,8 @@ from . import (
     functions,
     shift,
     POV_manager,
-    addon_updater_ops
+    addon_updater_ops,
+    external_modules_install
     )
 
 @addon_updater_ops.make_annotations
@@ -180,7 +181,8 @@ classes = (
     PANOListItem,
     CAMTypeList,
     RES_list,
-    DemPreferences
+    DemPreferences,
+    external_modules_install.OBJECT_OT_install_missing_modules
     )
 
 def register():
