@@ -5,6 +5,9 @@ import bpy
 import site
 import pkg_resources
 
+from .blender_pip import Pip
+Pip._ensure_user_site_package()
+
 class OBJECT_OT_install_missing_modules(bpy.types.Operator):
     bl_idname = "install_missing.modules"
     bl_label = "missing modules"
@@ -16,9 +19,18 @@ class OBJECT_OT_install_missing_modules(bpy.types.Operator):
         return {'FINISHED'}
 
 def install_modules():
+    Pip.upgrade_pip()
+    list_of_modules =[
+        "google-api-python-client==1.7.9",
+        "google-auth-httplib2==0.0.3",
+        "google-auth-oauthlib==0.4.0"]
+    for module_istall in list_of_modules:
+        Pip.install(module_istall)
+
+def old_install_modules():
+    
     packages_path = site.getusersitepackages()
     sys.path.insert(0, packages_path )
-
 
     is_windows = sys.platform.startswith('win')
     if is_windows:
@@ -40,8 +52,8 @@ def install_modules():
     list_of_modules =["google-api-python-client", "google-auth-httplib2", "google-auth-oauthlib", "googleapiclient"]
 
     # upgrade pip
-    subprocess.call([python_exe, "-m", "ensurepip"])
-    subprocess.call([python_exe, "-m", "pip", "install", "--upgrade", "pip"])
+    #subprocess.call([python_exe, "-m", "ensurepip"])
+    #subprocess.call([python_exe, "-m", "pip", "install", "--upgrade", "pip"])
 
     #subprocess.call([python_exe, "-m", "pip", "install", "--upgrade", "pip"])
 
@@ -50,13 +62,14 @@ def install_modules():
     #subprocess.call([python_exe, "-m", "pip", "install", "python-telegram-bot"])
     
     for install_module in list_of_modules:
-        subprocess.call([python_exe, "-m", "pip", "install", "--target=",python_libs, install_module])
+        print("ciao")
+        #subprocess.call([python_exe, "-m", "pip", "install", "--target=",python_libs, install_module])
 
 
-    installed_packages = pkg_resources.working_set
-    installed_packages_list = sorted(["%s==%s" % (i.key, i.version)
-        for i in installed_packages])
-    print(installed_packages_list)
+    # installed_packages = pkg_resources.working_set
+    # installed_packages_list = sorted(["%s==%s" % (i.key, i.version)
+    #     for i in installed_packages])
+    # print(installed_packages_list)
 
 if __name__ == '__main__':
     install_modules()

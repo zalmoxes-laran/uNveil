@@ -20,7 +20,7 @@ bl_info = {
     "name": "uNveil per Blender",
     "author": "Emanuel Demetrescu",
     "version": (0,9,10),
-    "blender": (2, 93, 4),
+    "blender": (2, 93, 5),
     "location": "3D View > Toolbox",
     "description": "Multitemporal storytelling",
     "warning": "alpha",
@@ -55,6 +55,9 @@ from bpy.types import (
     AddonPreferences,
     PropertyGroup,
     )
+
+from .blender_pip import Pip
+Pip._ensure_user_site_package()
 
 from . import (
     UI,
