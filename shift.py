@@ -1,3 +1,5 @@
+# -*- coding:utf-8 -*-
+
 import bpy
 from .functions import *
 from bpy.types import Operator
