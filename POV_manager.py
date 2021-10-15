@@ -247,7 +247,6 @@ class VIEW_pano(bpy.types.Operator):
 #        current_pano.select = True
         return {'FINISHED'}
 
-
 class VIEW_alignquad(bpy.types.Operator):
     bl_idname = "align.quad"
     bl_label = "align the quad inside the active Pano"
@@ -305,27 +304,83 @@ class VIEW_setlens(bpy.types.Operator):
 
         return {'FINISHED'}
 
+def set_res_mat(mat,res_number ):
+    nodes = mat.node_tree.nodes
+    for node in nodes:
+        if node.type == "TEX_IMAGE":
+            percorso_e_file = os.path.split(node.image.filepath)
+            print(percorso_e_file)
+            all_panores_base_directory = os.path.dirname(percorso_e_file[0])
+            current_panores_foldername = str(res_number)+"k"
+            #ItemName_res = (nodename+"-"+str(self.res_number)+"k.jpg")
+            minimum_sChildPath = os.path.join(all_panores_base_directory,current_panores_foldername,percorso_e_file[1])
+            #print(minimum_sChildPath)
+            node.image.filepath = minimum_sChildPath
+
 
 class SETpanoRES(bpy.types.Operator):
-    bl_idname = "set.panores"
+    bl_idname = "set.panorama_res"
     bl_label = "set the res of the panorama"
     bl_options = {"REGISTER", "UNDO"}
 
     res_number : StringProperty()
+    index_number : IntProperty()
 
     def execute(self, context):
         scene = bpy.context.scene
-        active_obj = bpy.context.active_object
-        if active_obj.material_slots[0].material.name.endswith('uvuberpano'):
+        context.scene.RES_pano = self.index_number
+        if scene.RES_propagato_su_tutto:
+            for panorama_unit in scene.pano_list:
+                panorama_unit.name
+                mat = bpy.data.objects[panorama_unit.name].material_slots[0].material
+                set_res_mat(mat,self.res_number)
+        else:
+            active_obj = bpy.context.active_object
             mat = active_obj.material_slots[0].material
-            nodes = mat.node_tree.nodes
-            for node in nodes:
-                if node.name.startswith('tn_'):
-                    nodename = node.name[3:]
-                    print(nodename)
-                    current_panores_foldername = str(self.res_number)+"k"
-                    ItemName_res = (nodename+"-"+str(self.res_number)+"k.jpg")
-                    minimum_sChildPath = os.path.join(scene.PANO_dir,current_panores_foldername,ItemName_res)
-                    print(minimum_sChildPath)
-                    node.image.filepath = minimum_sChildPath
+            set_res_mat(mat,self.res_number)
+        return {'FINISHED'}
+
+class RESETpanoNAME(bpy.types.Operator):
+    bl_idname = "reset.panoname"
+    bl_label = "reset the name of the panorama"
+    bl_options = {"REGISTER", "UNDO"}
+
+    res_number : StringProperty()
+    index_number : IntProperty()
+
+    def execute(self, context):
+        scene = bpy.context.scene
+        nome_oggetto_da_rinominare = scene.pano_list[self.index_number].previous_name
+        nuovo_nome_oggetto = scene.pano_list[self.index_number].name
+        nome_camera_da_rinominare = "CAM_"+nome_oggetto_da_rinominare
+        nuovo_nome_camera = "CAM_"+nuovo_nome_oggetto
+        
+        bpy.data.objects[nome_oggetto_da_rinominare].name = nuovo_nome_oggetto
+        bpy.data.objects[nome_camera_da_rinominare].name = nuovo_nome_camera
+
+        # update "previous name"
+        scene.pano_list[self.index_number].previous_name = scene.pano_list[self.index_number].name
+
+        return {'FINISHED'}  
+
+class SETpanoNAME(bpy.types.Operator):
+    bl_idname = "set.panoname"
+    bl_label = "set the name of the panorama"
+    bl_options = {"REGISTER", "UNDO"}
+
+    index_number : IntProperty()
+
+    def execute(self, context):
+        scene = bpy.context.scene
+        nome_oggetto_da_rinominare = scene.pano_list[self.index_number].previous_name
+        nuovo_nome_oggetto = scene.pano_list[self.index_number].name
+        nome_camera_da_rinominare = "CAM_"+nome_oggetto_da_rinominare
+        nuovo_nome_camera = "CAM_"+nuovo_nome_oggetto
+        
+        bpy.data.objects[nome_oggetto_da_rinominare].name = nuovo_nome_oggetto
+        bpy.data.objects[nome_camera_da_rinominare].name = nuovo_nome_camera
+
+        # update "previous name"
+        scene.pano_list[self.index_number].previous_name = scene.pano_list[self.index_number].name
+
         return {'FINISHED'}

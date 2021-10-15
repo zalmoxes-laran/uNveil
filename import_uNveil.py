@@ -122,9 +122,8 @@ def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col,
                 pivot = Vector( (0.5, 0.5) )
                 ScaleUV( uvMap, scale, pivot )
 
-                #ItemName_res = (remove_extension(ItemName)+"-"+str(scene.RES_pano)+"k.jpg")
                 ItemName_res = (remove_extension(ItemName)+".jpg")
-                current_panores_foldername = img_pano_folder#str(scene.RES_pano)+"k"
+                current_panores_foldername = str(img_pano_folder)
                 
                 minimum_sChildPath = os.path.join(folder_pano_txt_file,current_panores_foldername)
 
@@ -133,7 +132,7 @@ def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col,
                 setup_mat_panorama_3DSC(mat.name, img)
                 
                 scene.pano_list.add()
-                scene.pano_list[pano_list_index_counter].name = just_created_obj.name
+                scene.pano_list[pano_list_index_counter].name = scene.pano_list[pano_list_index_counter].previous_name = scene.pano_list[pano_list_index_counter].original_name = just_created_obj.name
                 
                 flipnormals(context)
                 create_pano_cam(just_created_obj.name,pos_x,pos_y,pos_z,bpy.data.collections[collection_name])

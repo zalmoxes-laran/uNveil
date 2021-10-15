@@ -21,63 +21,6 @@ from bpy.props import (BoolProperty,
                        CollectionProperty
                        )
 
-# class ToolsPanelImport:
-#     bl_label = "Import"
-#     bl_space_type = 'VIEW_3D'
-#     bl_region_type = 'UI'
-
-#     def draw(self, context):
-#         layout = self.layout
-#         obj = context.object
-
-#         row = layout.row()
-#         self.layout.operator("import_panorami.txt", icon="STICKY_UVS_DISABLE", text='import pano(s)')
-
-        #self.layout.operator("import_cam.agixml", icon="DUPLICATE", text='Agisoft xml cams')
-
-# class ToolsPanelExport:
-#     bl_label = "Exporters"
-#     bl_space_type = 'VIEW_3D'
-#     bl_region_type = 'UI'
-#     bl_options = {'DEFAULT_CLOSED'}
-
-#     def draw(self, context):
-#         layout = self.layout
-#         obj = context.object
-#         row = layout.row()
-#         if obj is not None:
-#             self.layout.operator("export.coordname", icon="STICKY_UVS_DISABLE", text='Coordinates')
-#             row = layout.row()
-
-#             box = layout.box()
-#             row = box.row()
-#             row.label(text= "Export object(s) in one file:")
-#             row = box.row()
-#             row.operator("export.object", icon="OBJECT_DATA", text='obj')
-#             #row = box.row()
-#             row.operator("fbx.exp", icon="OBJECT_DATA", text='fbx')
-#             row = box.row()
-#             row.label(text= "-> "+obj.name + ".obj/.fbx")
-
-#             box = layout.box()
-#             row = box.row()
-#             row.label(text= "Export objects in several files:")
-#             row = box.row()
-#             row.operator("obj.exportbatch", icon="DUPLICATE", text='obj')
-#             row.operator("fbx.exportbatch", icon="DUPLICATE", text='fbx')
-#             row.operator("gltf.exportbatch", icon="DUPLICATE", text='gltf')
-#             row.operator("glb.exportbatch", icon="DUPLICATE", text='glb')
-#             row = box.row()
-#             if not bpy.context.scene.FBX_export_dir:
-#                 row.label(text= "-> /objectname.obj")
-#                 row = box.row()
-#                 row.label(text= "-> /FBX/objectname.fbx")
-#             row = box.row()
-#             row.prop(context.scene, 'FBX_export_dir', toggle = True, text='Export to')
-#         else:
-#             row.label(text="Select object(s) to see tools here.")
-#             row = layout.row()
-
 class ToolsPanelSHIFT:
     bl_label = "Shifting"
     bl_space_type = 'VIEW_3D'
@@ -110,16 +53,6 @@ class ToolsPanelSHIFT:
 
         addon_updater_ops.update_notice_box_ui(self, context)
 
-# class VIEW3D_PT_un_Import_ToolBar(Panel, ToolsPanelImport):
-#     bl_category = "uNveil"
-#     bl_idname = "VIEW3D_PT_un_Import_ToolBar"
-#     bl_context = "objectmode"
-
-# class VIEW3D_PT_un_Export_ToolBar(Panel, ToolsPanelExport):
-#     bl_category = "uNveil"
-#     bl_idname = "VIEW3D_PT_un_Export_ToolBar"
-#     bl_context = "objectmode"
-
 class VIEW3D_PT_un_Shift_ToolBar(Panel, ToolsPanelSHIFT):
     bl_category = "uNveil"
     bl_idname = "VIEW3D_PT_un_Shift_ToolBar"
@@ -131,14 +64,15 @@ class Res_menu(bpy.types.Menu):
 
     def draw(self, context):
         res_list = context.scene.resolution_list
-        idx = 0
         layout = self.layout
+        idx = 0
         while idx < len(res_list):
             op = layout.operator(
-                    "set.pano_res", text=str(res_list[idx].res_num), emboss=False, icon="RIGHTARROW")
+                    "set.panorama_res", text=str(res_list[idx].res_num), emboss=False, icon="RIGHTARROW")
             op.res_number = str(res_list[idx].res_num)
+            op.index_number = res_list[idx].res_num
             idx +=1
-
+            
 class PANOToolsPanel:
     bl_label = "POV manager"
     bl_space_type = "VIEW_3D"
@@ -166,11 +100,15 @@ class PANOToolsPanel:
                 select_a_mesh(layout)
             else:
                 row = layout.row()
-                split = layout.split()
-                col = split.column()
-                col.operator("ubermat_create.pano", icon="MATERIAL", text='')
-                col = split.column()
-                col.operator("ubermat_update.pano", icon="MATERIAL", text='')
+                
+                ## PORZIONE DI CODICE DISATTIVATA TEMPORANEAMENTE PER TESTING. LO REINSERISCO PIU' AVANTI
+                #split = layout.split()
+                #col = split.column()
+                #col.operator("ubermat_create.pano", icon="MATERIAL", text='')
+                #col = split.column()
+                #col.operator("ubermat_update.pano", icon="MATERIAL", text='')
+                ## FINE PORZIONE DI TESTO DISATTIVATA
+
                 row = layout.row()
 
                 #split = layout.split()
@@ -178,7 +116,9 @@ class PANOToolsPanel:
 
                 if len(scene.resolution_list) > 0:
                     row = layout.row()
-                    row.menu(Res_menu.bl_idname, text=str(resolution_pano), icon='COLOR')
+                    row.label(text="Set pano res:")
+                    row.menu(Res_menu.bl_idname, text=str(resolution_pano)+"k", icon='COLOR')
+                    row.prop(scene, 'RES_propagato_su_tutto', text="All")
 
                 #col.prop(context.scene, 'RES_pano', toggle = True)
                 #col = split.column()
@@ -204,6 +144,11 @@ class PANOToolsPanel:
             row.label(text="Name:")
             row = layout.row()
             row.prop(item, "name", text="")
+            op = row.operator("set.panoname", icon="DISC", text="")
+            
+            op.index_number = scene.pano_list_index
+            #row = layout.row()
+            #row.prop(context.scene, 'BL_x_shift', toggle = True)
 
         if context.active_object:
             if obj.type in ['MESH']:
@@ -259,4 +204,8 @@ class ToolsPanelMetadata:
 class VIEW3D_PT_metadata(Panel, ToolsPanelMetadata):
     bl_category = "uNveil"
     bl_idname = "VIEW3D_PT_metadata"
-    #bl_context = "objectmode"   
+    #bl_context = "objectmode"
+
+
+
+

@@ -136,6 +136,16 @@ class PANOListItem(PropertyGroup):
             description="A name for this item",
             default="Untitled")
 
+    previous_name : StringProperty(
+            name="Name",
+            description="Previous name for this item",
+            default="Empty")
+
+    original_name : StringProperty(
+            name="Name",
+            description="Original name for this item",
+            default="Empty")
+
     icon : StringProperty(
             name="code for icon",
             description="",
@@ -180,6 +190,7 @@ classes = (
     POV_manager.ubermat_create,
     POV_manager.ubermat_update,
     POV_manager.SETpanoRES,
+    POV_manager.SETpanoNAME,
     PANO_UL_List,
     PANOListItem,
     CAMTypeList,
@@ -219,6 +230,11 @@ def register():
         description = "Resolution of Panoramic image for bubbles"
         )
 
+    bpy.types.Scene.RES_propagato_su_tutto = BoolProperty(
+        name = "Res",
+        default = False,
+        description = "Change resolution of all panoramic image for bubbles"
+        )
 
     bpy.types.Scene.camera_type = StringProperty(
         name = "Camera type",
@@ -243,6 +259,7 @@ def register():
     # panoramic
     bpy.types.Scene.camera_list = CollectionProperty(type = CAMTypeList)
     bpy.types.Scene.resolution_list = CollectionProperty(type = RES_list)
+    bpy.types.Scene.resolution_list_index = IntProperty(name = "Index for my_list", default = 0)
     bpy.types.Scene.pano_list = CollectionProperty(type = PANOListItem)
     bpy.types.Scene.pano_list_index = IntProperty(name = "Index for my_list", default = 0)
 
@@ -288,4 +305,5 @@ def unregister():
     del bpy.types.Scene.PANO_dir
     del bpy.types.Scene.PANO_cam_lens
     del bpy.types.Scene.BL_epsg
+    del bpy.types.Scene.RES_propagato_su_tutto
 

@@ -114,6 +114,13 @@ def get_cc_node_pano(obj, current_pano):
             cc_node = node
     return cc_node
 
+def get_alpha_node_pano():
+    nodes = bpy.data.objects[bpy.context.scene.pano_list[bpy.context.scene.pano_list_index].name].material_slots[0].material.node_tree.nodes
+    for node in nodes:
+        if node.type == "MIX_SHADER":
+            node_alpha = node
+    return node_alpha
+
 #if 'Material Output' in [node.name for node in bpy.data.materials['your_material_name'].node_tree.nodes]:
 #    print('Yes!')
 
@@ -1197,38 +1204,40 @@ def read_pano_dir(sPath):
     for sChild in os.listdir(sPath):
             sChildPath = os.path.join(sPath,sChild)
             if os.path.isdir(sChildPath):
-                folder_presence = True
-                folder_list.append(sChild)
-                currentnumber = getnumber_in_name(str(sChild))
-                scene.resolution_list.add()
-                scene.resolution_list[idx].res_num = currentnumber
-                idx += 1
-
-                if currentnumber < min_len:
-                    min_len = currentnumber
-                    #min_folder = sChild
-
-                if currentnumber > max_len:
-                    max_len = currentnumber
-                    max_folder = sChild
-
+                is_folder_with_res_value, currentnumber = get_res_in_folder_name(str(sChild))
+                if is_folder_with_res_value:
+                    folder_list.append(sChild)
+                    folder_presence = True
+                    scene.resolution_list.add()
+                    scene.resolution_list[idx].res_num = currentnumber
+                    idx += 1
+                    if currentnumber < min_len:
+                        min_len = currentnumber
+                        min_folder = sChild
+                    if currentnumber > max_len:
+                        max_len = currentnumber
+                        max_folder = sChild
 
     if folder_presence is False:
         pass
     #print(str(minimum_sChildPath))
     scene.RES_pano = min_len
     #scene["RES_pano_folder_list"] = sorted(scene.resolution_list, key = getnumber_in_name)
-    scene["RES_pano_folder_list"] = sorted(folder_list, key = getnumber_in_name)
+    scene["RES_pano_folder_list"] = folder_list#.sort()
+    #scene["RES_pano_folder_list"] = sorted(folder_list, key = getnumber_in_name)
     print(scene["RES_pano_folder_list"])
-    return max_folder
+    return min_folder
 
-def getnumber_in_name(string):
-    temp = re.findall(r'\d+', str(string))
-    numbers = list(map(int, temp))
-    #print(numbers)
-    lastnumber = int(numbers[len(numbers)-1])
-    return lastnumber
-
+def get_res_in_folder_name(foldername):
+    if foldername.endswith("k") or foldername.endswith("K"):
+        is_folder_res = True
+        temp = re.findall(r'\d+', str(foldername))
+        numbers = list(map(int, temp))
+        res_value = int(numbers[len(numbers)-1])        
+    else:
+        is_folder_res = False
+        res_value = 0
+    return is_folder_res, res_value 
 
 def bmesh_calc_area(bm):
     """Calculate the surface area."""
