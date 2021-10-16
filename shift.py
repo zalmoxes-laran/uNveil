@@ -12,6 +12,13 @@ from bpy.props import (BoolProperty,
                        CollectionProperty
                        )
 
+from bpy.types import Panel
+from bpy.types import PropertyGroup
+from bpy.types import Menu, UIList
+
+import logging
+log = logging.getLogger(__name__)
+
 class ImportCoordinateShift(Operator, ImportHelper):
     """Tool to import shift coordinates from a txt file"""
     bl_idname = "import_fromfile.shift_valcoor"  # important since its how bpy.ops.import_file.pano_data is constructed
@@ -63,3 +70,56 @@ class OBJECT_OT_IMPORTPOINTS(bpy.types.Operator):
         scene['BL_y_shift'] = scene['crs y']
 
         return {'FINISHED'}
+
+class ToolsPanelSHIFT:
+    bl_label = "Shifting"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    #bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        #addon_updater_ops.check_for_update_background()
+        layout = self.layout
+        scene = context.scene
+        obj = context.object
+
+        row = layout.row()
+        row.label(text="Shift values:")
+        row.operator("shiftval_from.txtfile", icon="STICKY_UVS_DISABLE", text='import')
+        row.operator("export.coordshift", icon="STICKY_UVS_DISABLE", text='export')
+        row = layout.row()
+        row.prop(context.scene, 'BL_x_shift', toggle = True)
+        row = layout.row()
+        row.prop(context.scene, 'BL_y_shift', toggle = True)
+        row = layout.row()
+        row.prop(context.scene, 'BL_z_shift', toggle = True)
+        row = layout.row()
+        row.prop(context.scene, 'BL_epsg', toggle = True)
+        row = layout.row()        
+
+        #addon_updater_ops.update_notice_box_ui(self, context)
+
+class VIEW3D_PT_un_Shift_ToolBar(Panel, ToolsPanelSHIFT):
+    bl_category = "uNveil"
+    bl_idname = "VIEW3D_PT_un_Shift_ToolBar"
+    bl_context = "objectmode"
+
+classes = [
+    OBJECT_OT_IMPORTUNSHIFT,
+	OBJECT_OT_IMPORTPOINTS,
+    ImportCoordinateShift,
+    VIEW3D_PT_un_Shift_ToolBar
+    ]
+
+def register():
+	for cls in classes:
+		try:
+			bpy.utils.register_class(cls)
+		except ValueError as e:
+			log.warning('{} is already registered, now unregister and retry... '.format(cls))
+			bpy.utils.unregister_class(cls)
+			bpy.utils.register_class(cls)
+
+def unregister():
+	for cls in classes:
+		bpy.utils.unregister_class(cls)

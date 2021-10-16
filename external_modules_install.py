@@ -4,9 +4,13 @@ import os
 import bpy
 import site
 import pkg_resources
+from bpy.types import Panel
 
 from .blender_pip import Pip
 Pip._ensure_user_site_package()
+
+import logging
+log = logging.getLogger(__name__)
 
 class OBJECT_OT_install_missing_modules(bpy.types.Operator):
     bl_idname = "install_missing.modules"
@@ -70,6 +74,48 @@ def old_install_modules():
     # installed_packages_list = sorted(["%s==%s" % (i.key, i.version)
     #     for i in installed_packages])
     # print(installed_packages_list)
+
+class ToolsPanelMetadata:
+    bl_label = "Metadata manager"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        obj = context.active_object
+        #resolution_pano = scene.RES_pano
+
+        row = layout.row()
+        row.label(text="Activate service")
+        #row.operator("activate.spreadsheetservice", icon="STICKY_UVS_DISABLE", text='')
+        row = layout.row()
+        row.label(text="Update modules")
+        row.operator("install_missing.modules", icon="STICKY_UVS_DISABLE", text='')
+
+class VIEW3D_PT_metadata(Panel, ToolsPanelMetadata):
+    bl_category = "uNveil"
+    bl_idname = "VIEW3D_PT_metadata"
+    #bl_context = "objectmode"
+
+classes = [
+    OBJECT_OT_install_missing_modules,
+    VIEW3D_PT_metadata
+    ]
+
+def register():
+	for cls in classes:
+		try:
+			bpy.utils.register_class(cls)
+		except ValueError as e:
+			log.warning('{} is already registered, now unregister and retry... '.format(cls))
+			bpy.utils.unregister_class(cls)
+			bpy.utils.register_class(cls)
+
+def unregister():
+	for cls in classes:
+		bpy.utils.unregister_class(cls)
 
 if __name__ == '__main__':
     install_modules()

@@ -60,7 +60,6 @@ from .blender_pip import Pip
 Pip._ensure_user_site_package()
 
 from . import (
-    UI,
     import_uNveil,
     export_uNveil,
     functions,
@@ -128,44 +127,8 @@ class CAMTypeList(PropertyGroup):
             description="A name for this item",
             default="Untitled")
 
-class PANOListItem(PropertyGroup):
-    """ Group of properties representing an item in the list """
-
-    name : StringProperty(
-            name="Name",
-            description="A name for this item",
-            default="Untitled")
-
-    previous_name : StringProperty(
-            name="Name",
-            description="Previous name for this item",
-            default="Empty")
-
-    original_name : StringProperty(
-            name="Name",
-            description="Original name for this item",
-            default="Empty")
-
-    icon : StringProperty(
-            name="code for icon",
-            description="",
-            default="GROUP_UVS")
-
-    resol_pano : IntProperty(
-            name = "Res",
-            default = 1,
-            description = "Resolution of Panoramic image for this bubble")
-
-class PANO_UL_List(bpy.types.UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, resol_pano, index):
-        #scene = context.scene
-        layout.label(text = item.name, icon = item.icon)
 
 classes = (
-    UI.VIEW3D_PT_un_Shift_ToolBar,
-    UI.Res_menu,
-    UI.VIEW3D_PT_un_SetupPanel,
-    UI.VIEW3D_PT_metadata,
     import_uNveil.OBJECT_OT_PANORAMI,
     import_uNveil.ImportCoorPanorami,
     export_uNveil.ExportEpsgShift,
@@ -179,30 +142,15 @@ classes = (
     export_uNveil.OBJECT_OT_glbexportbatch,
     functions.OBJECT_OT_createcyclesmat,
     functions.OBJECT_OT_savepaintcam,
-    shift.OBJECT_OT_IMPORTPOINTS,
-    shift.OBJECT_OT_IMPORTUNSHIFT,
-    shift.ImportCoordinateShift,
-    POV_manager.REMOVE_pano,
-    POV_manager.VIEW_pano,
-    POV_manager.VIEW_alignquad,
-    POV_manager.VIEW_setlens,
-    POV_manager.PANO_import,
-    POV_manager.ubermat_create,
-    POV_manager.ubermat_update,
-    POV_manager.SETpanoRES,
-    POV_manager.SETpanoNAME,
-    PANO_UL_List,
-    PANOListItem,
     CAMTypeList,
     RES_list,
-    DemPreferences,
-    external_modules_install.OBJECT_OT_install_missing_modules
+    DemPreferences
     )
 
 def register():
 
     # addon_updater_ops.register(bl_info)
-
+    
     for cls in classes:
         bpy.utils.register_class(cls)
 
@@ -259,9 +207,6 @@ def register():
     # panoramic
     bpy.types.Scene.camera_list = CollectionProperty(type = CAMTypeList)
     bpy.types.Scene.resolution_list = CollectionProperty(type = RES_list)
-    bpy.types.Scene.resolution_list_index = IntProperty(name = "Index for my_list", default = 0)
-    bpy.types.Scene.pano_list = CollectionProperty(type = PANOListItem)
-    bpy.types.Scene.pano_list_index = IntProperty(name = "Index for my_list", default = 0)
 
     bpy.types.Scene.PANO_file = StringProperty(
     name = "TXT",
@@ -282,6 +227,9 @@ def register():
     default = 21,
     description = "Define the lens of the cameras",
     )
+    shift.register()
+    POV_manager.register()
+    external_modules_install.register()
 
 def unregister():
 
@@ -291,7 +239,6 @@ def unregister():
                 bpy.utils.unregister_class(cls)
         except RuntimeError:
                 pass
-
 
     del bpy.types.Scene.BL_x_shift
     del bpy.types.Scene.BL_y_shift
