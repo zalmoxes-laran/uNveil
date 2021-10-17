@@ -65,6 +65,7 @@ from . import (
     functions,
     shift,
     POV_manager,
+    POI_manager,
     addon_updater_ops,
     external_modules_install
     )
@@ -133,13 +134,6 @@ classes = (
     import_uNveil.ImportCoorPanorami,
     export_uNveil.ExportEpsgShift,
     export_uNveil.OBJECT_OT_ExportShiftFile,
-    export_uNveil.OBJECT_OT_ExportObjButton,
-    export_uNveil.OBJECT_OT_fbxexp,
-    export_uNveil.OBJECT_OT_fbxexportbatch,
-    export_uNveil.OBJECT_OT_objexportbatch,
-    export_uNveil.OBJECT_OT_osgtexportbatch,
-    export_uNveil.OBJECT_OT_gltfexportbatch,
-    export_uNveil.OBJECT_OT_glbexportbatch,
     functions.OBJECT_OT_createcyclesmat,
     functions.OBJECT_OT_savepaintcam,
     CAMTypeList,
@@ -173,6 +167,12 @@ def register():
         )
 
     bpy.types.Scene.RES_pano = IntProperty(
+        name = "Res",
+        default = 1,
+        description = "Resolution of Panoramic image for bubbles"
+        )
+
+    bpy.types.Scene.RES_poi = IntProperty(
         name = "Res",
         default = 1,
         description = "Resolution of Panoramic image for bubbles"
@@ -230,6 +230,7 @@ def register():
     shift.register()
     POV_manager.register()
     external_modules_install.register()
+    POI_manager.register()
 
 def unregister():
 
