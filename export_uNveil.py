@@ -6,7 +6,7 @@ import bpy
 import math
 
 from bpy_extras.io_utils import ExportHelper
-from bpy.props import StringProperty, BoolProperty, EnumProperty
+from bpy.props import StringProperty, BoolProperty, EnumProperty, PropertyGroup
 from bpy.types import Operator
 
 
@@ -77,6 +77,56 @@ def write_gsv_data(context, filepath, shift, rot, cam, nam, aton):
             
     f.close()
     return {'FINISHED'}
+
+
+class POSListItem(PropertyGroup):
+    """ Group of properties representing an item in the list """
+
+    x_pos : FloatProperty(
+            name="Position x",
+            description="Position x of the pano",
+            default= 0.0)
+
+    y_pos : FloatProperty(
+            name="Position y",
+            description="Position y of the pano",
+            default= 0.0)
+
+    z_pos : FloatProperty(
+            name="Position z",
+            description="Position z of the pano",
+            default= 0.0)
+
+class ExportPanoATON(Operator, ExportHelper):
+    """This appears in the tooltip of the operator and in the generated docs"""
+    bl_idname = "export_pano.file_aton"  # important since its how bpy.ops.import_test.some_data is constructed
+    bl_label = "Export Coordinate shift file"
+
+    # ExportHelper mixin class uses this
+    filename_ext = ".json"
+
+    filter_glob: StringProperty(
+            default="*.json",
+            options={'HIDDEN'},
+            maxlen=255,  # Max internal buffer length, longer would be clamped.
+            )
+
+    # List of operator properties, the attributes will be assigned
+    # to the class instance from the operator settings before calling.
+
+    nam: BoolProperty(
+            name="Add names of objects",
+            description="This tool includes name",
+            default=True,
+            )
+
+    pos: CollectionProperty(type = POSListItem)
+
+    semlist: CollectionProperty(type = SEMListItem)
+
+    def execute(self, context):
+        return write_gsv_data(context, self.filepath, self.shift, self.rot, self.cam, self.nam, self.aton)
+
 
 class ExportEpsgShift(Operator, ExportHelper):
     """This appears in the tooltip of the operator and in the generated docs"""

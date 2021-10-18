@@ -134,6 +134,7 @@ classes = (
     import_uNveil.ImportCoorPanorami,
     export_uNveil.ExportEpsgShift,
     export_uNveil.OBJECT_OT_ExportShiftFile,
+    export_uNveil.POSListItem,
     functions.OBJECT_OT_createcyclesmat,
     functions.OBJECT_OT_savepaintcam,
     CAMTypeList,
@@ -247,11 +248,7 @@ def unregister():
     del bpy.types.Scene.RES_pano
     del bpy.types.Scene.camera_type
     del bpy.types.Scene.camera_lens
-    del bpy.types.Scene.pano_list
-    del bpy.types.Scene.pano_list_index
-    del bpy.types.Scene.PANO_file
-    del bpy.types.Scene.PANO_dir
-    del bpy.types.Scene.PANO_cam_lens
+
     del bpy.types.Scene.BL_epsg
     del bpy.types.Scene.RES_propagato_su_tutto
 

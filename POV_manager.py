@@ -564,5 +564,10 @@ def register():
     bpy.types.Scene.resolution_list_index = IntProperty(name = "Index for my_list", default = 0)
     
 def unregister():
-	for cls in classes:
-		bpy.utils.unregister_class(cls)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)        
+    del bpy.types.Scene.pano_list
+    del bpy.types.Scene.pano_list_index
+    del bpy.types.Scene.PANO_file
+    del bpy.types.Scene.PANO_dir
+    del bpy.types.Scene.PANO_cam_lens
