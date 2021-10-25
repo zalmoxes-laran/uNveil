@@ -1,14 +1,13 @@
 import bpy
+
+from bpy_extras.io_utils import ExportHelper
+from bpy.props import StringProperty, BoolProperty, EnumProperty
+from bpy.types import Operator, PropertyGroup
+
 import os
 from .functions import *
 
-import bpy
 import math
-
-from bpy_extras.io_utils import ExportHelper
-from bpy.props import StringProperty, BoolProperty, EnumProperty, PropertyGroup
-from bpy.types import Operator
-
 
 ############## from here operators to export text ########################
 
@@ -122,7 +121,7 @@ class ExportPanoATON(Operator, ExportHelper):
 
     pos: CollectionProperty(type = POSListItem)
 
-    semlist: CollectionProperty(type = SEMListItem)
+    #semlist: CollectionProperty(type = SEMListItem)
 
     def execute(self, context):
         return write_gsv_data(context, self.filepath, self.shift, self.rot, self.cam, self.nam, self.aton)
