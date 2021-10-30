@@ -112,3 +112,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Google credentials
+credentials.json
+/creds
+
+# specific project's folders
+/unveil_updater

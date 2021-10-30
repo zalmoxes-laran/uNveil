@@ -59,6 +59,8 @@ from bpy.types import (
 from .blender_pip import Pip
 Pip._ensure_user_site_package()
 
+from .google_credentials import *
+
 from . import (
     import_uNveil,
     export_uNveil,
@@ -67,12 +69,15 @@ from . import (
     POV_manager,
     POI_manager,
     addon_updater_ops,
+    # da qui moduli per google
     external_modules_install,
     google_credentials,
     spreadsheet
     )
 
 @addon_updater_ops.make_annotations
+
+
 class DemPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
     # addon updater preferences
@@ -234,6 +239,8 @@ def register():
     POI_manager.register()
     google_credentials.register()
 
+    check_google_modules()
+
 def unregister():
 
     # addon_updater_ops.unregister(bl_info)
@@ -252,4 +259,3 @@ def unregister():
 
     del bpy.types.Scene.BL_epsg
     del bpy.types.Scene.RES_propagato_su_tutto
-

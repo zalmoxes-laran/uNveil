@@ -22,29 +22,36 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
-from google_credentials import *
+from .google_credentials import *
 import bpy
-# If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-# The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
-SAMPLE_RANGE_NAME = 'Class Data!A2:E'
+import json
 
-def init_spreadsheet_service(credenziali):
+def init_spreadsheet_service(context):
     """Shows basic usage of the Sheets API.
     Prints values from a sample spreadsheet.
     """
+    # If modifying these scopes, delete the file token.json.
+    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+
+    # The ID and range of a sample spreadsheet.
+    #SAMPLE_SPREADSHEET_ID = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
+    #SAMPLE_RANGE_NAME = 'Class Data!A2:E'
+
+    SAMPLE_SPREADSHEET_ID = context.scene.g_spreadsheet_id
+    SAMPLE_RANGE_NAME = context.scene.g_spreadsheet_sheet+"!A3:H"
+
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
     preferences = bpy.context.preferences
-    addon_prefs = preferences.addons[__name__].preferences
+    addon_prefs = bpy.context.preferences.addons['uNveil'].preferences
 
     token_file = os.path.join(addon_prefs.filepath,'token.json')
+    print(token_file)
     if os.path.exists(token_file):
-        creds = Credentials.from_authorized_user_file(credenziali, SCOPES)
+        creds = Credentials.from_authorized_user_file(token_file, SCOPES)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
@@ -71,7 +78,7 @@ def init_spreadsheet_service(credenziali):
         print('Name, Major:')
         for row in values:
             # Print columns A and E, which correspond to indices 0 and 4.
-            print('%s, %s' % (row[0], row[4]))
+            print('%s, %s' % (row[0], row[3]))
 
 if __name__ == '__main__':
     init_spreadsheet_service()

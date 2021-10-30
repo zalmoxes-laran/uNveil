@@ -5,6 +5,7 @@ import bpy
 import site
 import pkg_resources
 from bpy.types import Panel
+from .google_credentials import check_google_modules
 
 from .blender_pip import Pip
 Pip._ensure_user_site_package()
@@ -20,14 +21,15 @@ class OBJECT_OT_install_missing_modules(bpy.types.Operator):
     def execute(self, context):
         #bpy.ops.image.save_dirty()
         install_modules()
+        check_google_modules()
         return {'FINISHED'}
 
 def install_modules():
     Pip.upgrade_pip()
     list_of_modules =[
-        "google-api-python-client",#==1.7.9",
-        "google-auth-httplib2",#==0.0.3",
-        "google-auth-oauthlib",#==0.4.0",
+        "google-api-python-client==2.28.0",
+        "google-auth-httplib2==0.1.0",
+        "google-auth-oauthlib==0.4.6",
         #"six",
         "httplib2",
         "pyparsing==2.4.7",
@@ -82,33 +84,8 @@ def old_install_modules():
     #     for i in installed_packages])
     # print(installed_packages_list)
 
-class ToolsPanelMetadata:
-    bl_label = "Metadata manager"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    def draw(self, context):
-        layout = self.layout
-        scene = context.scene
-        obj = context.active_object
-        #resolution_pano = scene.RES_pano
-
-        row = layout.row()
-        row.label(text="Activate service")
-        #row.operator("activate.spreadsheetservice", icon="STICKY_UVS_DISABLE", text='')
-        row = layout.row()
-        row.label(text="Update modules")
-        row.operator("install_missing.modules", icon="STICKY_UVS_DISABLE", text='')
-
-class VIEW3D_PT_metadata(Panel, ToolsPanelMetadata):
-    bl_category = "uNveil"
-    bl_idname = "VIEW3D_PT_metadata"
-    #bl_context = "objectmode"
-
 classes = [
     OBJECT_OT_install_missing_modules,
-    VIEW3D_PT_metadata
     ]
 
 def register():

@@ -1,8 +1,11 @@
 import bpy
-from bpy.types import Operator, AddonPreferences
+from bpy.types import Operator, AddonPreferences, Panel
 from bpy.props import StringProperty, IntProperty, BoolProperty
-
+from .spreadsheet import *
 import os
+
+import logging
+log = logging.getLogger(__name__)
 
 def get_creds_folder_path():
     script_file = os.path.realpath(__file__)
@@ -18,6 +21,18 @@ def get_creds_folder_path():
 
     return credential_folder
 
+def check_google_modules():
+    addon_prefs = bpy.context.preferences.addons['uNveil'].preferences
+    try:
+        import googleapiclient
+        import google_auth_oauthlib
+        import google_auth_httplib2
+        addon_prefs.is_google_module = True
+        print("ci sono")
+    except ImportError:
+        addon_prefs.is_google_module = False
+        print("Non ci sono")
+        
 class uNveil_GoogleCredentialsPreferences(AddonPreferences):
     # this must match the add-on name, use '__package__'
     # when defining this in a submodule of a python package.
@@ -33,17 +48,25 @@ class uNveil_GoogleCredentialsPreferences(AddonPreferences):
         name="Example Number",
         default=4,
     )
-    boolean: BoolProperty(
-        name="Example Boolean",
+    '''
+    is_google_module: BoolProperty(
+        name="Google modules are present",
         default=False,
     )
-    '''
+   
     def draw(self, context):
         layout = self.layout
         layout.label(text="Google credentials setup")
-        layout.prop(self, "filepath")
+        layout.prop(self, "filepath", text="Credentials path:")
+        if self.is_google_module:
+            layout.label(text="Google modules are correctly installed")
+        else:
+            layout.label(text="Google modules are missing: install with the button below")
+        row = layout.row()
+        #row.label(text="")
+        row.operator("install_missing.modules", icon="STICKY_UVS_DISABLE", text='Install google modules (waiting some minutes is normal)')
         #layout.prop(self, "number")
-        #layout.prop(self, "boolean")
+        #layout.prop(self, "is_google_module")
 
 class OBJECT_OT_uNveil_prefs_googlecreds(Operator):
     """Display Google Credentials preferences"""
@@ -72,19 +95,78 @@ class OBJECT_OT_uNveil_open_prefs(Operator):
 
     def execute(self, context):
         bpy.ops.preferences.addon_show(module="uNveil")
-
         return {'FINISHED'}
+
+class OBJECT_OT_uNveil_try_credentials(Operator):
+    """Try Google Credentials"""
+    bl_idname = "try_google.unveil_googlecreds"
+    bl_label = "Try uNveil Google Credentials"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        
+        init_spreadsheet_service(context)
+        return {'FINISHED'}
+
+class ToolsPanelMetadata:
+    bl_label = "Metadata manager"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        obj = context.active_object
+        #resolution_pano = scene.RES_pano
+
+        row = layout.row()
+        row.label(text="Google Spreadsheet setup")
+        row = layout.row()
+        layout.prop(scene, "g_spreadsheet_id", text="id")
+        row = layout.row()
+        layout.prop(scene, "g_spreadsheet_sheet", text="sheet")
+        
+        #row.operator("activate.spreadsheetservice", icon="STICKY_UVS_DISABLE", text='')
+        row = layout.row()
+        row.label(text="Try connection")
+        row.operator("try_google.unveil_googlecreds", icon="STICKY_UVS_DISABLE", text='')
+
+class VIEW3D_PT_metadata(Panel, ToolsPanelMetadata):
+    bl_category = "uNveil"
+    bl_idname = "VIEW3D_PT_metadata"
+    #bl_context = "objectmode"
+
+classes = [
+    VIEW3D_PT_metadata,
+    OBJECT_OT_uNveil_prefs_googlecreds,
+    uNveil_GoogleCredentialsPreferences,
+    OBJECT_OT_uNveil_open_prefs,
+    OBJECT_OT_uNveil_try_credentials,
+    ]
 
 # Registration
 def register():
-    bpy.utils.register_class(OBJECT_OT_uNveil_prefs_googlecreds)
-    bpy.utils.register_class(uNveil_GoogleCredentialsPreferences)
-    bpy.utils.register_class(OBJECT_OT_uNveil_open_prefs)
+    for cls in classes:
+        try:
+            bpy.utils.register_class(cls)
+        except ValueError as e:
+            log.warning('{} is already registered, now unregister and retry... '.format(cls))
+            bpy.utils.unregister_class(cls)
+            bpy.utils.register_class(cls)
+    
+    bpy.types.Scene.g_spreadsheet_id = StringProperty(
+        name = "Google spreadsheet id",
+        default = "",
+        description = "Define the id of the Google spreadsheet")
 
+    bpy.types.Scene.g_spreadsheet_sheet = StringProperty(
+        name = "Google spreadsheet sheet name",
+        default = "",
+        description = "Define the name of the Google spreadsheet sheet")
 
 def unregister():
-    bpy.utils.unregister_class(OBJECT_OT_uNveil_prefs_googlecreds)
-    bpy.utils.unregister_class(uNveil_GoogleCredentialsPreferences)
-    bpy.utils.unregister_class(OBJECT_OT_uNveil_open_prefs)
-
-
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    del bpy.types.Scene.g_spreadsheet_id
+    del bpy.types.Scene.g_spreadsheet_sheet
