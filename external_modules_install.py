@@ -25,9 +25,16 @@ class OBJECT_OT_install_missing_modules(bpy.types.Operator):
 def install_modules():
     Pip.upgrade_pip()
     list_of_modules =[
-        "google-api-python-client==1.7.9",
-        "google-auth-httplib2==0.0.3",
-        "google-auth-oauthlib==0.4.0"]
+        "google-api-python-client",#==1.7.9",
+        "google-auth-httplib2",#==0.0.3",
+        "google-auth-oauthlib",#==0.4.0",
+        #"six",
+        "httplib2",
+        "pyparsing==2.4.7",
+        "uritemplate",
+        #"google",
+        #"googleapiclient"
+        ]
     for module_istall in list_of_modules:
         Pip.install(module_istall)
 

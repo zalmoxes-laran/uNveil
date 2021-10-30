@@ -67,7 +67,9 @@ from . import (
     POV_manager,
     POI_manager,
     addon_updater_ops,
-    external_modules_install
+    external_modules_install,
+    google_credentials,
+    spreadsheet
     )
 
 @addon_updater_ops.make_annotations
@@ -128,9 +130,8 @@ class CAMTypeList(PropertyGroup):
             description="A name for this item",
             default="Untitled")
 
-
 classes = (
-    import_uNveil.OBJECT_OT_PANORAMI,
+    #import_uNveil.OBJECT_OT_PANORAMI,
     import_uNveil.ImportCoorPanorami,
     export_uNveil.ExportEpsgShift,
     export_uNveil.OBJECT_OT_ExportShiftFile,
@@ -145,7 +146,6 @@ classes = (
 def register():
 
     # addon_updater_ops.register(bl_info)
-    
     for cls in classes:
         bpy.utils.register_class(cls)
 
@@ -232,6 +232,7 @@ def register():
     POV_manager.register()
     external_modules_install.register()
     POI_manager.register()
+    google_credentials.register()
 
 def unregister():
 
