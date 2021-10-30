@@ -98,13 +98,16 @@ class OBJECT_OT_uNveil_open_prefs(Operator):
         return {'FINISHED'}
 
 class OBJECT_OT_uNveil_try_credentials(Operator):
-    """Try Google Credentials"""
+    """If the button is grey, open preference panel and launch installation of necessary dependances"""
     bl_idname = "try_google.unveil_googlecreds"
-    bl_label = "Try uNveil Google Credentials"
+    bl_label = "Check uNveil Google Credentials"
     bl_options = {'REGISTER', 'UNDO'}
-
+    
+    @classmethod
+    def poll(cls, context):
+        return bpy.context.preferences.addons['uNveil'].preferences.is_google_module
+		
     def execute(self, context):
-        
         init_spreadsheet_service(context)
         return {'FINISHED'}
 
@@ -131,6 +134,7 @@ class ToolsPanelMetadata:
         row = layout.row()
         row.label(text="Try connection")
         row.operator("try_google.unveil_googlecreds", icon="STICKY_UVS_DISABLE", text='')
+        row.operator("open_prefs_panel.unveil_googlecreds", icon="SETTINGS", text="")
 
 class VIEW3D_PT_metadata(Panel, ToolsPanelMetadata):
     bl_category = "uNveil"
