@@ -30,12 +30,13 @@ def install_modules():
         "google-api-python-client==2.28.0",
         "google-auth-httplib2==0.1.0",
         "google-auth-oauthlib==0.4.6",
-        #"six",
+        "six==1.16.0",
         "httplib2",
         "pyparsing==2.4.7",
         "uritemplate",
-        #"google",
+        "google==3.0.0",
         #"googleapiclient"
+        "google.auth==2.3.2"
         ]
     for module_istall in list_of_modules:
         Pip.install(module_istall)
