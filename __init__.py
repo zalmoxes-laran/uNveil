@@ -72,7 +72,7 @@ from . import (
     # da qui moduli per google
     external_modules_install,
     google_credentials,
-    spreadsheet
+    spreadsheet,
     )
 
 @addon_updater_ops.make_annotations

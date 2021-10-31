@@ -57,7 +57,6 @@ class PANOListItem(PropertyGroup):
             default = 1,
             description = "Resolution of Panoramic image for this bubble")
 
-
 def panolistitem_to_obj(item_in_list):
     obj = bpy.data.objects[item_in_list.name]
     return obj

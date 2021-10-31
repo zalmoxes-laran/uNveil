@@ -1,7 +1,7 @@
 import bpy
 from bpy.types import Operator, AddonPreferences, Panel
 from bpy.props import StringProperty, IntProperty, BoolProperty
-from .spreadsheet import *
+from .spreadsheet import init_spreadsheet_service
 import os
 
 import logging
@@ -108,11 +108,14 @@ class OBJECT_OT_uNveil_try_credentials(Operator):
         return bpy.context.preferences.addons['uNveil'].preferences.is_google_module
 		
     def execute(self, context):
-        init_spreadsheet_service(context)
+        if init_spreadsheet_service(context):
+            print("Connection works")
+        else:
+            print("Connection failed")
         return {'FINISHED'}
 
 class ToolsPanelMetadata:
-    bl_label = "Metadata manager"
+    bl_label = "Google Spreadsheet setup"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_options = {'DEFAULT_CLOSED'}
@@ -123,10 +126,15 @@ class ToolsPanelMetadata:
         obj = context.active_object
         #resolution_pano = scene.RES_pano
 
-        row = layout.row()
-        row.label(text="Google Spreadsheet setup")
+        #row = layout.row()
+        #row.label(text="Google Spreadsheet setup")
         row = layout.row()
         layout.prop(scene, "g_spreadsheet_id", text="id")
+        # qui serve un operatore per isolare il codice id in automatico
+        # tra le seguenti stringhe
+        # https://docs.google.com/spreadsheets/d/
+        # e l'ultimo  "/"
+
         row = layout.row()
         layout.prop(scene, "g_spreadsheet_sheet", text="sheet")
         
@@ -160,9 +168,9 @@ def register():
             bpy.utils.register_class(cls)
     
     bpy.types.Scene.g_spreadsheet_id = StringProperty(
-        name = "Google spreadsheet id",
+        name = "Define the id of the Google spreadsheet",
         default = "",
-        description = "Define the id of the Google spreadsheet")
+        description = "look at the link to the spreadsheed: id is a 44 token between https://docs.google.com/spreadsheets/d/ and /edit#gid=0. EXAMPLE: https://docs.google.com/spreadsheets/d/154hagqP1iQ0pkoQ5FB9mqTbkOzzXk0R_knWSPudfgAs/edit#gid=0 TOKEN here is 154hagqP1iQ0pkoQ5FB9mqTbkOzzXk0R_knWSPudfgAs")
 
     bpy.types.Scene.g_spreadsheet_sheet = StringProperty(
         name = "Google spreadsheet sheet name",

@@ -42,7 +42,7 @@ def init_spreadsheet_service(context):
     #SAMPLE_RANGE_NAME = 'Class Data!A2:E'
 
     SAMPLE_SPREADSHEET_ID = context.scene.g_spreadsheet_id
-    SAMPLE_RANGE_NAME = context.scene.g_spreadsheet_sheet+"!A3:H"
+    SAMPLE_RANGE_NAME = context.scene.g_spreadsheet_sheet+"!A6:G"
 
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
@@ -74,15 +74,17 @@ def init_spreadsheet_service(context):
     result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                                 range=SAMPLE_RANGE_NAME).execute()
     values = result.get('values', [])
-
+    return values
+    '''
     if not values:
         print('No data found.')
     else:
         print('Name, Major:')
         for row in values:
             # Print columns A and E, which correspond to indices 0 and 4.
-            print('%s, %s' % (row[0], row[3]))
-
+            print('%s, %s' % (row[1], row[4]))
+    '''
+    
 if __name__ == '__main__':
     init_spreadsheet_service()
 # [END sheets_quickstart]

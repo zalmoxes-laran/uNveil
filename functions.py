@@ -917,6 +917,15 @@ def PANO_list_clear(context):
         scene.pano_list.remove(0)
     return
 
+def clear_list(context, listname, listname_index):
+    scene = context.scene
+    listname.update()
+    list_lenght = len(listname)
+    listname_index = 0
+    for x in range(list_lenght):
+        listname.remove(0)
+    return
+
 def e2d(float_value):
     fac = 180/pi
     return (float_value/fac)
