@@ -250,6 +250,12 @@ def unregister():
         except RuntimeError:
                 pass
 
+    shift.unregister()
+    POV_manager.unregister()
+    external_modules_install.unregister()
+    POI_manager.unregister()
+    google_credentials.unregister()
+
     del bpy.types.Scene.BL_x_shift
     del bpy.types.Scene.BL_y_shift
     del bpy.types.Scene.BL_z_shift

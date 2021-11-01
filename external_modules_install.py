@@ -4,6 +4,9 @@ import os
 import bpy
 import site
 import pkg_resources
+
+from bpy.props import BoolProperty
+
 from bpy.types import Panel
 from .google_credentials import check_google_modules
 
@@ -18,14 +21,17 @@ class OBJECT_OT_install_missing_modules(bpy.types.Operator):
     bl_label = "missing modules"
     bl_options = {"REGISTER", "UNDO"}
 
+    is_install : BoolProperty()
+
     def execute(self, context):
-        #bpy.ops.image.save_dirty()
-        install_modules()
+        if self.is_install:
+            install_modules()
+        else:
+            uninstall_modules()
         check_google_modules()
         return {'FINISHED'}
 
-def install_modules():
-    Pip.upgrade_pip()
+def google_list_modules():
     list_of_modules =[
         "google-api-python-client==2.28.0",
         "google-auth-httplib2==0.1.0",
@@ -38,8 +44,18 @@ def install_modules():
         #"googleapiclient"
         "google.auth==2.3.2"
         ]
+    return list_of_modules
+
+def install_modules():
+    Pip.upgrade_pip()
+    list_of_modules = google_list_modules()
     for module_istall in list_of_modules:
         Pip.install(module_istall)
+
+def uninstall_modules():
+    list_of_modules = google_list_modules()
+    for module_istall in list_of_modules:
+        Pip.uninstall(module_istall)
 
 def old_install_modules():
     
