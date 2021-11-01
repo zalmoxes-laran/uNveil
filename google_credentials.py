@@ -102,7 +102,7 @@ class OBJECT_OT_uNveil_open_prefs(Operator):
         return {'FINISHED'}
 
 class OBJECT_OT_uNveil_try_credentials(Operator):
-    """If the button is grey, open preference panel and launch installation of necessary dependances"""
+    """If the button is grey, fille the fields above AND open preference panel (button with the gears here on the right) and launch installation of necessary dependances"""
     bl_idname = "try_google.unveil_googlecreds"
     bl_label = "Check uNveil Google Credentials"
     bl_options = {'REGISTER', 'UNDO'}
@@ -116,9 +116,9 @@ class OBJECT_OT_uNveil_try_credentials(Operator):
 		
     def execute(self, context):
         if init_spreadsheet_service(context):
-            print("Connection works")
+            self.report({'INFO'}, "Connection works")
         else:
-            print("Connection failed")
+            self.report({'ERROR'}, "Connection failed, check parameters")
         return {'FINISHED'}
 
 class ToolsPanelMetadata:

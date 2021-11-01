@@ -62,7 +62,7 @@ Pip._ensure_user_site_package()
 from .google_credentials import *
 
 from . import (
-    import_uNveil,
+    #import_uNveil,
     export_uNveil,
     functions,
     shift,
@@ -137,7 +137,7 @@ class CAMTypeList(PropertyGroup):
 
 classes = (
     #import_uNveil.OBJECT_OT_PANORAMI,
-    import_uNveil.ImportCoorPanorami,
+    #import_uNveil.ImportCoorPanorami,
     export_uNveil.ExportEpsgShift,
     export_uNveil.OBJECT_OT_ExportShiftFile,
     export_uNveil.POSListItem,

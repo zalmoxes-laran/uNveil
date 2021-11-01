@@ -4,12 +4,7 @@ import bpy
 from .functions import *
 from bpy.types import Operator
 from bpy_extras.io_utils import ImportHelper
-from bpy.props import (BoolProperty,
-                       FloatProperty,
-                       IntProperty,
-                       StringProperty,
-                       EnumProperty,
-                       CollectionProperty
+from bpy.props import (StringProperty,
                        )
 
 from bpy.types import Panel

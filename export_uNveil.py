@@ -11,7 +11,6 @@ import math
 
 ############## from here operators to export text ########################
 
-
 class OBJECT_OT_ExportShiftFile(bpy.types.Operator):
     bl_idname = "export.coordshift"
     bl_label = "Export coord name"
@@ -77,7 +76,6 @@ def write_gsv_data(context, filepath, shift, rot, cam, nam, aton):
     f.close()
     return {'FINISHED'}
 
-
 class POSListItem(PropertyGroup):
     """ Group of properties representing an item in the list """
 
@@ -125,7 +123,6 @@ class ExportPanoATON(Operator, ExportHelper):
 
     def execute(self, context):
         return write_gsv_data(context, self.filepath, self.shift, self.rot, self.cam, self.nam, self.aton)
-
 
 class ExportEpsgShift(Operator, ExportHelper):
     """This appears in the tooltip of the operator and in the generated docs"""

@@ -139,15 +139,18 @@ def json_writer(base_dir):
 
     return
 
-
 class POI_import_metadata(bpy.types.Operator):
+    '''Narative units are retrieved from a standardized Google Spreadsheet. If the button is grayed out, fill the fields in the Google Spreadsheet setup section'''
     bl_idname = "import.poi_metadata"
-    bl_label = "Import POI metadata from gogle spreadsheet"
+    bl_label = "Import from Gogle Spreadsheet"
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
-        return bpy.context.preferences.addons['uNveil'].preferences.is_google_module
+        is_active_button = False
+        if len(context.scene.g_spreadsheet_id) == 44 and len(context.scene.g_spreadsheet_sheet) > 0 and context.preferences.addons['uNveil'].preferences.is_google_module:
+            is_active_button = True
+        return is_active_button
 
     def execute(self, context):
         data = bpy.data
@@ -344,7 +347,6 @@ class POIToolsPanel:
         #row = layout.row()
         #self.layout.operator("remove.poi", icon="ERROR", text='Remove the Pano')
         
-
 class VIEW3D_PT_poi_SetupPanel(Panel, POIToolsPanel):
     bl_category = "uNveil"
     bl_idname = "VIEW3D_PT_poi_SetupPanel"

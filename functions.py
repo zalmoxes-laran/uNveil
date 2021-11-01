@@ -1,3 +1,7 @@
+# functions library made by Emanuel Demetrescu
+# version 1.0 2021/11/01
+# -*- coding:utf-8 -*-
+
 import bpy
 import os
 import time
@@ -215,7 +219,6 @@ def assignmatslots(ob, matlist):
     # restore active object:
     scn.objects.active = ob_active
 
-
 def check_texture(img, mat):
     #finds a texture from an image
     #makes a texture if needed
@@ -288,13 +291,7 @@ def tex_to_mat():
 
         #set texface indices to material slot indices..
         me = ob.data
-#class CAMERA_PH_presets(Menu):
-#    bl_label = "cameras presets"
-#    preset_subdir = "ph_camera"
-#    preset_operator = "script.execute_preset"
-#    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
-#    draw = Menu.draw_preset
-
+        
         i = 0
         for f in faceindex:
             if f is not None:
@@ -303,7 +300,7 @@ def tex_to_mat():
     if editmode:
         bpy.ops.object.mode_set(mode='EDIT')
 
-#        self.layout.operator("cam.visibility", icon="RENDER_REGION", text='Cam visibility')
+        #self.layout.operator("cam.visibility", icon="RENDER_REGION", text='Cam visibility')
 
 
 #Recursivly transverse layer_collection for a particular name
@@ -327,14 +324,14 @@ def check_children_plane(cam_ob):
     return check
 
 def correctcameraname(cameraname):
-#        extensions = ['.jpg','.JPG']
-#        for extension in extensions:
+        #extensions = ['.jpg','.JPG']
+        #for extension in extensions:
     if cameraname.endswith('.JPG'):
         return cameraname
         pass
     else:
         cameranamecor = cameraname + ".JPG"
-#                print(cameranamecor)
+                #print(cameranamecor)
         return cameranamecor
 
 def decimate_mesh(context,obj,ratio,lod):
@@ -352,21 +349,21 @@ def decimate_mesh(context,obj,ratio,lod):
     bpy.ops.object.vertex_group_add()
     bpy.ops.object.vertex_group_assign()
     bpy.ops.object.editmode_toggle()
-#    bpy.data.objects[lod1name].modifiers.new("Decimate", type='DECIMATE')
+    #bpy.data.objects[lod1name].modifiers.new("Decimate", type='DECIMATE')
     D.objects[obj.name].modifiers.new("Decimate", type='DECIMATE')
     D.objects[obj.name].modifiers["Decimate"].ratio = ratio
     D.objects[obj.name].modifiers["Decimate"].vertex_group = "Group"
     D.objects[obj.name].modifiers["Decimate"].invert_vertex_group = True
     bpy.ops.object.modifier_apply(modifier="Decimate")
-#    bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Decimate")
-#    print("applied modifier")
+    #bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Decimate")
+    #print("applied modifier")
 
 def setupclonepaint():
     bpy.ops.object.mode_set(mode = 'TEXTURE_PAINT')
     bpy.ops.paint.brush_select(image_tool='CLONE')
     bpy.context.scene.tool_settings.image_paint.mode = 'MATERIAL'
     bpy.context.scene.tool_settings.image_paint.use_clone_layer = True
-#    bpy.context.scene.tool_settings.image_paint.seam_bleed = 16
+    #bpy.context.scene.tool_settings.image_paint.seam_bleed = 16
     obj = bpy.context.active_object
 
     for matslot in obj.material_slots:
@@ -396,8 +393,8 @@ def cycles2bi():
         for matslot in ob.material_slots:
             mat = matslot.material
             node_original = node_retriever(mat,"original")
-#            print(node_original.image.name)
-#            print(mat.texture_slots[0].texture.image.name)
+            #print(node_original.image.name)
+            #print(mat.texture_slots[0].texture.image.name)
             mat.texture_slots[0].texture.image = node_original.image
 
 def select_a_mesh(layout):
@@ -487,7 +484,6 @@ def bake_tex_set(type):
     for ob in selected_objs:
         ob.select_set(True)
     print("--- JOB complete in %s seconds ---" % tot_time)
-
 
 def remove_cc_setup(mat):
     nodes = mat.node_tree.nodes
@@ -595,15 +591,15 @@ def dict2list(dict):
     list=[]
     for i,j in dict.items():
         list.append(j)
-#    print (list)
+    #print (list)
     return list
 
 def create_correction_nodegroup(name):
     # create a group
-#    active_object_name = bpy.context.scene.objects.active.name
+    #active_object_name = bpy.context.scene.objects.active.name
     cc_nodegroup = bpy.data.node_groups.new(name, 'ShaderNodeTree')
     #cc_nodegroup.name = "cc_node"
-#    cc_nodegroup.label = label
+    #cc_nodegroup.label = label
 
     # create group inputs
     group_inputs = cc_nodegroup.nodes.new('NodeGroupInput')
@@ -640,8 +636,6 @@ def create_correction_nodegroup(name):
 
     return cc_nodegroup
 
-
-
 ############ QUESTA PARTE NON DOVREBBE PIU' SERVIRE NEL BLENDER 2.8 ############
 def bi2cycles():
     for obj in bpy.context.selected_objects:
@@ -672,7 +666,8 @@ def bi2cycles():
 
 ####################################################################################
 
-def cc_node_to_mat(mat, cc_nodegroup):#(ob,context):
+def cc_node_to_mat(mat, cc_nodegroup):
+    #(ob,context):
     print("Voglio attaccare al materiale "+ mat.name + " il nodo gruppo: " + cc_nodegroup.name)
     #cc_image_node, cc_node, original_node, diffuse_node, source_paint_node = node_retriever(mat, "all")
     links = mat.node_tree.links
@@ -688,8 +683,8 @@ def cc_node_to_mat(mat, cc_nodegroup):#(ob,context):
  #   colcor.node_tree = cc_nodegroup
     print(cc_nodegroup)
     colcor.node_tree = cc_nodegroup
-#    x_img = teximg.location[0]
-#    x_dif = mainNode.location[0]
+    #x_img = teximg.location[0]
+    #x_dif = mainNode.location[0]
     x = (teximg.location[0]+mainNode.location[0])/2
     y = (teximg.location[1]+mainNode.location[1])/2
     colcor.location = (x, y)
@@ -700,13 +695,13 @@ def cc_node_to_mat(mat, cc_nodegroup):#(ob,context):
 def remove_node(mat, node_to_remove):
     node = node_retriever(mat, node_to_remove)
     if node is not None:
-#        links = mat.node_tree.links
-#        previous_node = cc_node.inputs[0].links[0].from_node
-#        following_node = cc_node.outputs[0].links[0].to_node
-#        links.new(previous_node.outputs[0], following_node.inputs[0])
+        #links = mat.node_tree.links
+        #previous_node = cc_node.inputs[0].links[0].from_node
+        #following_node = cc_node.outputs[0].links[0].to_node
+        #links.new(previous_node.outputs[0], following_node.inputs[0])
         mat.node_tree.nodes.remove(node)
-#    else:
-#        print("There is not a color correction node in this material")
+    #else:
+        #print("There is not a color correction node in this material")
 
 # for quick utils____________________________________________
 def make_group(ob,context):
@@ -789,7 +784,6 @@ def desiredmatnumber(ob):
         desmatnumber = 1
     return desmatnumber
 
-
 def set_texset_obj(context):
     view_mode = context.window_manager.ccToolViewVar.cc_view
     for obj in context.selected_objects:
@@ -820,7 +814,6 @@ def create_material_from_image(context,image,oggetto,connect):
     mat.node_tree.nodes.active = texImage
 
     return mat, texImage, bsdf
-
 
 def mat_from_image(img,ob,alpha):
     mat = bpy.data.materials.new(name='M_'+ ob.name)
@@ -1252,7 +1245,6 @@ def bmesh_calc_area(bm):
     """Calculate the surface area."""
     return sum(f.calc_area() for f in bm.faces)
 
-
 def bmesh_copy_from_object(obj, transform=True, triangulate=True, apply_modifiers=False):
     """Returns a transformed, triangulated copy of the mesh"""
 
@@ -1285,7 +1277,6 @@ def bmesh_copy_from_object(obj, transform=True, triangulate=True, apply_modifier
         bmesh.ops.triangulate(bm, faces=bm.faces)
 
     return bm
-
 
 def clean_float(text):
     # strip trailing zeros: 0.000 -> 0.0

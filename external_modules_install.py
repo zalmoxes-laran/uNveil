@@ -7,7 +7,6 @@ import pkg_resources
 
 from bpy.props import BoolProperty
 
-from bpy.types import Panel
 from .google_credentials import check_google_modules
 
 from .blender_pip import Pip

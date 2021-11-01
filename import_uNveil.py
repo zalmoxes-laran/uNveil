@@ -1,19 +1,13 @@
 import bpy
 import os
 
-from bpy import ops
-from bpy.types import Panel
 from bpy.types import Operator
-from bpy.types import PropertyGroup
 
 from bpy_extras.io_utils import ImportHelper
 
 from bpy.props import (BoolProperty,
-                       FloatProperty,
-                       IntProperty,
                        StringProperty,
-                       EnumProperty,
-                       CollectionProperty
+                       EnumProperty
                        )
 
 from .functions import *
@@ -140,7 +134,7 @@ def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col,
                 pano_list_index_counter += 1
 
         return {'FINISHED'}
-
+'''
 def read_point_data(context, filepath, shift, name_col, x_col, y_col, z_col, omega_col, phi_col, kappa_col, separator):
     print("running read point file...")
     f = open(filepath, 'r', encoding='utf-8')
@@ -179,7 +173,7 @@ def read_point_data(context, filepath, shift, name_col, x_col, y_col, z_col, ome
         o.show_name = True
 
     return {'FINISHED'}
-
+'''
 class ImportCoorPanorami(Operator, ImportHelper):
     """Tool to import panoramas from a txt file"""
     bl_idname = "import_file.pano_data"  # important since its how bpy.ops.import_file.pano_data is constructed
