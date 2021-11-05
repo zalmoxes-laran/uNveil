@@ -145,13 +145,14 @@ class POI_import_metadata(bpy.types.Operator):
     bl_label = "Import from Gogle Spreadsheet"
     bl_options = {"REGISTER", "UNDO"}
 
+    
     @classmethod
     def poll(cls, context):
         is_active_button = False
         if len(context.scene.g_spreadsheet_id) == 44 and len(context.scene.g_spreadsheet_sheet) > 0 and context.preferences.addons['uNveil'].preferences.is_google_module:
             is_active_button = True
         return is_active_button
-
+    
     def execute(self, context):
         data = bpy.data
         context = bpy.context

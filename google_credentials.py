@@ -67,7 +67,7 @@ class uNveil_GoogleCredentialsPreferences(AddonPreferences):
         op = row.operator("install_missing.modules", icon="STICKY_UVS_DISABLE", text='Install google modules (waiting some minutes is normal)')
         op.is_install = True
         row = layout.row()
-        row.operator("install_missing.modules", icon="STICKY_UVS_DISABLE", text='Uninstall google modules (waiting some minutes is normal)')
+        op = row.operator("install_missing.modules", icon="STICKY_UVS_DISABLE", text='Uninstall google modules (waiting some minutes is normal)')
         op.is_install = False
         #layout.prop(self, "number")
         #layout.prop(self, "is_google_module")
@@ -113,7 +113,7 @@ class OBJECT_OT_uNveil_try_credentials(Operator):
         if len(context.scene.g_spreadsheet_id) == 44 and len(context.scene.g_spreadsheet_sheet) > 0 and context.preferences.addons['uNveil'].preferences.is_google_module:
             is_active_button = True
         return is_active_button
-		
+	
     def execute(self, context):
         if init_spreadsheet_service(context):
             self.report({'INFO'}, "Connection works")
