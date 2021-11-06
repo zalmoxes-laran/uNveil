@@ -58,7 +58,9 @@ def init_spreadsheet_service(context):
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+            os.remove(token_file)
+            print("Le credenziali erano scadute.")
+            #creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 'credentials.json', SCOPES)
