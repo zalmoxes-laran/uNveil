@@ -47,7 +47,14 @@ def google_list_modules():
         "rsa==4.7.2",
         "cachetools==4.2.4",
         "requests_oauthlib==1.3.0",
-        "oauthlib==3.1.1"
+        "oauthlib==3.1.1",
+        "python-telegram-bot==13.7",
+        "pytz==2021.3",
+        "apscheduler==3.8.1",
+        "tzlocal==4.1",
+        "pytz-deprecation-shim==0.1.0.post0",
+        "tornado==6.1",
+        "exchange==0.3"
         ]
     return list_of_modules
 
