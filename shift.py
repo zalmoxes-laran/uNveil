@@ -53,7 +53,7 @@ class OBJECT_OT_IMPORTUNSHIFT(bpy.types.Operator):
         bpy.ops.import_fromfile.shift_valcoor('INVOKE_DEFAULT')
         return {'FINISHED'}    
 
-class OBJECT_OT_IMPORTPOINTS(bpy.types.Operator):
+class OBJECT_OT_IMPORTUNNTS(bpy.types.Operator):
     """Import points as empty objects from a txt file"""
     bl_idname = "shift_from.blendergis"
     bl_label = "Copy from BlenderGis"
@@ -101,7 +101,7 @@ class VIEW3D_PT_un_Shift_ToolBar(Panel, ToolsPanelSHIFT):
 
 classes = [
     OBJECT_OT_IMPORTUNSHIFT,
-	OBJECT_OT_IMPORTPOINTS,
+	OBJECT_OT_IMPORTUNNTS,
     ImportCoordinateShift,
     VIEW3D_PT_un_Shift_ToolBar
     ]

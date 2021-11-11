@@ -23,6 +23,7 @@ try:
     from google.auth.transport.requests import Request
     from google.oauth2.credentials import Credentials
 except ImportError:
+    print("Some errors importing")
     pass
 
 from .google_credentials import *

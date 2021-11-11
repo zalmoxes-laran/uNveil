@@ -25,6 +25,38 @@ import logging
 log = logging.getLogger(__name__)
 
 
+class UN_OT_add_remove_UN_models(bpy.types.Operator):
+    """Add and remove UN proxies from POV"""
+    bl_idname = "un_models.add_remove"
+    bl_label = "Add and remove UN proxies from POV"
+    bl_description = "Add and remove UN proxies from POV"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    rm_pov : StringProperty()
+    rm_add : BoolProperty()
+
+    def execute(self, context):
+        scene = context.scene
+        selected_objects = context.selected_objects
+
+        for ob in selected_objects:
+            if len(ob.EM_ep_belong_ob) >= 0:
+                if self.rm_add:
+                    if not self.rm_pov in ob.EM_ep_belong_ob:
+                        local_counter = len(ob.EM_ep_belong_ob)
+                        ob.EM_ep_belong_ob.add()
+                        ob.EM_ep_belong_ob[local_counter].epoch = self.rm_pov
+                else:
+                    counter = 0
+                    for ob_list in ob.EM_ep_belong_ob:
+                        if ob_list.epoch == self.rm_pov:
+                            ob.EM_ep_belong_ob.remove(counter)  
+                        counter +=1
+            else:
+                ob.EM_ep_belong_ob.add()
+                ob.EM_ep_belong_ob[0].epoch = self.rm_pov                   
+        return {'FINISHED'}
+
 class OBJECT_OT_PANORAMI(Operator):
     """Import points as empty objects from a txt file"""
     bl_idname = "import_panorami.txt"
@@ -720,7 +752,6 @@ class SETpanoNAME(bpy.types.Operator):
 
         return {'FINISHED'}
 
-
 class Res_menu(bpy.types.Menu):
     bl_label = "Custom Menu"
     bl_idname = "OBJECT_MT_Res_menu"
@@ -810,8 +841,23 @@ class PANOToolsPanel:
             row = layout.row()
             row.prop(item, "name", text="")
             op = row.operator("set.panoname", icon="DISC", text="")
-            
             op.index_number = scene.pano_list_index
+
+            # assign un to pov section
+
+            row = layout.row()
+            row.label(text="Assign selected UN proxy to current POV:")
+            op = row.operator("un_models.add_remove", text="", emboss=False, icon='ADD')
+            op.rm_pov = scene.pano_list[scene.pano_list_index].name
+            op.rm_add = True
+            op = row.operator("un_models.add_remove", text="", emboss=False, icon='REMOVE')
+            op.rm_pov = scene.pano_list[scene.pano_list_index].name
+            op.rm_add = True
+            # qui comando selettore del un proxy
+            #op = row.operator("select_rm.given_epoch", text="", emboss=False, icon='SELECT_SET')
+            #op.rm_epoch = scene.epoch_list[scene.epoch_list_index].name
+
+
             #row = layout.row()
             #row.prop(context.scene, 'BL_x_shift', toggle = True)
 
@@ -865,6 +911,7 @@ classes = [
     VIEW3D_PT_un_SetupPanel,
     ImportCoorPanorami,
     OBJECT_OT_PANORAMI,
+    UN_OT_add_remove_UN_models,
     ]
 
 def register():
@@ -873,7 +920,7 @@ def register():
     bpy.types.Scene.pano_list = CollectionProperty(type = PANOListItem)
     bpy.types.Scene.pano_list_index = IntProperty(name = "Index for my_list", default = 0)
     bpy.types.Scene.resolution_list_index = IntProperty(name = "Index for my_list", default = 0)
-    
+
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)        

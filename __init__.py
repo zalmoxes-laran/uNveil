@@ -19,7 +19,7 @@ emanuel.demetrescu@gmail.com
 bl_info = {
     "name": "uNveil per Blender",
     "author": "Emanuel Demetrescu",
-    "version": (0,9,10),
+    "version": (0,9,11),
     "blender": (2, 93, 5),
     "location": "3D View > Toolbox",
     "description": "Multitemporal storytelling",
@@ -67,16 +67,16 @@ from . import (
     functions,
     shift,
     POV_manager,
-    POI_manager,
+    UN_manager,
     addon_updater_ops,
     # da qui moduli per google
     external_modules_install,
     google_credentials,
     spreadsheet,
+    export_aton,
     )
 
 @addon_updater_ops.make_annotations
-
 
 class DemPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__
@@ -178,7 +178,7 @@ def register():
         description = "Resolution of Panoramic image for bubbles"
         )
 
-    bpy.types.Scene.RES_poi = IntProperty(
+    bpy.types.Scene.RES_un = IntProperty(
         name = "Res",
         default = 1,
         description = "Resolution of Panoramic image for bubbles"
@@ -236,9 +236,9 @@ def register():
     shift.register()
     POV_manager.register()
     external_modules_install.register()
-    POI_manager.register()
+    UN_manager.register()
     google_credentials.register()
-
+    export_aton.register()
     check_google_modules()
 
 def unregister():
@@ -253,8 +253,9 @@ def unregister():
     shift.unregister()
     POV_manager.unregister()
     external_modules_install.unregister()
-    POI_manager.unregister()
+    UN_manager.unregister()
     google_credentials.unregister()
+    export_aton.unregister()
 
     del bpy.types.Scene.BL_x_shift
     del bpy.types.Scene.BL_y_shift
