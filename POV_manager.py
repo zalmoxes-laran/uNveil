@@ -86,6 +86,18 @@ def is_collection(name_col):
                         there_is = True
         return there_is
 
+def item_panolist_from_ob_name(obname):
+    counter = 0
+    found = False
+    real_name = "None"
+    while counter < len(context.scene.pano_list):
+        if context.scene.pano_list[counter].original_name == obname:
+            found = True
+            real_name = context.scene.pano_list[counter].name
+            return found, real_name
+        counter +=1
+    return found, real_name
+
 def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col, omega_col, phi_col, kappa_col, separator, clear_list):
         data = bpy.data
         scene = context.scene
@@ -94,13 +106,14 @@ def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col,
         img_pano_folder = read_pano_dir(folder_pano_txt_file)
         lines_in_file = readfile(filepath)
         if clear_list:
-                PANO_list_clear(context)
-        pano_list_index_counter = 0
+            clear_pano_list(context)
+        #pano_list_index_counter = 0
         counter = 0
         # Parse the array:
         for p in lines_in_file:                      
                 p0 = p.split(separator)  # use separator                         
                 ItemName = p0[name_col]
+                # check if the separator works
                 try:
                         pos_x = float(p0[x_col])-scene.BL_x_shift
                 except IndexError:
@@ -113,9 +126,20 @@ def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col,
                 phi = float(p0[phi_col])
                 kappa = float(p0[kappa_col])
 
+                existing_pano = False    
+                actual_name = remove_extension(ItemName)
+                if not clear_list:
+                    for pano in scene.pano_list:
+                        if pano.original_name == remove_extension(ItemName):
+                            existing_pano = True
+                            actual_name = pano.name
+                            print(f"{ItemName} esiste già nella lista")
+                existing_model = False
                 for model in data.objects:
-                        if model.name == remove_extension(ItemName) or model.name == "CAM_"+remove_extension(ItemName):
-                                data.objects.remove(model)
+                    if model.name == actual_name or model.name == "CAM_"+actual_name:
+                        existing_model = True
+                        if clear_list:
+                            data.objects.remove(model)
 
                 collection_name = namefile_from_path(filepath) 
                 if is_collection(collection_name):
@@ -125,56 +149,59 @@ def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col,
                         newcol = create_new_col_from_file_name(collection_name)
                              
                 context.view_layer.active_layer_collection = context.view_layer.layer_collection.children[collection_name]
+                if not existing_model:
+                    sph = bpy.ops.mesh.primitive_uv_sphere_add(calc_uvs=True, radius=0.2, location=(pos_x,pos_y,pos_z))
+                    just_created_obj = context.active_object
+                    just_created_obj.name = actual_name
+                    #context.view_layer.active_layer_collection.collection.objects.unlink(just_created_obj)
                 
-                sph = bpy.ops.mesh.primitive_uv_sphere_add(calc_uvs=True, radius=0.2, location=(pos_x,pos_y,pos_z))
-                just_created_obj = context.active_object
-                just_created_obj.name = remove_extension(ItemName)
-                #context.view_layer.active_layer_collection.collection.objects.unlink(just_created_obj)
-               
-                just_created_obj.rotation_euler[2] = e2d(-90.0)
-                bpy.ops.object.transform_apply(rotation = True, location = False)
+                    just_created_obj.rotation_euler[2] = e2d(-90.0)
+                    bpy.ops.object.transform_apply(rotation = True, location = False)
 
-                #print(f"Il panorama {just_created_obj.name} ha rotazione z: {e2d(180.0+phi)}")
-                #just_created_obj.rotation_euler[0] = e2d(-(omega-90.0))
-                #just_created_obj.rotation_euler[1] = e2d(kappa)
-                #just_created_obj.rotation_euler[2] = e2d(180.0+phi)
+                    #print(f"Il panorama {just_created_obj.name} ha rotazione z: {e2d(180.0+phi)}")
+                    #just_created_obj.rotation_euler[0] = e2d(-(omega-90.0))
+                    #just_created_obj.rotation_euler[1] = e2d(kappa)
+                    #just_created_obj.rotation_euler[2] = e2d(180.0+phi)
 
-                if omega>0:
-                        just_created_obj.rotation_euler[1] = e2d((omega-90.0))
-                else:
-                        just_created_obj.rotation_euler[1] = e2d(-(omega-90.0))
-                
-                just_created_obj.rotation_euler[0] = e2d(-kappa)
-                
-                if omega>0:
-                        just_created_obj.rotation_euler[2] = e2d(180.0+phi)
-                else:
-                        just_created_obj.rotation_euler[2] = e2d(180-phi)
-                
-                context.view_layer.objects.active = just_created_obj
-                
-                uvMapName = 'UVMap'
-                obj, uvMap = GetObjectAndUVMap( just_created_obj.name, uvMapName )
-                scale = Vector( (-1, 1) )
-                pivot = Vector( (0.5, 0.5) )
-                ScaleUV( uvMap, scale, pivot )
+                    if omega>0:
+                            just_created_obj.rotation_euler[1] = e2d((omega-90.0))
+                    else:
+                            just_created_obj.rotation_euler[1] = e2d(-(omega-90.0))
+                    
+                    just_created_obj.rotation_euler[0] = e2d(-kappa)
+                    
+                    if omega>0:
+                            just_created_obj.rotation_euler[2] = e2d(180.0+phi)
+                    else:
+                            just_created_obj.rotation_euler[2] = e2d(180-phi)
+                    
+                    context.view_layer.objects.active = just_created_obj
+                    
+                    uvMapName = 'UVMap'
+                    obj, uvMap = GetObjectAndUVMap( just_created_obj.name, uvMapName )
+                    scale = Vector( (-1, 1) )
+                    pivot = Vector( (0.5, 0.5) )
+                    ScaleUV( uvMap, scale, pivot )
 
-                ItemName_res = (remove_extension(ItemName)+".jpg")
-                current_panores_foldername = str(img_pano_folder)
-                
-                minimum_sChildPath = os.path.join(folder_pano_txt_file,current_panores_foldername)
+                    ItemName_res = (remove_extension(ItemName)+".jpg")
+                    current_panores_foldername = str(img_pano_folder)
+                    
+                    minimum_sChildPath = os.path.join(folder_pano_txt_file,current_panores_foldername)
 
-                diffTex, img = create_tex_from_file(ItemName_res,minimum_sChildPath)
-                mat = create_mat(just_created_obj)
-                setup_mat_panorama_3DSC(mat.name, img)
-                
-                scene.pano_list.add()
-                scene.pano_list[pano_list_index_counter].name = scene.pano_list[pano_list_index_counter].previous_name = scene.pano_list[pano_list_index_counter].original_name = just_created_obj.name
-                
-                flipnormals(context)
-                create_pano_cam(just_created_obj.name,pos_x,pos_y,pos_z,bpy.data.collections[collection_name])
+                    diffTex, img = create_tex_from_file(ItemName_res,minimum_sChildPath)
+                    mat = create_mat(just_created_obj)
+                    setup_mat_panorama_3DSC(mat.name, img)
+                    
+                    if not existing_pano:
+                        scene.pano_list.add()
+                        last_record_index = len(scene.pano_list)-1
+                        scene.pano_list[last_record_index].name = scene.pano_list[last_record_index].previous_name = scene.pano_list[
+                            last_record_index].original_name = just_created_obj.name
+                    
+                    flipnormals(context)
+                    create_pano_cam(just_created_obj.name,pos_x,pos_y,pos_z,bpy.data.collections[collection_name])
 
-                pano_list_index_counter += 1
+                #pano_list_index_counter += 1
 
         return {'FINISHED'}
 '''
@@ -359,7 +386,18 @@ def menu_func_import(self, context):
 class PANO_UL_List(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, resol_pano, index):
         #scene = context.scene
-        layout.label(text = item.name, icon = item.icon)
+        icons_style = 'OUTLINER'
+        #layout.label(text = item.name, icon = item.icon)
+
+        layout = layout.split(factor=0.9, align=True)
+        layout.prop(item, "name", text="", emboss=False, icon=item.icon)
+        icon = 'RESTRICT_SELECT_OFF' if item.publish_item else 'RESTRICT_SELECT_ON'
+        #op = 
+        layout.operator(
+            "epoch_manager.toggle_select", text="", emboss=False, icon=icon)
+
+        #self.layout.prop(context.scene, "test_color", text='Detail Color')
+        #op.group_em_idx = index
 
 class PANOListItem(PropertyGroup):
     """ Group of properties representing an item in the list """
@@ -383,6 +421,11 @@ class PANOListItem(PropertyGroup):
             name="code for icon",
             description="",
             default="GROUP_UVS")
+    
+    publish_item: BoolProperty(
+            name="code for icon",
+            description="",
+            default=False)
 
     resol_pano : IntProperty(
             name = "Res",
@@ -456,15 +499,6 @@ def json_writer(base_dir):
     em_file_fixed_path = bpy.path.abspath(scene.EM_file)
     shutil.copyfile(em_file_fixed_path, em_file_4_emviq)
 
-
-    return
-
-def clear_panolist():
-    data = bpy.data
-    context = bpy.context
-    scene = context.scene
-    PANO_list_clear(context)
-    pano_list_index_counter = 0    
     return
 
 class PANO_import(bpy.types.Operator):
@@ -479,8 +513,6 @@ class PANO_import(bpy.types.Operator):
         #minimum_sChildPath, folder_list = read_pano_dir(context)
         read_pano_dir(context)
         lines_in_file = readfile(scene.PANO_file)
-        # PANO_list_clear(context)
-        # pano_list_index_counter = 0
         
         # Parse the array:
         for p in lines_in_file:
@@ -675,14 +707,17 @@ def set_res_mat(mat,res_number ):
     nodes = mat.node_tree.nodes
     for node in nodes:
         if node.type == "TEX_IMAGE":
-            percorso_e_file = os.path.split(node.image.filepath)
-            print(percorso_e_file)
+            image_filepath_abs = bpy.path.abspath(node.image.filepath)
+            #print(image_filepath_abs)
+            percorso_e_file = os.path.split(image_filepath_abs)
+            #print(percorso_e_file)
             all_panores_base_directory = os.path.dirname(percorso_e_file[0])
+            #print(all_panores_base_directory)
             current_panores_foldername = str(res_number)+"k"
             #ItemName_res = (nodename+"-"+str(self.res_number)+"k.jpg")
             minimum_sChildPath = os.path.join(all_panores_base_directory,current_panores_foldername,percorso_e_file[1])
             #print(minimum_sChildPath)
-            node.image.filepath = minimum_sChildPath
+            node.image.filepath = bpy.path.relpath(minimum_sChildPath)
 
 class SETpanoRES(bpy.types.Operator):
     bl_idname = "set.panorama_res"
@@ -697,7 +732,7 @@ class SETpanoRES(bpy.types.Operator):
         context.scene.RES_pano = self.index_number
         if scene.RES_propagato_su_tutto:
             for panorama_unit in scene.pano_list:
-                panorama_unit.name
+                #panorama_unit.original_name
                 mat = bpy.data.objects[panorama_unit.name].material_slots[0].material
                 set_res_mat(mat,self.res_number)
         else:
@@ -890,9 +925,9 @@ class PANOToolsPanel:
         col.operator("set.lens", icon="FILE_TICK", text='SL')
         '''
 
-class VIEW3D_PT_un_SetupPanel(Panel, PANOToolsPanel):
+class VIEW3D_PT_pov_SetupPanel(Panel, PANOToolsPanel):
     bl_category = "uNveil"
-    bl_idname = "VIEW3D_PT_un_SetupPanel"
+    bl_idname = "VIEW3D_PT_pov_SetupPanel"
     #bl_context = "objectmode"
 
 classes = [
@@ -908,7 +943,7 @@ classes = [
     SETpanoRES,
     SETpanoNAME,
     Res_menu,
-    VIEW3D_PT_un_SetupPanel,
+    VIEW3D_PT_pov_SetupPanel,
     ImportCoorPanorami,
     OBJECT_OT_PANORAMI,
     UN_OT_add_remove_UN_models,
@@ -921,11 +956,33 @@ def register():
     bpy.types.Scene.pano_list_index = IntProperty(name = "Index for my_list", default = 0)
     bpy.types.Scene.resolution_list_index = IntProperty(name = "Index for my_list", default = 0)
 
+    bpy.types.Scene.RES_propagato_su_tutto = BoolProperty(
+        name="Res",
+        default=False,
+        description="Change resolution of all panoramic image for bubbles"
+    )
+
+    bpy.types.Scene.PANO_file = StringProperty(
+        name="TXT",
+        default="",
+        description="Define the path to the PANO file",
+        subtype='FILE_PATH'
+    )
+
+    bpy.types.Scene.PANO_dir = StringProperty(
+        name="DIR",
+        default="",
+        description="Define the path to the PANO file",
+        subtype='DIR_PATH'
+    )
+
+
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)        
     del bpy.types.Scene.pano_list
     del bpy.types.Scene.pano_list_index
+    del bpy.types.Scene.resolution_list_index
+    del bpy.types.Scene.RES_propagato_su_tutto
     del bpy.types.Scene.PANO_file
     del bpy.types.Scene.PANO_dir
-    del bpy.types.Scene.PANO_cam_lens

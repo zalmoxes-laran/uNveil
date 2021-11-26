@@ -101,20 +101,47 @@ class VIEW3D_PT_un_Shift_ToolBar(Panel, ToolsPanelSHIFT):
 
 classes = [
     OBJECT_OT_IMPORTUNSHIFT,
-	OBJECT_OT_IMPORTUNNTS,
+    OBJECT_OT_IMPORTUNNTS,
     ImportCoordinateShift,
     VIEW3D_PT_un_Shift_ToolBar
     ]
 
 def register():
-	for cls in classes:
-		try:
-			bpy.utils.register_class(cls)
-		except ValueError as e:
-			log.warning('{} is already registered, now unregister and retry... '.format(cls))
-			bpy.utils.unregister_class(cls)
-			bpy.utils.register_class(cls)
+    for cls in classes:
+        try:
+            bpy.utils.register_class(cls)
+        except ValueError as e:
+            log.warning('{} is already registered, now unregister and retry... '.format(cls))
+            bpy.utils.unregister_class(cls)
+            bpy.utils.register_class(cls)
+            
+    bpy.types.Scene.BL_epsg = StringProperty(
+        name = "EPSG",
+        default = "Not set",
+        description = "Epsg code"
+        )
+    bpy.types.Scene.BL_x_shift = FloatProperty(
+        name="X shift",
+        default=0.0,
+        description="Define the shift on the x axis",
+    )
+
+    bpy.types.Scene.BL_y_shift = FloatProperty(
+        name="Y shift",
+        default=0.0,
+        description="Define the shift on the y axis",
+    )
+
+    bpy.types.Scene.BL_z_shift = FloatProperty(
+        name="Z shift",
+        default=0.0,
+        description="Define the shift on the z axis",
+    )
 
 def unregister():
-	for cls in classes:
-		bpy.utils.unregister_class(cls)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    del bpy.types.Scene.BL_epsg
+    del bpy.types.Scene.BL_x_shift
+    del bpy.types.Scene.BL_y_shift
+    del bpy.types.Scene.BL_z_shift

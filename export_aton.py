@@ -217,7 +217,6 @@ classes = [
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    #bpy.types.Scene.pano_list = CollectionProperty(type = PANOListItem)
     bpy.types.Scene.unveil_dir_aton = StringProperty(
         name = "Aton directory for uNveil",
         default = "",

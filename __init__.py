@@ -62,7 +62,6 @@ Pip._ensure_user_site_package()
 from .google_credentials import *
 
 from . import (
-    #import_uNveil,
     export_uNveil,
     functions,
     shift,
@@ -136,8 +135,7 @@ class CAMTypeList(PropertyGroup):
             default="Untitled")
 
 classes = (
-    #import_uNveil.OBJECT_OT_PANORAMI,
-    #import_uNveil.ImportCoorPanorami,
+
     export_uNveil.ExportEpsgShift,
     export_uNveil.OBJECT_OT_ExportShiftFile,
     export_uNveil.POSListItem,
@@ -154,23 +152,7 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.Scene.BL_x_shift = FloatProperty(
-      name = "X shift",
-      default = 0.0,
-      description = "Define the shift on the x axis",
-      )
 
-    bpy.types.Scene.BL_y_shift = FloatProperty(
-      name = "Y shift",
-      default = 0.0,
-      description = "Define the shift on the y axis",
-      )
-
-    bpy.types.Scene.BL_z_shift = FloatProperty(
-        name = "Z shift",
-        default = 0.0,
-        description = "Define the shift on the z axis",
-        )
 
     bpy.types.Scene.RES_pano = IntProperty(
         name = "Res",
@@ -184,23 +166,13 @@ def register():
         description = "Resolution of Panoramic image for bubbles"
         )
 
-    bpy.types.Scene.RES_propagato_su_tutto = BoolProperty(
-        name = "Res",
-        default = False,
-        description = "Change resolution of all panoramic image for bubbles"
-        )
-
     bpy.types.Scene.camera_type = StringProperty(
         name = "Camera type",
         default = "Not set",
         description = "Current camera type"
         )
 
-    bpy.types.Scene.BL_epsg = StringProperty(
-        name = "EPSG",
-        default = "Not set",
-        description = "Epsg code"
-        )
+
 
     bpy.types.Scene.camera_lens = IntProperty(
         name = "Camera Lens",
@@ -214,19 +186,6 @@ def register():
     bpy.types.Scene.camera_list = CollectionProperty(type = CAMTypeList)
     bpy.types.Scene.resolution_list = CollectionProperty(type = RES_list)
 
-    bpy.types.Scene.PANO_file = StringProperty(
-    name = "TXT",
-    default = "",
-    description = "Define the path to the PANO file",
-    subtype = 'FILE_PATH'
-    )
-
-    bpy.types.Scene.PANO_dir = StringProperty(
-    name = "DIR",
-    default = "",
-    description = "Define the path to the PANO file",
-    subtype = 'DIR_PATH'
-    )
 
     bpy.types.Scene.PANO_cam_lens = IntProperty(
     name = "Cam Lens",
@@ -257,12 +216,8 @@ def unregister():
     google_credentials.unregister()
     export_aton.unregister()
 
-    del bpy.types.Scene.BL_x_shift
-    del bpy.types.Scene.BL_y_shift
-    del bpy.types.Scene.BL_z_shift
     del bpy.types.Scene.RES_pano
     del bpy.types.Scene.camera_type
     del bpy.types.Scene.camera_lens
 
-    del bpy.types.Scene.BL_epsg
-    del bpy.types.Scene.RES_propagato_su_tutto
+    del bpy.types.Scene.PANO_cam_lens
