@@ -4,6 +4,7 @@ import mathutils
 from bpy.types import Panel
 from bpy.types import Operator
 from bpy.types import PropertyGroup
+from bpy.types import UIList
 
 from .functions import *
 
@@ -197,6 +198,8 @@ def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col,
                         last_record_index = len(scene.pano_list)-1
                         scene.pano_list[last_record_index].name = scene.pano_list[last_record_index].previous_name = scene.pano_list[
                             last_record_index].original_name = just_created_obj.name
+                        scene.pano_list[last_record_index].group_file = collection_name
+
                     
                     flipnormals(context)
                     create_pano_cam(just_created_obj.name,pos_x,pos_y,pos_z,bpy.data.collections[collection_name])
@@ -383,21 +386,53 @@ def menu_func_import(self, context):
 
     bpy.ops.import_file.pano_data('INVOKE_DEFAULT')
 
-class PANO_UL_List(bpy.types.UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, resol_pano, index):
-        #scene = context.scene
+class PANO_UL_List(UIList):
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+    #def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        pano_element = item
+        #scene = context.scene occhio manca questa variabile: resol_pano
         icons_style = 'OUTLINER'
         #layout.label(text = item.name, icon = item.icon)
-
-        layout = layout.split(factor=0.9, align=True)
-        layout.prop(item, "name", text="", emboss=False, icon=item.icon)
-        icon = 'RESTRICT_SELECT_OFF' if item.publish_item else 'RESTRICT_SELECT_ON'
-        #op = 
-        layout.operator(
-            "epoch_manager.toggle_select", text="", emboss=False, icon=icon)
-
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            layout = layout.split(factor=0.9, align=True)
+            layout.prop(pano_element, "name", text="",
+                        emboss=False, icon=pano_element.icon)
+            
+            icon = 'RESTRICT_VIEW_OFF' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
+            op = layout.operator(
+                "pov_manager.toggle_publish", text="", emboss=False, icon=icon)
+            op.group_un_idx = index
         #self.layout.prop(context.scene, "test_color", text='Detail Color')
-        #op.group_em_idx = index
+        
+
+class OT_toggle_publish(bpy.types.Operator):
+    """Define if a POV will be published or not"""
+    bl_idname = "pov_manager.toggle_publish"
+    bl_label = "Toggle Publish"
+    bl_description = "Define if a POV will be published or not"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    group_un_idx: IntProperty()
+
+    def execute(self, context):
+        scene = context.scene
+        print(str(scene.pano_list_index))
+        if self.group_un_idx < len(scene.pano_list):
+            print(f"toggle {self.group_un_idx}")
+            scene.pano_list[self.group_un_idx].publish_item = not scene.pano_list[self.group_un_idx].publish_item
+            print(scene.pano_list[self.group_un_idx].publish_item)
+           
+            '''
+            scene.pano_list[self.group_un_idx]
+            # check_same_ids()  # check scene ids
+            current_e_manager = scene.pano_list[self.group_un_idx]
+            for pov in scene.pano_list:
+                if pov.icon == "RESTRICT_INSTANCED_OFF":
+                    if current_e_manager.name == us.epoch:
+                        object_to_select = bpy.data.objects[us.name]
+                        object_to_select.select_set(True)
+            '''
+        return {'FINISHED'}
 
 class PANOListItem(PropertyGroup):
     """ Group of properties representing an item in the list """
@@ -431,6 +466,11 @@ class PANOListItem(PropertyGroup):
             name = "Res",
             default = 1,
             description = "Resolution of Panoramic image for this bubble")
+
+    group_file: StringProperty(
+        name="name of the group",
+        description="",
+        default="None")
 
 def panolistitem_to_obj(item_in_list):
     obj = bpy.data.objects[item_in_list.name]
@@ -570,6 +610,7 @@ class PANO_import(bpy.types.Operator):
            
             scene.pano_list.add()
             scene.pano_list[pano_list_index_counter].name = just_created_obj.name
+            #scene.pano_list[pano_list_index_counter].group_file = just_created_obj.name
             
             flipnormals()
             create_cam(just_created_obj.name,pos_x,pos_y,pos_z)
@@ -671,7 +712,6 @@ class VIEW_alignquad(bpy.types.Operator):
 
         return {'FINISHED'}
 
-
 class VIEW_setlens(bpy.types.Operator):
     bl_idname = "set.lens"
     bl_label = "set the lens of the camera"
@@ -700,7 +740,6 @@ class VIEW_setlens(bpy.types.Operator):
         #        set_rotation_to_bubble(context,object,current_camera_obj)
 
         return {'FINISHED'}
-
 '''
 
 def set_res_mat(mat,res_number ):
@@ -866,7 +905,8 @@ class PANOToolsPanel:
 
         row = layout.row()
         layout.alignment = 'LEFT'
-        row.template_list("PANO_UL_List", "PANO nodes", scene, "pano_list", scene, "pano_list_index")
+        row.template_list("PANO_UL_List", "", scene,
+                          "pano_list", scene, "pano_list_index")
 
         if scene.pano_list_index >= 0 and len(scene.pano_list) > 0:
             current_pano = scene.pano_list[scene.pano_list_index].name
@@ -877,6 +917,11 @@ class PANOToolsPanel:
             row.prop(item, "name", text="")
             op = row.operator("set.panoname", icon="DISC", text="")
             op.index_number = scene.pano_list_index
+
+            row = layout.row()  
+            row.label(text="Group:")
+            row = layout.row()
+            row.prop(item, "group_file", text="")
 
             # assign un to pov section
 
@@ -947,6 +992,7 @@ classes = [
     ImportCoorPanorami,
     OBJECT_OT_PANORAMI,
     UN_OT_add_remove_UN_models,
+    OT_toggle_publish
     ]
 
 def register():
