@@ -907,20 +907,18 @@ def clear_pano_list(context):
     scene.pano_list.update()
     for x in range(len(scene.pano_list)):
         scene.pano_list.remove(0)
-'''
-def clear_list_(context, listname, listname_index):
-    scene = context.scene
-
-    exec("global listname; scene."+listname+".update()")
-    exec("global listname; print(scene."+listname+")")
-    list_lenght = 0
-    exec("global listname; "+list_lenght+"= len(scene."+listname+")")
-    print(f"il valore {str(list_lenght)}")
-    exec("scene."+listname_index+"= 0")
-    for x in range(list_lenght-1):
-        exec("scene."+listname+".remove(0)")
     return
-'''
+
+def clear_list(context, listname, listname_index):
+    scene = context.scene
+    listname.update()
+    list_lenght = len(listname)
+    listname_index = 0
+    for x in range(list_lenght):
+        listname.remove(0)
+    return
+
+
 def e2d(float_value):
     fac = 180/pi
     return (float_value/fac)

@@ -42,7 +42,8 @@ def google_list_modules():
         "google==3.0.0",
         #"googleapiclient"
         "google.auth==2.3.2",
-        "google-api-core==2.2.2"
+        "google-api-core==2.2.2",
+        "google-api-python-client==2.31.1"
         "pyasn1==0.4.8",
         "pyasn1_modules==0.2.8",
         "rsa==4.7.2",

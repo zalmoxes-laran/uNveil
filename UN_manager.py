@@ -115,14 +115,15 @@ class UN_import_metadata(bpy.types.Operator):
         # qui inserisco lettore tabella
 
         values = init_spreadsheet_service(context)
-
+        #print(values)
         # Parse the array:
         for p in values:
             is_record = False
             try:
                 code = p[0]
-                if p[0].startswith("UN"):
+                if p[0].startswith("POI"):
                     is_record = True
+                    print(p[0])
 
             except IndexError:
                 pass
