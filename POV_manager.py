@@ -397,14 +397,18 @@ class PANO_UL_List(UIList):
             layout = layout.split(factor=0.9, align=True)
             layout.prop(pano_element, "name", text="",
                         emboss=False, icon=pano_element.icon)
-            
+
+            #icon = '' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
+            op = layout.operator(
+                "view.pano", text="", emboss=False, icon='VIS_SEL_11')
+            op.group_un_idx = index
+
             icon = 'RESTRICT_VIEW_OFF' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
             op = layout.operator(
                 "pov_manager.toggle_publish", text="", emboss=False, icon=icon)
             op.group_un_idx = index
         #self.layout.prop(context.scene, "test_color", text='Detail Color')
         
-
 class OT_toggle_publish(bpy.types.Operator):
     """Define if a POV will be published or not"""
     bl_idname = "pov_manager.toggle_publish"
@@ -674,11 +678,13 @@ class VIEW_pano(bpy.types.Operator):
     bl_label = "View from the inside of selected Pano"
     bl_options = {"REGISTER", "UNDO"}
 
+    group_un_idx : IntProperty()
+    
     def execute(self, context):
         data = bpy.data
         context = bpy.context
         scene = context.scene
-        pano_list_index = scene.pano_list_index
+        pano_list_index = self.group_un_idx#scene.pano_list_index
         current_camera_name = 'CAM_'+scene.pano_list[pano_list_index].name
         current_camera_obj = data.objects[current_camera_name]
         scene.camera = current_camera_obj
@@ -952,7 +958,9 @@ class PANOToolsPanel:
                         node.draw_buttons_ext(context, layout)
 
         row = layout.row()
-        self.layout.operator("view.pano", icon="ZOOM_PREVIOUS", text='Inside the Pano')
+        
+        op = self.layout.operator("view.pano", icon="ZOOM_PREVIOUS", text='Inside the Pano')
+        op.group_un_idx = scene.pano_list_index         
         row = layout.row()
         self.layout.operator("remove.pano", icon="ERROR", text='Remove the Pano')
         '''
