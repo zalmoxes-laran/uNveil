@@ -44,15 +44,10 @@ import bpy.props as prop
 
 from bpy.props import (
             StringProperty,
-            BoolProperty,
-            FloatProperty,
-            EnumProperty,
             IntProperty,
-            PointerProperty,
             CollectionProperty,
             )
 from bpy.types import (
-    AddonPreferences,
     PropertyGroup,
     )
 
@@ -66,13 +61,13 @@ from . import (
     functions,
     shift,
     POV_manager,
-    UN_manager,
     addon_updater_ops,
     # da qui moduli per google
     external_modules_install,
     google_credentials,
-    spreadsheet,
+    #spreadsheet,
     export_aton,
+    UN_manager,
     )
 
 @addon_updater_ops.make_annotations

@@ -24,8 +24,6 @@ import shutil
 import logging
 log = logging.getLogger(__name__)
 
-from .spreadsheet import *
-
 class UN_properties_belonging_ob(bpy.types.PropertyGroup):
 
     nu: prop.StringProperty(
@@ -42,7 +40,6 @@ class UN_properties_belonging_ob(bpy.types.PropertyGroup):
            name="epoch",
            description="Epoch",
            default="Untitled")
-
 
 class UN_UL_List(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, resol_un, index):
@@ -91,7 +88,6 @@ def unlistitem_to_obj(item_in_list):
     obj = bpy.data.objects[item_in_list.name]
     return obj
 
-
 class UN_import_metadata(bpy.types.Operator):
     '''Narative units are retrieved from a standardized Google Spreadsheet. If the button is grayed out, fill the fields in the Google Spreadsheet setup section'''
     bl_idname = "import.un_metadata"
@@ -113,7 +109,7 @@ class UN_import_metadata(bpy.types.Operator):
         clear_list(context, scene.un_list, scene.un_list_index) 
         un_list_index_counter = 0
         # qui inserisco lettore tabella
-
+        from .spreadsheet import init_spreadsheet_service
         values = init_spreadsheet_service(context)
         #print(values)
         # Parse the array:

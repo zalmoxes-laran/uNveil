@@ -1,7 +1,6 @@
 import bpy
 from bpy.types import Operator, AddonPreferences, Panel
 from bpy.props import StringProperty, IntProperty, BoolProperty
-#from .spreadsheet import init_spreadsheet_service
 import os
 
 import logging
@@ -100,7 +99,7 @@ class OBJECT_OT_uNveil_open_prefs(Operator):
     def execute(self, context):
         bpy.ops.preferences.addon_show(module="uNveil")
         return {'FINISHED'}
-'''
+
 class OBJECT_OT_uNveil_try_credentials(Operator):
     """If the button is grey, fille the fields above AND open preference panel (button with the gears here on the right) and launch installation of necessary dependances"""
     bl_idname = "try_google.unveil_googlecreds"
@@ -115,12 +114,13 @@ class OBJECT_OT_uNveil_try_credentials(Operator):
         return is_active_button
 	
     def execute(self, context):
+        from .spreadsheet import init_spreadsheet_service
         if init_spreadsheet_service(context):
             self.report({'INFO'}, "Connection works")
         else:
             self.report({'ERROR'}, "Connection failed, check parameters")
         return {'FINISHED'}
-'''
+
 class ToolsPanelMetadata:
     bl_label = "Google Spreadsheet setup"
     bl_space_type = "VIEW_3D"
@@ -161,7 +161,7 @@ classes = [
     OBJECT_OT_uNveil_prefs_googlecreds,
     uNveil_GoogleCredentialsPreferences,
     OBJECT_OT_uNveil_open_prefs,
-    #OBJECT_OT_uNveil_try_credentials,
+    OBJECT_OT_uNveil_try_credentials,
     ]
 
 # Registration

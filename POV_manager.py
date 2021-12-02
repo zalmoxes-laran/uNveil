@@ -1,5 +1,4 @@
 import bpy
-import mathutils
 
 from bpy.types import Panel
 from bpy.types import Operator
@@ -9,10 +8,9 @@ from bpy.types import UIList
 from .functions import *
 
 import os
-from bpy_extras.io_utils import ImportHelper, axis_conversion
+from bpy_extras.io_utils import ImportHelper
 
 from bpy.props import (BoolProperty,
-                       FloatProperty,
                        StringProperty,
                        EnumProperty,
                        CollectionProperty
@@ -88,6 +86,7 @@ def is_collection(name_col):
         return there_is
 
 def item_panolist_from_ob_name(obname):
+    context = bpy.context
     counter = 0
     found = False
     real_name = "None"
