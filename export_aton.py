@@ -5,32 +5,54 @@ from bpy.props import EnumProperty, StringProperty, BoolProperty, IntProperty, C
 
 from .functions import *
 
+from .POV_manager import panolistitem_to_obj
+
 import json
 import shutil
 
+
+
 def export_unveil_json(scene, base_dir, network, sem):
     
-    pov_list = ["pippo","pluto","paperino"]
-    for pov in pov_list:
-        network_node = {}
-        network_node['name'] = pov
-        network_node['pos'] = [10.0,0.0,1.0]
-        network_node['semlist'] = ["P01","P02","P03"]
-        network.append(network_node)
+    for pano in scene.pano_list:
+        if pano.publish_item:
 
-    un_list = ["portos","Aramis","Dartagnan"]
-    for un in un_list:
+        #pov_list = ["pippo","pluto","paperino"]
+        #for pov in pov_list:
+            network_node = {}
+            #print(pano.name)
+            network_node['name'] = pano.name
+            ob = panolistitem_to_obj(pano)
+            network_node['pos'] = [ob.location[0], ob.location[2], -ob.location[1]]
+            network_node['semlist'] = ["P01"]
+            
+            if len(pano.un_list) > 0:
+                for sem in pano.un_list:
+                    print(f"stampare {sem.un_item}")
+                    network_node['semlist'].clear()
+                    network_node['semlist'] = ["P01","P02","P03"]
+                    #network_node['semlist'].append(str(sem.un_item))
+            
+            #network_node['semlist'] = pano.un_list
+            #network_node['semlist'] = ["P01","P02","P03"]
+            network.append(network_node)
+
+    for un in scene.un_list:
+    #un_list = ["portos","Aramis","Dartagnan"]
+    #for un in un_list:
         sem_node = {}
         # qui si iniettano i descrittori del un
         sem_subnode = {}
-        sem_subnode['title'] = un
-        sem_subnode['descr'] = "un moschettiere"
+        sem_subnode['titolo'] = un.nome
+        sem_subnode['title'] = un.name
+        sem_subnode['descrITA'] = un.descrizione
+        sem_subnode['descrENG'] = un.description
         sem_subnode['cover'] = "immagine.jpg"
         sem_subnode['audio'] = "p11.mp3"
         # e si agganciano al nodo superiore
         sem_node = sem_subnode
         # qui si assegna il nome del UN
-        sem[un]= sem_node
+        sem[un.identificativo] = sem_node
 
     '''
     for ob in bpy.data.objects:

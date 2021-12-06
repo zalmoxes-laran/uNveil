@@ -54,6 +54,16 @@ class UNListItem(PropertyGroup):
             description="An id for this item",
             default="Untitled")
 
+    nome: StringProperty(
+        name="Nome",
+        description="A name for this item (ITA)",
+        default="Untitled")
+
+    name: StringProperty(
+        name="Name",
+        description="A name for this item (ENG)",
+        default="Untitled")
+
     icon : StringProperty(
             name="code for icon",
             description="",
@@ -61,7 +71,12 @@ class UNListItem(PropertyGroup):
 
     description : StringProperty(
             name="Description",
-            description="A description for this item",
+            description="A description for this item (ENG)",
+            default="Untitled")
+
+    descrizione: StringProperty(
+            name="Descrizione",
+            description="A description for this item (ITA)",
             default="Untitled")
 
     media : StringProperty(
@@ -117,7 +132,7 @@ class UN_import_metadata(bpy.types.Operator):
             is_record = False
             try:
                 code = p[0]
-                if p[0].startswith("POI"):
+                if p[0].startswith("UN"):
                     is_record = True
                     print(p[0])
 
@@ -129,19 +144,29 @@ class UN_import_metadata(bpy.types.Operator):
                 #scene.un_list[un_list_index_counter].context = p[3]
                 #scene.un_list[un_list_index_counter].time = p[2]
                 try:
-                    scene.un_list[un_list_index_counter].name = p[1]
+                    scene.un_list[un_list_index_counter].nome = p[1]
+                except IndexError:
+                    scene.un_list[un_list_index_counter].nome = ""
+
+                try:
+                    scene.un_list[un_list_index_counter].name = p[2]
                 except IndexError:
                     scene.un_list[un_list_index_counter].name = ""
+
                 try:
-                    scene.un_list[un_list_index_counter].description = p[4]
+                    scene.un_list[un_list_index_counter].descrizione = p[5]
+                except IndexError:
+                    scene.un_list[un_list_index_counter].descrizione = ""
+                try:
+                    scene.un_list[un_list_index_counter].description = p[6]
                 except IndexError:
                     scene.un_list[un_list_index_counter].description = ""
                 try:
-                    scene.un_list[un_list_index_counter].media = p[5]
+                    scene.un_list[un_list_index_counter].media = p[7]
                 except IndexError:
                     scene.un_list[un_list_index_counter].media = ""
                 try:    
-                    scene.un_list[un_list_index_counter].audio = p[6]
+                    scene.un_list[un_list_index_counter].audio = p[8]
                 except IndexError:
                     scene.un_list[un_list_index_counter].audio = ""
                 un_list_index_counter += 1
@@ -275,11 +300,19 @@ class UNToolsPanel:
             row = layout.row()
             row.prop(item, "identificativo", text="")
             row = layout.row()
-            row.label(text="Name:")
+            row.label(text="Nome (ITA):")
+            row = layout.row()
+            row.prop(item, "nome", text="")
+            row = layout.row()
+            row.label(text="Name (ENG):")
             row = layout.row()
             row.prop(item, "name", text="")
             row = layout.row()
-            row.label(text="Description:")
+            row.label(text="Descrizione (ITA):")
+            row = layout.row()
+            row.prop(item, "descrizione", text="")
+            row = layout.row()
+            row.label(text="Description (ENG):")
             row = layout.row()
             row.prop(item, "description", text="")
             row = layout.row()

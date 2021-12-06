@@ -24,18 +24,74 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class UN_OT_add_remove_UN_models(bpy.types.Operator):
-    """Add and remove UN proxies from POV"""
-    bl_idname = "un_models.add_remove"
-    bl_label = "Add and remove UN proxies from POV"
-    bl_description = "Add and remove UN proxies from POV"
+class UN_contained_in_pov(PropertyGroup):
+    """ List of UN """
+
+    un_item: StringProperty(
+        name="Name",
+        description="name of the UN",
+        default="Untitled")
+
+
+class UN_OT_remove_UN(bpy.types.Operator):
+    """Remove UN from POV"""
+    bl_idname = "un_models.remove"
+    bl_label = "Remove UN from POV"
+    bl_description = "Remove UN from POV"
     bl_options = {'REGISTER', 'UNDO'}
 
-    rm_pov : StringProperty()
-    rm_add : BoolProperty()
+
+    group_un_idx: IntProperty()
 
     def execute(self, context):
         scene = context.scene
+        sel_pano = scene.pano_list[scene.pano_list_index]
+
+        sel_pano.un_list.remove(self.group_un_idx)
+        #print(f"Ho rimosso il {sel_un.identificativo}")
+
+        return {'FINISHED'}
+
+
+class UN_OT_add_remove_UN_models(bpy.types.Operator):
+    """Add and remove UN to/from POV"""
+    bl_idname = "un_models.add_remove"
+    bl_label = "Add and remove UN to/from POV"
+    bl_description = "Add and remove UN to/from POV"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    rm_add : BoolProperty()
+    group_un_idx : IntProperty()
+
+    def execute(self, context):
+        scene = context.scene
+        sel_pano = scene.pano_list[scene.pano_list_index]
+        sel_un = scene.un_list[scene.un_list_index]
+
+        #print(sel_pano.un_list.un_item)
+        #if len(sel_pano.un_list) > 0:
+        if self.rm_add:
+            un_ancora_non_presente = True
+
+            for list_item in sel_pano.un_list:
+                if sel_un.identificativo == list_item.un_item:
+                    un_ancora_non_presente = False
+
+            if un_ancora_non_presente:
+                sel_pano.un_list.add()
+                print(len(sel_pano.un_list)-1)
+                sel_pano.un_list[len(sel_pano.un_list)-1].un_item = sel_un.identificativo
+                print(f"Added {sel_un.identificativo} to {sel_pano.name}") #{sel_pano.un_list[len(sel_pano.un_list)-1].un_item}")
+        
+        else:
+            counter = 0
+            while counter < len(sel_pano.un_list):
+                if sel_un.identificativo == sel_pano.un_list[counter].un_item:
+                    sel_pano.un_list.remove(counter)
+                    print(f"Ho rimosso il {sel_un.identificativo}")
+                counter +=1
+            
+        '''
         selected_objects = context.selected_objects
 
         for ob in selected_objects:
@@ -53,7 +109,8 @@ class UN_OT_add_remove_UN_models(bpy.types.Operator):
                         counter +=1
             else:
                 ob.EM_ep_belong_ob.add()
-                ob.EM_ep_belong_ob[0].epoch = self.rm_pov                   
+                ob.EM_ep_belong_ob[0].epoch = self.rm_pov    
+        '''               
         return {'FINISHED'}
 
 class OBJECT_OT_PANORAMI(Operator):
@@ -245,7 +302,7 @@ def read_point_data(context, filepath, shift, name_col, x_col, y_col, z_col, ome
         o.show_name = True
 
     return {'FINISHED'}
-'''
+    '''
 
 class ImportCoorPanorami(Operator, ImportHelper):
     """Tool to import panoramas from a txt file"""
@@ -407,7 +464,32 @@ class PANO_UL_List(UIList):
                 "pov_manager.toggle_publish", text="", emboss=False, icon=icon)
             op.group_un_idx = index
         #self.layout.prop(context.scene, "test_color", text='Detail Color')
-        
+
+class UN_PANO_UL_List(UIList):
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        #def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        un_element = item
+        #scene = context.scene occhio manca questa variabile: resol_pano
+        icons_style = 'OUTLINER'
+        #layout.label(text = item.name, icon = item.icon)
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            layout = layout.split(factor=0.9, align=True)
+            layout.prop(un_element, "un_item", text="",
+                        emboss=False, icon='VIS_SEL_11')
+            
+            #icon = '' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
+            op = layout.operator(
+                "un_models.remove", text="", emboss=False, icon='CANCEL')
+            op.group_un_idx = index
+            
+            '''
+            icon = 'RESTRICT_VIEW_OFF' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
+            op = layout.operator(
+                "pov_manager.toggle_publish", text="", emboss=False, icon=icon)
+            op.group_un_idx = index
+            '''
+        #self.layout.prop(context.scene, "test_color", text='Detail Color')
+
 class OT_toggle_publish(bpy.types.Operator):
     """Define if a POV will be published or not"""
     bl_idname = "pov_manager.toggle_publish"
@@ -474,6 +556,16 @@ class PANOListItem(PropertyGroup):
         name="name of the group",
         description="",
         default="None")
+
+    un_list: CollectionProperty(
+        type=UN_contained_in_pov)
+    '''
+    bpy.types.Object.UN_ep_belong_ob_index = IntProperty()
+
+    bpy.types.Object.UN_pano_belong_ob = CollectionProperty(
+        type=UN_panos_belonging_ob)
+    bpy.types.Object.UN_pano_belong_ob_index = IntProperty()
+    '''
 
 def panolistitem_to_obj(item_in_list):
     obj = bpy.data.objects[item_in_list.name]
@@ -861,6 +953,8 @@ class PANOToolsPanel:
         row = layout.row()
         row.label(text="Import")
         row.operator("import_panorami.txt", icon="STICKY_UVS_DISABLE", text='')
+        row.operator("remove.pano", icon="ERROR",
+                             text='')
         row = layout.row()
         #row.prop(context.scene, 'PANO_file', toggle = True)
         #row = layout.row()
@@ -912,6 +1006,8 @@ class PANOToolsPanel:
         layout.alignment = 'LEFT'
         row.template_list("PANO_UL_List", "", scene,
                           "pano_list", scene, "pano_list_index")
+        
+
 
         if scene.pano_list_index >= 0 and len(scene.pano_list) > 0:
             current_pano = scene.pano_list[scene.pano_list_index].name
@@ -931,13 +1027,15 @@ class PANOToolsPanel:
             # assign un to pov section
 
             row = layout.row()
-            row.label(text="Assign selected UN proxy to current POV:")
+            row.label(text="Assign selected UN to current POV:")
             op = row.operator("un_models.add_remove", text="", emboss=False, icon='ADD')
-            op.rm_pov = scene.pano_list[scene.pano_list_index].name
+
             op.rm_add = True
+            op.group_un_idx = 8000
             op = row.operator("un_models.add_remove", text="", emboss=False, icon='REMOVE')
-            op.rm_pov = scene.pano_list[scene.pano_list_index].name
-            op.rm_add = True
+
+            op.rm_add = False
+            op.group_un_idx = 8000
             # qui comando selettore del un proxy
             #op = row.operator("select_rm.given_epoch", text="", emboss=False, icon='SELECT_SET')
             #op.rm_epoch = scene.epoch_list[scene.epoch_list_index].name
@@ -955,13 +1053,14 @@ class PANOToolsPanel:
                         row.label(text=node.name)# + nodegroupname)
                         layout.context_pointer_set("node", node)
                         node.draw_buttons_ext(context, layout)
-
+        '''
         row = layout.row()
         
         op = self.layout.operator("view.pano", icon="ZOOM_PREVIOUS", text='Inside the Pano')
         op.group_un_idx = scene.pano_list_index         
         row = layout.row()
-        self.layout.operator("remove.pano", icon="ERROR", text='Remove the Pano')
+        '''
+        
         '''
         row = layout.row()
         self.layout.operator("align.quad", icon="OUTLINER_OB_FORCE_FIELD", text='Align quad')
@@ -977,14 +1076,22 @@ class PANOToolsPanel:
         col.operator("set.lens", icon="FILE_TICK", text='SL')
         '''
 
+        row = layout.row()
+        layout.alignment = 'LEFT'
+        row.template_list("UN_PANO_UL_List", "", scene.pano_list[scene.pano_list_index],
+                          "un_list", scene, "un_inpano_list_index", rows=2)
+
 class VIEW3D_PT_pov_SetupPanel(Panel, PANOToolsPanel):
     bl_category = "uNveil"
     bl_idname = "VIEW3D_PT_pov_SetupPanel"
     #bl_context = "objectmode"
 
 classes = [
+    UN_OT_remove_UN,
+    UN_contained_in_pov,
     PANOListItem,
     PANO_UL_List,
+    UN_PANO_UL_List,
     REMOVE_pano,
     VIEW_pano,
     #VIEW_alignquad,
@@ -999,7 +1106,7 @@ classes = [
     ImportCoorPanorami,
     OBJECT_OT_PANORAMI,
     UN_OT_add_remove_UN_models,
-    OT_toggle_publish
+    OT_toggle_publish,
     ]
 
 def register():
@@ -1008,6 +1115,7 @@ def register():
     bpy.types.Scene.pano_list = CollectionProperty(type = PANOListItem)
     bpy.types.Scene.pano_list_index = IntProperty(name = "Index for my_list", default = 0)
     bpy.types.Scene.resolution_list_index = IntProperty(name = "Index for my_list", default = 0)
+    bpy.types.Scene.un_inpano_list_index = IntProperty(name="Index for my_list", default=0)
 
     bpy.types.Scene.RES_propagato_su_tutto = BoolProperty(
         name="Res",
@@ -1028,7 +1136,6 @@ def register():
         description="Define the path to the PANO file",
         subtype='DIR_PATH'
     )
-
 
 def unregister():
     for cls in classes:

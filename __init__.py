@@ -129,6 +129,8 @@ class CAMTypeList(PropertyGroup):
             description="A name for this item",
             default="Untitled")
 
+
+
 classes = (
 
     export_uNveil.ExportEpsgShift,
@@ -187,6 +189,9 @@ def register():
     default = 21,
     description = "Define the lens of the cameras",
     )
+
+
+
     shift.register()
     POV_manager.register()
     external_modules_install.register()
