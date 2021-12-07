@@ -157,9 +157,9 @@ class VIEW3D_PT_metadata(Panel, ToolsPanelMetadata):
     #bl_context = "objectmode"
 
 classes = [
+    uNveil_GoogleCredentialsPreferences,
     VIEW3D_PT_metadata,
     OBJECT_OT_uNveil_prefs_googlecreds,
-    uNveil_GoogleCredentialsPreferences,
     OBJECT_OT_uNveil_open_prefs,
     OBJECT_OT_uNveil_try_credentials,
     ]
