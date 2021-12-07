@@ -19,7 +19,7 @@ emanuel.demetrescu@gmail.com
 bl_info = {
     "name": "uNveil per Blender",
     "author": "Emanuel Demetrescu",
-    "version": (0,9,11),
+    "version": (0,9,12),
     "blender": (2, 93, 5),
     "location": "3D View > Toolbox",
     "description": "Multitemporal storytelling",

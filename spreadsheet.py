@@ -49,10 +49,11 @@ def init_spreadsheet_service(context):
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    preferences = bpy.context.preferences
-    addon_prefs = bpy.context.preferences.addons[__name__].preferences
+    preferences = context.preferences
+    addon_prefs = preferences.addons.get(__package__, None)
+    #addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
-    token_file = os.path.join(addon_prefs.filepath,'token.json')
+    token_file = os.path.join(addon_prefs.preferences.filepath,'token.json')
     print(token_file)
     if os.path.exists(token_file):
         creds = Credentials.from_authorized_user_file(token_file, SCOPES)

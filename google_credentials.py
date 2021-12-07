@@ -83,9 +83,10 @@ class OBJECT_OT_uNveil_prefs_googlecreds(Operator):
 
     def execute(self, context):
         preferences = context.preferences
-        addon_prefs = preferences.addons[__name__].preferences
+        addon_prefs = preferences.addons.get(__package__, None)
+        #addon_prefs = preferences.addons[__name__].preferences
 
-        info = ("Path: %s" % (addon_prefs.filepath))
+        info = ("Path: %s" % (addon_prefs.preferences.filepath))
         #info = ("Path: %s, Number: %d, Boolean %r" %
         #        (addon_prefs.filepath, addon_prefs.number, addon_prefs.boolean))
 
