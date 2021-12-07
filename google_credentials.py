@@ -23,7 +23,7 @@ def get_creds_folder_path():
 def check_google_modules():
     for addon in bpy.context.preferences.addons
     if addon.module.startswith('nUveil'):
-        addon_prefs = bpy.context.preferences.addons['uNveil'].preferences
+        addon_prefs = addon.preferences
     try:
         import googleapiclient
         import google_auth_oauthlib
