@@ -21,9 +21,9 @@ def get_creds_folder_path():
     return credential_folder
 
 def check_google_modules():
-    for addon in bpy.context.preferences.addons
-    if addon.module.startswith('nUveil'):
-        addon_prefs = addon.preferences
+    for addon in bpy.context.preferences.addons:
+        if addon.module.startswith('nUveil'):
+            addon_prefs = addon.preferences
     try:
         import googleapiclient
         import google_auth_oauthlib
