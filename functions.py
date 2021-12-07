@@ -178,7 +178,6 @@ def parse_cam_xml(name_cam):
                 y = cam.find('y').text
         return s_width, s_height, x, y
 
-
 def set_up_lens(obj,sens_width,sens_lenght,lens):
     #obj.select_set(True)
     obj.data.lens = lens
@@ -301,7 +300,6 @@ def tex_to_mat():
         bpy.ops.object.mode_set(mode='EDIT')
 
         #self.layout.operator("cam.visibility", icon="RENDER_REGION", text='Cam visibility')
-
 
 #Recursivly transverse layer_collection for a particular name
 def recurLayerCollection(layerColl, collName):
@@ -1174,7 +1172,6 @@ def flipnormals(context):
     bpy.ops.mesh.flip_normals()
     bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
-
 def create_pano_cam(name,pos_x,pos_y,pos_z, collection):
   # create camera data
     context = bpy.context
@@ -1182,6 +1179,7 @@ def create_pano_cam(name,pos_x,pos_y,pos_z, collection):
     cam_data.display_size = 0.15
     cam_data.lens = bpy.context.scene.PANO_cam_lens
     cam_data.type = 'PANO'
+    cam_data.cycles.camera_type = 'EQUIRECTANGULAR'
     # create object camera data and insert the camera data
     cam_ob = bpy.data.objects.new('CAM_'+name, cam_data)
     # link into scene

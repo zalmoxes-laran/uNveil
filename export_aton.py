@@ -8,8 +8,8 @@ from .functions import *
 from .POV_manager import panolistitem_to_obj
 
 import json
-import shutil
 
+from shutil import copyfile
 
 
 def export_unveil_json(scene, base_dir, network, sem):
@@ -20,18 +20,20 @@ def export_unveil_json(scene, base_dir, network, sem):
         #pov_list = ["pippo","pluto","paperino"]
         #for pov in pov_list:
             network_node = {}
-            #print(pano.name)
+            print(pano.name)
             network_node['name'] = pano.name
             ob = panolistitem_to_obj(pano)
             network_node['pos'] = [ob.location[0], ob.location[2], -ob.location[1]]
-            network_node['semlist'] = ["P01"]
-            
+            network_node['rot'] = [ob.rotation_euler[0], ob.rotation_euler[2], -ob.rotation_euler[1]]
+            network_node['semlist'] = []
+
             if len(pano.un_list) > 0:
-                for sem in pano.un_list:
-                    print(f"stampare {sem.un_item}")
-                    network_node['semlist'].clear()
-                    network_node['semlist'] = ["P01","P02","P03"]
-                    #network_node['semlist'].append(str(sem.un_item))
+                for sema in pano.un_list:
+                    print(f"stampare {sema.un_item}")
+            
+                    #network_node['semlist'].clear()
+                    #network_node['semlist'] = ["P01","P02","P03"]
+                    network_node['semlist'].append(str(sema.un_item))
             
             #network_node['semlist'] = pano.un_list
             #network_node['semlist'] = ["P01","P02","P03"]
@@ -172,7 +174,7 @@ class UNVEIL_OT_aton_json_export(bpy.types.Operator):
         progetto_aton = scene.unveil_dir_aton
 
         fix_if_relative_folder = bpy.path.abspath(scene.unveil_dir_aton)
-        base_dir = os.path.dirname(fix_if_relative_folder)
+        base_dir = fix_if_relative_folder# os.path.dirname(fix_if_relative_folder)
 
         print("la base_dir per il file json è:"+base_dir)
         
@@ -205,7 +207,40 @@ class UNVEIL_OT_aton_json_export(bpy.types.Operator):
         with open(file_name, 'w') as outfile:
             outfile.write(data + '\n')
 
+        content_base_dir =os.path.join(base_dir+"content")
+        for resol in scene.resolution_list:
+            res_folder_name = str(resol.res_num)+"k"
+            create_folder_in_path(res_folder_name, content_base_dir)
+            for pano in scene.pano_list:
+                if pano.publish_item:
+                    ob = select_obj_from_panoitem(pano.name)
+                    image_file_path = get_img_path_from_ob(ob) 
+                    fix_if_relative_path = bpy.path.abspath(image_file_path)
+                    normalized_path = os.path.normpath(fix_if_relative_path)
+                    path_components = normalized_path.split(os.sep)
+                    path_components[len(path_components)-2] = res_folder_name
+                    original_file_path = os.path.join(*path_components)
+                    filename, file_extension = os.path.splitext(original_file_path)
+                    file_name_with_extension = pano.name+file_extension
+                    destination_file_path = os.path.join(content_base_dir,res_folder_name,file_name_with_extension)
+                    if os.path.isfile(destination_file_path):
+                        print(f"File esistente {destination_file_path}")
+                    else:
+                        copyfile(original_file_path, destination_file_path)    
+            
+
         return {'FINISHED'}
+
+
+def get_img_path_from_ob(ob): #
+    mat_nodes = ob.material_slots[0].material.node_tree.nodes
+    for node in mat_nodes:
+        if node.type == 'TEX_IMAGE':
+            return node.image.filepath
+            pass
+    print("non ho trovato nulla")
+    return "none"
+
 
 # Pannello di export
 
@@ -224,6 +259,7 @@ class Export_Aton_panel:
         row.operator("export.unjsonaton", icon="STICKY_UVS_DISABLE", text='Export Aton')
         row = layout.row()
         row.prop(context.scene, 'unveil_dir_aton', toggle = True, text ="")
+
         
 class VIEW3D_PT_un_Export_Aton_panel(Panel, Export_Aton_panel):
     bl_category = "uNveil"

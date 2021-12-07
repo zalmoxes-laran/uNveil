@@ -559,13 +559,7 @@ class PANOListItem(PropertyGroup):
 
     un_list: CollectionProperty(
         type=UN_contained_in_pov)
-    '''
-    bpy.types.Object.UN_ep_belong_ob_index = IntProperty()
 
-    bpy.types.Object.UN_pano_belong_ob = CollectionProperty(
-        type=UN_panos_belonging_ob)
-    bpy.types.Object.UN_pano_belong_ob_index = IntProperty()
-    '''
 
 def panolistitem_to_obj(item_in_list):
     obj = bpy.data.objects[item_in_list.name]
@@ -1026,16 +1020,7 @@ class PANOToolsPanel:
 
             # assign un to pov section
 
-            row = layout.row()
-            row.label(text="Assign selected UN to current POV:")
-            op = row.operator("un_models.add_remove", text="", emboss=False, icon='ADD')
 
-            op.rm_add = True
-            op.group_un_idx = 8000
-            op = row.operator("un_models.add_remove", text="", emboss=False, icon='REMOVE')
-
-            op.rm_add = False
-            op.group_un_idx = 8000
             # qui comando selettore del un proxy
             #op = row.operator("select_rm.given_epoch", text="", emboss=False, icon='SELECT_SET')
             #op.rm_epoch = scene.epoch_list[scene.epoch_list_index].name
@@ -1078,8 +1063,23 @@ class PANOToolsPanel:
 
         row = layout.row()
         layout.alignment = 'LEFT'
+        row = layout.row()
+        row.label(text="List of related Narrative Units (UN):")
+        row = layout.row()
         row.template_list("UN_PANO_UL_List", "", scene.pano_list[scene.pano_list_index],
                           "un_list", scene, "un_inpano_list_index", rows=2)
+        if scene.pano_list_index >= 0 and len(scene.pano_list) > 0: 
+            row = layout.row()
+            row.label(text="Assign selected UN to current POV:")
+            op = row.operator("un_models.add_remove", text="", emboss=False, icon='ADD')
+
+            op.rm_add = True
+            op.group_un_idx = 8000
+            op = row.operator("un_models.add_remove", text="", emboss=False, icon='REMOVE')
+
+            op.rm_add = False
+            op.group_un_idx = 8000
+
 
 class VIEW3D_PT_pov_SetupPanel(Panel, PANOToolsPanel):
     bl_category = "uNveil"

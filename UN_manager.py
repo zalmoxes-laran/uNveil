@@ -84,7 +84,12 @@ class UNListItem(PropertyGroup):
             description="A media list for this item",
             default="Untitled")
 
-    audio : StringProperty(
+    audio_ita : StringProperty(
+            name="Audio",
+            description="An audio list for this item",
+            default="Untitled")
+
+    audio_eng : StringProperty(
             name="Audio",
             description="An audio list for this item",
             default="Untitled")
@@ -166,9 +171,13 @@ class UN_import_metadata(bpy.types.Operator):
                 except IndexError:
                     scene.un_list[un_list_index_counter].media = ""
                 try:    
-                    scene.un_list[un_list_index_counter].audio = p[8]
+                    scene.un_list[un_list_index_counter].audio_ita = p[8]
                 except IndexError:
-                    scene.un_list[un_list_index_counter].audio = ""
+                    scene.un_list[un_list_index_counter].audio_ita = ""
+                try:    
+                    scene.un_list[un_list_index_counter].audio_eng = p[9]
+                except IndexError:
+                    scene.un_list[un_list_index_counter].audio_eng = ""
                 un_list_index_counter += 1
 
         return {'FINISHED'}
@@ -320,13 +329,15 @@ class UNToolsPanel:
             row = layout.row()
             row.prop(item, "media", text="")
             row = layout.row()
-            row.label(text="Audio file:")
+            row.label(text="Audio file (ITA):")
             row = layout.row()
-            row.prop(item, "audio", text="")
-
-            op = row.operator("set.unname", icon="DISC", text="")
-            
-            op.index_number = scene.un_list_index
+            row.prop(item, "audio_ita", text="")
+            row = layout.row()
+            row.label(text="Audio file (ENG):")
+            row = layout.row()
+            row.prop(item, "audio_eng", text="")
+            #op = row.operator("set.unname", icon="DISC", text="")
+            #op.index_number = scene.un_list_index
     
         #row = layout.row()
         #self.layout.operator("remove.un", icon="ERROR", text='Remove the Pano')
