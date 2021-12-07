@@ -102,8 +102,8 @@ class OBJECT_OT_uNveil_open_prefs(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-    
-        bpy.ops.preferences.addon_show(module=__name__)
+        
+        bpy.ops.preferences.addon_show(module=__package__)
         return {'FINISHED'}
 
 class OBJECT_OT_uNveil_try_credentials(Operator):
