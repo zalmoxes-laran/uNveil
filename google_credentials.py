@@ -99,7 +99,10 @@ class OBJECT_OT_uNveil_open_prefs(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        bpy.ops.preferences.addon_show(module="uNveil")
+        for addon in bpy.context.preferences.addons:
+            if addon.module.startswith('nUveil'):
+                modl = addon.module      
+        bpy.ops.preferences.addon_show(module=modl)
         return {'FINISHED'}
 
 class OBJECT_OT_uNveil_try_credentials(Operator):

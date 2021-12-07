@@ -198,7 +198,7 @@ def register():
     UN_manager.register()
     google_credentials.register()
     export_aton.register()
-    #check_google_modules()
+    check_google_modules()
 
 def unregister():
 
