@@ -21,17 +21,19 @@ def get_creds_folder_path():
     return credential_folder
 
 def check_google_modules():
-    for addon in bpy.context.preferences.addons:
-        if addon.module.startswith('nUveil'):
-            addon_prefs = addon.preferences
+    addon_prefs = bpy.context.preferences.addons.get(__package__, None)
+    #addon_prefs = bpy.context.preferences.addons[__name__].preferences
+    #for addon in bpy.context.preferences.addons:
+    #    if addon.module.startswith('nUveil'):
+    #        addon_prefs = addon.preferences
     try:
         import googleapiclient
         import google_auth_oauthlib
         import google_auth_httplib2
-        addon_prefs.is_google_module = True
+        addon_prefs.preferences.is_google_module = True
         print("ci sono")
     except ImportError:
-        addon_prefs.is_google_module = False
+        addon_prefs.preferences.is_google_module = False
         print("Non ci sono")
         
 class uNveil_GoogleCredentialsPreferences(AddonPreferences):
@@ -99,10 +101,8 @@ class OBJECT_OT_uNveil_open_prefs(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        for addon in bpy.context.preferences.addons:
-            if addon.module.startswith('nUveil'):
-                modl = addon.module      
-        bpy.ops.preferences.addon_show(module=modl)
+    
+        bpy.ops.preferences.addon_show(module=__name__)
         return {'FINISHED'}
 
 class OBJECT_OT_uNveil_try_credentials(Operator):
@@ -114,7 +114,8 @@ class OBJECT_OT_uNveil_try_credentials(Operator):
     @classmethod
     def poll(cls, context):
         is_active_button = False
-        if len(context.scene.g_spreadsheet_id) == 44 and len(context.scene.g_spreadsheet_sheet) > 0 and context.preferences.addons['uNveil'].preferences.is_google_module:
+        prefs = context.preferences.addons.get(__package__, None)
+        if len(context.scene.g_spreadsheet_id) == 44 and len(context.scene.g_spreadsheet_sheet) > 0 and prefs.preferences.is_google_module:
             is_active_button = True
         return is_active_button
 	

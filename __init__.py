@@ -133,7 +133,7 @@ class CAMTypeList(PropertyGroup):
 
 classes = (
 
-    export_uNveil.ExportEpsgShift,
+    export_uNveil.Export_OT_EpsgShift,
     export_uNveil.OBJECT_OT_ExportShiftFile,
     export_uNveil.POSListItem,
     functions.OBJECT_OT_createcyclesmat,

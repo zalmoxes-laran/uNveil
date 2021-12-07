@@ -50,7 +50,7 @@ def init_spreadsheet_service(context):
     # created automatically when the authorization flow completes for the first
     # time.
     preferences = bpy.context.preferences
-    addon_prefs = bpy.context.preferences.addons['uNveil'].preferences
+    addon_prefs = bpy.context.preferences.addons[__name__].preferences
 
     token_file = os.path.join(addon_prefs.filepath,'token.json')
     print(token_file)

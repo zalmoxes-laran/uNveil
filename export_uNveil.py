@@ -124,7 +124,7 @@ class ExportPanoATON(Operator, ExportHelper):
     def execute(self, context):
         return write_gsv_data(context, self.filepath, self.shift, self.rot, self.cam, self.nam, self.aton)
 
-class ExportEpsgShift(Operator, ExportHelper):
+class Export_OT_EpsgShift(Operator, ExportHelper):
     """This appears in the tooltip of the operator and in the generated docs"""
     bl_idname = "export_shift.file_data"  # important since its how bpy.ops.import_test.some_data is constructed
     bl_label = "Export Coordinate shift file"
