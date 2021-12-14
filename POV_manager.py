@@ -1060,15 +1060,16 @@ class PANOToolsPanel:
         col.label(text="Apply")
         col.operator("set.lens", icon="FILE_TICK", text='SL')
         '''
+        if scene.pano_list_index >= 0 and len(scene.pano_list) > 0:
+            row = layout.row()
+            layout.alignment = 'LEFT'
+            row = layout.row()
 
-        row = layout.row()
-        layout.alignment = 'LEFT'
-        row = layout.row()
-        row.label(text="List of related Narrative Units (UN):")
-        row = layout.row()
-        row.template_list("UN_PANO_UL_List", "", scene.pano_list[scene.pano_list_index],
-                          "un_list", scene, "un_inpano_list_index", rows=2)
-        if scene.pano_list_index >= 0 and len(scene.pano_list) > 0: 
+            row.label(text="List of related Narrative Units (UN):")
+            row = layout.row()
+            row.template_list("UN_PANO_UL_List", "", scene.pano_list[scene.pano_list_index],
+                            "un_list", scene, "un_inpano_list_index", rows=2)
+            
             row = layout.row()
             row.label(text="Assign selected UN to current POV:")
             op = row.operator("un_models.add_remove", text="", emboss=False, icon='ADD')
