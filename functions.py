@@ -916,7 +916,6 @@ def clear_list(context, listname, listname_index):
         listname.remove(0)
     return
 
-
 def e2d(float_value):
     fac = 180/pi
     return (float_value/fac)

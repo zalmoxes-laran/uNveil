@@ -32,7 +32,6 @@ class UN_contained_in_pov(PropertyGroup):
         description="name of the UN",
         default="Untitled")
 
-
 class UN_OT_remove_UN(bpy.types.Operator):
     """Remove UN from POV"""
     bl_idname = "un_models.remove"
@@ -51,7 +50,6 @@ class UN_OT_remove_UN(bpy.types.Operator):
         #print(f"Ho rimosso il {sel_un.identificativo}")
 
         return {'FINISHED'}
-
 
 class UN_OT_add_remove_UN_models(bpy.types.Operator):
     """Add and remove UN to/from POV"""
@@ -450,9 +448,12 @@ class PANO_UL_List(UIList):
         icons_style = 'OUTLINER'
         #layout.label(text = item.name, icon = item.icon)
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            layout = layout.split(factor=0.9, align=True)
+            layout = layout.split(factor=0.7, align=True)
             layout.prop(pano_element, "name", text="",
                         emboss=False, icon=pano_element.icon)
+            op = layout.menu(Epoch_un_menu.bl_idname,
+                            text=pano_element.active_un_epoch)#, icon='COLOR')
+            #op.pano_index = index
 
             #icon = '' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
             op = layout.operator(
@@ -560,6 +561,60 @@ class PANOListItem(PropertyGroup):
     un_list: CollectionProperty(
         type=UN_contained_in_pov)
 
+    active_un_epoch: StringProperty(
+        name="active epoch",
+        description="",
+        default="Modern")
+
+## 
+## col.menu(Epoch_un_menu.bl_idname, text=current_proxy_display_mode, icon='COLOR')
+
+class Epoch_un_menu(bpy.types.Menu):
+    """Define if a POV will be published or not"""
+    bl_label = "Custom Menu"
+    bl_idname = "OBJECT_MT_Epoch_un_menu"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    pano_index: IntProperty()
+
+    def execute(self, context):
+        return {'FINISHED'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        op = layout.operator("unset.ancient_epoch", text="Ancient")
+        #op.index = self.pano_index
+        op = layout.operator("unset.modern_epoch", text="Modern")
+        #op.index = self.pano_index
+
+class UN_set_ancient_epoch(bpy.types.Operator):
+    bl_idname = "unset.ancient_epoch"
+    bl_label = "some"
+    bl_description = "some"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    index: IntProperty()
+
+    def execute(self, context):
+        context.scene.pano_list[context.scene.pano_list_index].active_un_epoch = "Ancient"
+        #update_icons(context, "em_list")
+        #set_materials_using_EM_list(context)
+        return {'FINISHED'}
+
+class UN_set_modern_epoch(bpy.types.Operator):
+    bl_idname = "unset.modern_epoch"
+    bl_label = "some"
+    bl_description = "some"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    index: IntProperty()
+
+    def execute(self, context):
+        context.scene.pano_list[context.scene.pano_list_index].active_un_epoch = "Modern"
+        #update_icons(context, "em_list")
+        #set_materials_using_EM_list(context)
+        return {'FINISHED'}
 
 def panolistitem_to_obj(item_in_list):
     obj = bpy.data.objects[item_in_list.name]
@@ -1001,8 +1056,6 @@ class PANOToolsPanel:
         row.template_list("PANO_UL_List", "", scene,
                           "pano_list", scene, "pano_list_index")
         
-
-
         if scene.pano_list_index >= 0 and len(scene.pano_list) > 0:
             current_pano = scene.pano_list[scene.pano_list_index].name
             item = scene.pano_list[scene.pano_list_index]
@@ -1108,6 +1161,9 @@ classes = [
     OBJECT_OT_PANORAMI,
     UN_OT_add_remove_UN_models,
     OT_toggle_publish,
+    Epoch_un_menu,
+    UN_set_modern_epoch,
+    UN_set_ancient_epoch,
     ]
 
 def register():

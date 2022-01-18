@@ -19,7 +19,7 @@ emanuel.demetrescu@gmail.com
 bl_info = {
     "name": "uNveil per Blender",
     "author": "Emanuel Demetrescu",
-    "version": (0,9,12),
+    "version": (0,9,13),
     "blender": (2, 93, 5),
     "location": "3D View > Toolbox",
     "description": "Multitemporal storytelling",
@@ -68,6 +68,7 @@ from . import (
     #spreadsheet,
     export_aton,
     UN_manager,
+    EPOCH_manager,
     )
 
 @addon_updater_ops.make_annotations
@@ -196,6 +197,7 @@ def register():
     POV_manager.register()
     external_modules_install.register()
     UN_manager.register()
+    EPOCH_manager.register()
     google_credentials.register()
     export_aton.register()
     check_google_modules()
@@ -215,6 +217,7 @@ def unregister():
     UN_manager.unregister()
     google_credentials.unregister()
     export_aton.unregister()
+    EPOCH_manager.unregister()
 
     del bpy.types.Scene.RES_pano
     del bpy.types.Scene.camera_type

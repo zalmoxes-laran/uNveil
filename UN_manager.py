@@ -59,20 +59,10 @@ class UNListItem(PropertyGroup):
         description="A name for this item (ITA)",
         default="Untitled")
 
-    name: StringProperty(
-        name="Name",
-        description="A name for this item (ENG)",
-        default="Untitled")
-
     icon : StringProperty(
             name="code for icon",
             description="",
             default="GROUP_UVS")
-
-    description : StringProperty(
-            name="Description",
-            description="A description for this item (ENG)",
-            default="Untitled")
 
     descrizione: StringProperty(
             name="Descrizione",
@@ -84,12 +74,7 @@ class UNListItem(PropertyGroup):
             description="A media list for this item",
             default="Untitled")
 
-    audio_ita : StringProperty(
-            name="Audio",
-            description="An audio list for this item",
-            default="Untitled")
-
-    audio_eng : StringProperty(
+    audio : StringProperty(
             name="Audio",
             description="An audio list for this item",
             default="Untitled")
@@ -153,32 +138,19 @@ class UN_import_metadata(bpy.types.Operator):
                     scene.un_list[un_list_index_counter].nome = p[1]
                 except IndexError:
                     scene.un_list[un_list_index_counter].nome = ""
-
                 try:
-                    scene.un_list[un_list_index_counter].name = p[2]
-                except IndexError:
-                    scene.un_list[un_list_index_counter].name = ""
-
-                try:
-                    scene.un_list[un_list_index_counter].descrizione = p[5]
+                    scene.un_list[un_list_index_counter].descrizione = p[4]
                 except IndexError:
                     scene.un_list[un_list_index_counter].descrizione = ""
                 try:
-                    scene.un_list[un_list_index_counter].description = p[6]
-                except IndexError:
-                    scene.un_list[un_list_index_counter].description = ""
-                try:
-                    scene.un_list[un_list_index_counter].media = p[7]
+                    scene.un_list[un_list_index_counter].media = p[5]
                 except IndexError:
                     scene.un_list[un_list_index_counter].media = ""
                 try:    
-                    scene.un_list[un_list_index_counter].audio_ita = p[8]
+                    scene.un_list[un_list_index_counter].audio = p[6]
                 except IndexError:
-                    scene.un_list[un_list_index_counter].audio_ita = ""
-                try:    
-                    scene.un_list[un_list_index_counter].audio_eng = p[9]
-                except IndexError:
-                    scene.un_list[un_list_index_counter].audio_eng = ""
+                    scene.un_list[un_list_index_counter].audio = ""
+
                 un_list_index_counter += 1
 
         return {'FINISHED'}
@@ -310,33 +282,21 @@ class UNToolsPanel:
             row = layout.row()
             row.prop(item, "identificativo", text="")
             row = layout.row()
-            row.label(text="Nome (ITA):")
+            row.label(text="Nome:")
             row = layout.row()
             row.prop(item, "nome", text="")
             row = layout.row()
-            row.label(text="Name (ENG):")
-            row = layout.row()
-            row.prop(item, "name", text="")
-            row = layout.row()
-            row.label(text="Descrizione (ITA):")
+            row.label(text="Descrizione:")
             row = layout.row()
             row.prop(item, "descrizione", text="")
-            row = layout.row()
-            row.label(text="Description (ENG):")
-            row = layout.row()
-            row.prop(item, "description", text="")
             row = layout.row()
             row.label(text="Media:")
             row = layout.row()
             row.prop(item, "media", text="")
             row = layout.row()
-            row.label(text="Audio file (ITA):")
+            row.label(text="Audio file:")
             row = layout.row()
-            row.prop(item, "audio_ita", text="")
-            row = layout.row()
-            row.label(text="Audio file (ENG):")
-            row = layout.row()
-            row.prop(item, "audio_eng", text="")
+            row.prop(item, "audio", text="")
             #op = row.operator("set.unname", icon="DISC", text="")
             #op.index_number = scene.un_list_index
     
