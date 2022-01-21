@@ -448,11 +448,14 @@ class PANO_UL_List(UIList):
         icons_style = 'OUTLINER'
         #layout.label(text = item.name, icon = item.icon)
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            layout = layout.split(factor=0.7, align=True)
+            layout = layout.split(factor=0.65, align=True)
             layout.prop(pano_element, "name", text="",
                         emboss=False, icon=pano_element.icon)
-            op = layout.menu(Epoch_un_menu.bl_idname,
-                            text=pano_element.active_un_epoch)#, icon='COLOR')
+            layout = layout.split(factor=0.4, align=True)
+            layout.prop(bpy.data.objects[pano_element.name].material_slots[0].material.node_tree.nodes['Mix Shader'].inputs[0], "default_value", text="",
+                        emboss=True)
+            #op = layout.menu(Epoch_un_menu.bl_idname,
+            #                text=pano_element.active_un_epoch)#, icon='COLOR')
             #op.pano_index = index
 
             #icon = '' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
