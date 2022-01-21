@@ -32,7 +32,7 @@ class OBJECT_OT_install_missing_modules(bpy.types.Operator):
 
 def google_list_modules():
     list_of_modules =[
-        "google-api-python-client==2.28.0",
+        #"google-api-python-client==2.28.0",
         "google-auth-httplib2==0.1.0",
         "google-auth-oauthlib==0.4.6",
         "six==1.16.0",
@@ -43,7 +43,7 @@ def google_list_modules():
         #"googleapiclient"
         "google.auth==2.3.2",
         "google-api-core==2.2.2",
-        "google-api-python-client==2.31.1"
+        "google-api-python-client==2.31.0",
         "pyasn1==0.4.8",
         "pyasn1_modules==0.2.8",
         "rsa==4.7.2",
