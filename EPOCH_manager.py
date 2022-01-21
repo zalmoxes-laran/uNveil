@@ -102,10 +102,10 @@ class EPOCHToolsPanel:
         obj = context.active_object
         resolution_pano = scene.RES_pano
 
-        row = layout.row()
-        row.operator("remove.pano", icon="ERROR",
-                             text='')
-        row = layout.row()
+        #row = layout.row()
+        #row.operator("remove.pano", icon="ERROR",
+        #                     text='')
+        #row = layout.row()
 
         row = layout.row()
         layout.alignment = 'LEFT'
@@ -119,7 +119,6 @@ class EPOCHToolsPanel:
             row.label(text="Name:")
             row = layout.row()
             row.prop(item, "name", text="")
-
 
 class VIEW3D_PT_epoch_SetupPanel(Panel, EPOCHToolsPanel):
     bl_category = "uNveil"

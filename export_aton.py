@@ -227,8 +227,7 @@ class UNVEIL_OT_aton_json_export(bpy.types.Operator):
                         print(f"File esistente {destination_file_path}")
                     else:
                         copyfile(original_file_path, destination_file_path)    
-            
-
+        
         return {'FINISHED'}
 
 
