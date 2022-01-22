@@ -69,6 +69,7 @@ from . import (
     export_aton,
     UN_manager,
     EPOCH_manager,
+    pano_baker,
     )
 
 @addon_updater_ops.make_annotations
@@ -201,6 +202,7 @@ def register():
     google_credentials.register()
     export_aton.register()
     check_google_modules()
+    pano_baker.register()
 
 def unregister():
 
@@ -218,6 +220,7 @@ def unregister():
     google_credentials.unregister()
     export_aton.unregister()
     EPOCH_manager.unregister()
+    pano_baker.unregister()
 
     del bpy.types.Scene.RES_pano
     del bpy.types.Scene.camera_type
