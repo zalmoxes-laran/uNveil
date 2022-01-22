@@ -36,35 +36,6 @@ class EPOCH_UL_List(UIList):
             layout.prop(epoch_element, "name", text="",
                         emboss=False, icon=epoch_element.icon)
 
-'''
-            op = layout.operator(
-                "view.pano", text="", emboss=False, icon='VIS_SEL_11')
-            op.group_un_idx = index
-
-            icon = 'RESTRICT_VIEW_OFF' if epoch_element.publish_item else 'RESTRICT_VIEW_ON'
-            op = layout.operator(
-                "pov_manager.toggle_publish", text="", emboss=False, icon=icon)
-            op.group_un_idx = index
-'''
-
-class OT_EP_toggle_publish(bpy.types.Operator):
-    """Define if a POV will be published or not"""
-    bl_idname = "pov_manager.toggle_publish"
-    bl_label = "Toggle Publish"
-    bl_description = "Define if a POV will be published or not"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    group_un_idx: IntProperty()
-
-    def execute(self, context):
-        scene = context.scene
-        print(str(scene.epoch_list_index))
-        if self.group_un_idx < len(scene.epoch_list):
-            print(f"toggle {self.group_un_idx}")
-            scene.epoch_list[self.group_un_idx].publish_item = not scene.epoch_list[self.group_un_idx].publish_item
-            print(scene.epoch_list[self.group_un_idx].publish_item)
-           
-        return {'FINISHED'}
 
 class EPOCHListItem(PropertyGroup):
     """ Group of properties representing an item in the list """
@@ -127,7 +98,6 @@ class VIEW3D_PT_epoch_SetupPanel(Panel, EPOCHToolsPanel):
 
 classes = [
     EPOCH_UL_List,
-    OT_EP_toggle_publish,
     EPOCHListItem,
     #EPOCHToolsPanel,
     VIEW3D_PT_epoch_SetupPanel

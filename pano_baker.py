@@ -59,8 +59,10 @@ def render_pano(pano_index):
 
     #basepath = "D:\QSYNC\SegniProject\Immagini360\Attuale\8k\ "
     basepath = scene.unveil_dir_bake_output
-    if not os.path.exists(os.path.join(basepath+pano_name+".jpg")):
-        scene.render.filepath = os.path.join(basepath+pano_name+".jpg")
+    pano_name_with_res = pano_name+"-" + str(scene.bake_res_out)[:1] + "k-m"
+    if not os.path.exists(os.path.join(basepath+pano_name_with_res+".jpg")) or scene.bake_overwrite:
+        scene.render.filepath = os.path.join(
+            basepath+pano_name_with_res+".jpg")
         bpy.ops.render.render(write_still=1)
     #bpy.data.objects[pano_name].material_slots[0].material.node_tree.nodes['Mix Shader'].inputs[0].default_value = previous_alpha
     bpy.data.objects[pano_name].material_slots[0].material.node_tree.nodes['Mix Shader'].inputs[0].default_value = 0.68
@@ -89,8 +91,8 @@ class OT_render_pano_operator(bpy.types.Operator):
 
             print('start baking "'+pano_list[pano_index].name +
                 '" (object '+str(ob_counter)+'/'+str(tot_pano)+')')
-
-            render_pano(pano_index)
+            if pano_list[pano_index].publish_item:
+                render_pano(pano_index)
 
             ob_counter += 1
             pano_index += 1
@@ -117,9 +119,11 @@ class pano_bakerToolsPanel:
         row.operator("render.pano", icon="TEXTURE_DATA",
                              text='Bake to disk')
         row.prop(context.scene, 'bake_res_out', toggle=True)
+        row.prop(scene, 'bake_overwrite', text="Overwrite")
         row = layout.row()
 
         row.prop(context.scene, 'unveil_dir_bake_output', toggle=True, text="")
+        
 
         #if scene.pano_list_index >= 0 and len(scene.pano_list) > 0:
 
@@ -155,6 +159,12 @@ def register():
     bpy.types.Scene.bake_res_out = IntProperty(
         name="Resolution for bake", default=0)
 
+    bpy.types.Scene.bake_overwrite = BoolProperty(
+        name="Bake",
+        default=False,
+        description="Overwrite files with bake"
+    )
+
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
@@ -162,3 +172,4 @@ def unregister():
     #del bpy.types.Scene.epoch_list_index
     del bpy.types.Scene.unveil_dir_bake_output
     del bpy.types.Scene.bake_res_out
+    del bpy.types.Scene.bake_overwrite
