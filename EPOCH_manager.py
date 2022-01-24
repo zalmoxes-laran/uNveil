@@ -33,6 +33,42 @@ class UN_contained_in_epoch(PropertyGroup):
 
 class EPOCH_remove(Operator):
     """Remove EPOCH"""
+    bl_idname = "un_models.rm"
+    bl_label = "Remove EPOCH"
+    bl_description = "Remove EPOCH"
+    bl_options = {'REGISTER', 'UNDO'}
+
+
+    group_un_idx: IntProperty()
+
+    def execute(self, context):
+        scene = context.scene
+        sel_epoch = scene.epoch_list[scene.epoch_list_index]
+        sel_epoch.un_list_epoch.remove(self.group_un_idx)
+        
+
+        return {'FINISHED'}
+
+class EPOCH_add(Operator):
+    """Add EPOCH"""
+    bl_idname = "un_models.add"
+    bl_label = "Add EPOCH"
+    bl_description = "Add EPOCH"
+    bl_options = {'REGISTER', 'UNDO'}
+
+
+    group_un_idx: IntProperty()
+
+    def execute(self, context):
+        scene = context.scene
+        sel_epoch = scene.epoch_list[scene.epoch_list_index]
+        
+        sel_epoch.un_list_epoch.add()
+       
+
+        return {'FINISHED'}
+class UN_Epoch_remove_UN(Operator):
+    """Remove UN from EPOCH"""
     bl_idname = "un_models.remove_epoch"
     bl_label = "Remove EPOCH"
     bl_description = "Remove EPOCH"
@@ -44,30 +80,9 @@ class EPOCH_remove(Operator):
     def execute(self, context):
         scene = context.scene
         sel_epoch = scene.epoch_list[scene.epoch_list_index]
-
         sel_epoch.un_list_epoch.remove(self.group_un_idx)
-        #print(f"Ho rimosso il {sel_un.identificativo}")
-
-        return {'FINISHED'}
-
-
-class UN_Epoch_remove_UN(Operator):
-    """Remove UN from EPOCH"""
-    bl_idname = "un_models.remove_epoch"
-    bl_label = "Remove UN from EPOCH"
-    bl_description = "Remove UN from EPOCH"
-    bl_options = {'REGISTER', 'UNDO'}
-
-
-    group_un_idx: IntProperty()
-
-    def execute(self, context):
-        scene = context.scene
-        sel_epoch = scene.epoch_list[scene.epoch_list_index]
-
-        sel_epoch.un_list_epoch.remove(self.group_un_idx)
-        #print(f"Ho rimosso il {sel_un.identificativo}")
-
+        
+        
         return {'FINISHED'}
 
 class UN_Epoch_add_remove_UN_models(Operator):
@@ -147,7 +162,7 @@ class EPOCH_UL_List(UIList):
 
             #icon = '' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
             op = layout.operator(
-                "un_models.remove_epoch", text="", emboss=False, icon='CANCEL')
+                "un_models.rm", text="", emboss=False, icon='CANCEL')
             op.group_un_idx = index
             #op.rm_add = True
             #op.group_un_idx = 8000
@@ -273,7 +288,7 @@ class EPOCHToolsPanel:
             
             row2 = layout.row()
             row2.label(text="ADD EPOCH:")
-            op_epoch = row2.operator("un_models.add_remove_epoch", text="", emboss=False, icon='ADD')
+            op_epoch = row2.operator("un_models.add", text="", emboss=False, icon='ADD')
 
             
             row = layout.row()
@@ -315,6 +330,7 @@ class VIEW3D_PT_epoch_SetupPanel(Panel, EPOCHToolsPanel):
 classes = [
     UN_contained_in_epoch,
     EPOCH_remove,
+    EPOCH_add,
     UN_Epoch_remove_UN,
     UN_Epoch_add_remove_UN_models,
     EPOCH_UL_List,
