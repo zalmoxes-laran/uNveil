@@ -123,26 +123,7 @@ class UN_Epoch_add_remove_UN_models(Operator):
                     print(f"Ho rimosso il {sel_un.identificativo}")
                 counter +=1
             
-        '''
-        selected_objects = context.selected_objects
         
-        for ob in selected_objects:
-            if len(ob.EM_ep_belong_ob) >= 0:
-                if self.rm_add:
-                    if not self.rm_pov in ob.EM_ep_belong_ob:
-                        local_counter = len(ob.EM_ep_belong_ob)
-                        ob.EM_ep_belong_ob.add()
-                        ob.EM_ep_belong_ob[local_counter].epoch = self.rm_pov
-                else:
-                    counter = 0
-                    for ob_list in ob.EM_ep_belong_ob:
-                        if ob_list.epoch == self.rm_pov:
-                            ob.EM_ep_belong_ob.remove(counter)  
-                        counter +=1
-            else:
-                ob.EM_ep_belong_ob.add()
-                ob.EM_ep_belong_ob[0].epoch = self.rm_pov    
-            '''           
         return {'FINISHED'}
 
 class EPOCH_UL_List(UIList):
@@ -212,24 +193,6 @@ class UN_EPOCH_UL_List(UIList):
         #self.layout.prop(context.scene, "test_color", text='Detail Color')
 
 
-class OT_EP_toggle_publish(Operator):
-    """Define if a EPOCH will be published or not"""
-    bl_idname = "epoch_manager.toggle_publish"
-    bl_label = "Toggle Publish"
-    bl_description = "Define if a EPOCH will be published or not"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    group_un_idx: IntProperty()
-
-    def execute(self, context):
-        scene = context.scene
-        print(str(scene.epoch_list_index))
-        if self.group_un_idx < len(scene.epoch_list):
-            print(f"toggle {self.group_un_idx}")
-            scene.epoch_list[self.group_un_idx].publish_item = not scene.epoch_list[self.group_un_idx].publish_item
-            print(scene.epoch_list[self.group_un_idx].publish_item)
-           
-        return {'FINISHED'}
 
 class EPOCHListItem(PropertyGroup):
     """ Group of properties representing an item in the list """
@@ -269,14 +232,7 @@ class EPOCHToolsPanel:
     def draw(self, context):
         layout = self.layout
         scene = context.scene
-        #obj = context.active_object
-        #resolution_pano = scene.RES_pano
-
-        #row = layout.row()
-        #row.operator("remove.pano", icon="ERROR",
-        #                     text='')
-        #row = layout.row()
-
+        
         row_epoch = layout.row()
         layout.alignment = 'LEFT'
         row_epoch.template_list("EPOCH_UL_List", "", scene,
@@ -334,9 +290,7 @@ classes = [
     UN_Epoch_add_remove_UN_models,
     EPOCH_UL_List,
     UN_EPOCH_UL_List,
-    OT_EP_toggle_publish,    
     EPOCHListItem,
-    #EPOCHToolsPanel,
     VIEW3D_PT_epoch_SetupPanel,]
 
 
