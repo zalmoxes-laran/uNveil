@@ -43,8 +43,6 @@ class EPOCH_remove(Operator):
 
     def execute(self,context):
         scene=context.scene
-        #current_epoch = scene.epoch_list[scene.epoch_list_index].name
-        #item = scene.epoch_list[self.group_epoch_idx]
         scene.epoch_list.remove(self.group_un_idx)
 
         return {'FINISHED'}
@@ -61,8 +59,7 @@ class EPOCH_add(Operator):
 
     def execute(self, context):
         scene = context.scene
-        #sel_epoch = scene.epoch_list[scene.epoch_list_index]
-        
+
         scene.epoch_list.add()
         scene.epoch_list_index=len(scene.epoch_list) -1
 
@@ -100,8 +97,6 @@ class UN_Epoch_add_remove_UN_models(Operator):
         sel_epoch = scene.epoch_list[scene.epoch_list_index]
         sel_un = scene.un_list[scene.un_list_index]
 
-        #print(sel_pano.un_list.un_item)
-        #if len(sel_pano.un_list) > 0:
         if self.rm_add:
             un_ancora_non_presente = True
 
@@ -146,8 +141,6 @@ class EPOCH_remove(Operator):
 
     def execute(self, context):
         scene = context.scene
-        #current_epoch = scene.epoch_list[scene.epoch_list_index].name
-        #item = scene.epoch_list[self.group_epoch_idx]
         scene.epoch_list.remove(self.group_un_idx)
 
         return {'FINISHED'}
@@ -160,15 +153,10 @@ class EPOCH_add(Operator):
     bl_description = "Add EPOCH"
     bl_options = {'REGISTER', 'UNDO'}
 
-    #group_un_idx: IntProperty()
-
     def execute(self, context):
         scene = context.scene
-        #sel_epoch = scene.epoch_list[scene.epoch_list_index]
-
         scene.epoch_list.add()
         scene.epoch_list_index = len(scene.epoch_list) - 1
-
         return {'FINISHED'}
 
 
@@ -204,8 +192,6 @@ class UN_Epoch_add_remove_UN_models(Operator):
         sel_epoch = scene.epoch_list[scene.epoch_list_index]
         sel_un = scene.un_list[scene.un_list_index]
 
-        #print(sel_pano.un_list.un_item)
-        #if len(sel_pano.un_list) > 0:
         if self.rm_add:
             un_ancora_non_presente = True
 
@@ -218,7 +204,6 @@ class UN_Epoch_add_remove_UN_models(Operator):
                 print(len(sel_epoch.un_list_epoch)-1)
                 sel_epoch.un_list_epoch[len(
                     sel_epoch.un_list_epoch)-1].un_item = sel_un.identificativo
-                # {sel_pano.un_list[len(sel_pano.un_list)-1].un_item}")
                 print(f"Added {sel_un.identificativo} to {sel_epoch.name}")
 
         else:
@@ -228,52 +213,21 @@ class UN_Epoch_add_remove_UN_models(Operator):
                     sel_epoch.un_list_epoch.remove(counter)
                     print(f"Ho rimosso il {sel_un.identificativo}")
                 counter += 1
-
         return {'FINISHED'}
-
 
 class EPOCH_UL_List(UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        #def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         epoch_element = item
-        #scene = context.scene occhio manca questa variabile: resol_pano
         icons_style = 'OUTLINER'
-        #layout.label(text = item.name, icon = item.icon)
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
             layout = layout.split(factor=0.7, align=True)
             layout.prop(epoch_element, "name", text="",
                         emboss=False, icon=epoch_element.icon)
-            #op = layout.menu(Epoch_un_menu.bl_idname,
 
-            #op.pano_index = index
-
-            #icon = '' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
             op = layout.operator(
                 "un_models.rm", text="", emboss=False, icon='CANCEL')
             op.group_un_idx = index
-            #op.rm_add = True
-            #op.group_un_idx = 8000
 
-            
-            # op = layout.operator(
-            #     "view.epoch", text="", emboss=False, icon='VIS_SEL_11')
-            # op.group_un_idx = index
-
-
-            # icon = 'RESTRICT_VIEW_OFF' if epoch_element.publish_item else 'RESTRICT_VIEW_ON'
-            # op = layout.operator(
-            #     "epoch_manager.toggle_publish", text="", emboss=False, icon=icon)
-            # op.group_un_idx = index
-'''
-            op = layout.operator(
-                "view.pano", text="", emboss=False, icon='VIS_SEL_11')
-            op.group_un_idx = index
-
-            icon = 'RESTRICT_VIEW_OFF' if epoch_element.publish_item else 'RESTRICT_VIEW_ON'
-            op = layout.operator(
-                "pov_manager.toggle_publish", text="", emboss=False, icon=icon)
-            op.group_un_idx = index
-'''
 class UN_EPOCH_UL_List(UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         #def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
@@ -292,23 +246,12 @@ class UN_EPOCH_UL_List(UIList):
             op.group_un_idx = index
             op.rm_add = True
             op.group_un_idx = 8000
-            '''
-            icon = 'RESTRICT_VIEW_OFF' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
-            op = layout.operator(
-                "pov_manager.toggle_publish", text="", emboss=False, icon=icon)
-            op.group_un_idx = index
-            '''
-        #self.layout.prop(context.scene, "test_color", text='Detail Color')
-
-
+            
 
 class UN_EPOCH_UL_List(UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        #def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         un_element = item
-        #scene = context.scene occhio manca questa variabile: resol_pano
         icons_style = 'OUTLINER'
-        #layout.label(text = item.name, icon = item.icon)
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
             layout = layout.split(factor=0.9, align=True)
             layout.prop(un_element, "un_item", text="",
