@@ -1129,10 +1129,10 @@ class PANOToolsPanel:
 
             op.rm_add = True
             op.group_un_idx = 8000
-            #p = row.operator("un_models.add_remove", text="", emboss=False, icon='REMOVE')
+            op = row.operator("un_models.add_remove", text="", emboss=False, icon='REMOVE')
 
-            #op.rm_add = False
-            #op.group_un_idx = 8000
+            op.rm_add = False
+            op.group_un_idx = 8000
 
 
 class VIEW3D_PT_pov_SetupPanel(Panel, PANOToolsPanel):
