@@ -49,6 +49,26 @@ class OBJECT_OT_createcyclesmat(bpy.types.Operator):
 
 ##########################################################################################
 
+## #### #### #### #### #### #### #### #### #### #### #### ####
+#### Check the presence-absence of UN against the UN LIST ####
+## #### #### #### #### #### #### #### #### #### #### #### ####
+
+def check_objs_in_scene_and_provide_icon_for_list_element(list_element_name):
+    data = bpy.data
+    icon_check = 'RESTRICT_INSTANCED_ON'
+    for ob in data.objects:
+        if ob.name == list_element_name:
+            icon_check = 'RESTRICT_INSTANCED_OFF'
+    return icon_check
+
+def update_icons(context, list_type):
+    scene = context.scene
+    list_path = "scene."+list_type
+    for element in eval(list_path):
+        element.icon = check_objs_in_scene_and_provide_icon_for_list_element(
+            element.identificativo)
+    return
+
 def rename_ge(ob):
     if ob.name.startswith('OB_'):
         #print(ob.name)
