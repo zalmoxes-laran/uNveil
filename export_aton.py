@@ -48,7 +48,7 @@ def export_unveil_json(scene, base_dir, network, sem):
         sem_subnode['titolo'] = un.nome
         sem_subnode['title'] = un.name
         sem_subnode['descrITA'] = un.descrizione
-        sem_subnode['descrENG'] = un.description
+        #sem_subnode['descrENG'] = un.description
         sem_subnode['cover'] = "immagine.jpg"
         sem_subnode['audio'] = "p11.mp3"
         # e si agganciano al nodo superiore
