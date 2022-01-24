@@ -41,11 +41,11 @@ class EPOCH_remove(Operator):
 
     group_un_idx: IntProperty()
 
-    def execute(self, context):
-        scene = context.scene
-        sel_epoch = scene.epoch_list[scene.epoch_list_index]
-        sel_epoch.un_list_epoch.remove(self.group_un_idx)
-        
+    def execute(self,context):
+        scene=context.scene
+        #current_epoch = scene.epoch_list[scene.epoch_list_index].name
+        #item = scene.epoch_list[self.group_epoch_idx]
+        scene.epoch_list.remove(self.group_un_idx)
 
         return {'FINISHED'}
 
@@ -57,14 +57,14 @@ class EPOCH_add(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
 
-    group_un_idx: IntProperty()
+    #group_un_idx: IntProperty()
 
     def execute(self, context):
         scene = context.scene
-        sel_epoch = scene.epoch_list[scene.epoch_list_index]
+        #sel_epoch = scene.epoch_list[scene.epoch_list_index]
         
-        sel_epoch.un_list_epoch.add()
-       
+        scene.epoch_list.add()
+        scene.epoch_list_index=len(scene.epoch_list) -1
 
         return {'FINISHED'}
 class UN_Epoch_remove_UN(Operator):
@@ -282,22 +282,21 @@ class EPOCHToolsPanel:
         row_epoch.template_list("EPOCH_UL_List", "", scene,
                           "epoch_list", scene, "epoch_list_index")
         
-        if scene.epoch_list_index >= 0 and len(scene.epoch_list) > 0:
-            current_epoch = scene.epoch_list[scene.epoch_list_index].name
-            item = scene.epoch_list[scene.epoch_list_index]
-            
-            row2 = layout.row()
-            row2.label(text="ADD EPOCH:")
-            op_epoch = row2.operator("un_models.add", text="", emboss=False, icon='ADD')
+        
+        
+        row2 = layout.row()
+        row2.label(text="ADD EPOCH:")
+        op_epoch = row2.operator("un_models.add", text="", emboss=False, icon='ADD')
 
-            
+        if scene.epoch_list_index >= 0 and len(scene.epoch_list) > 0:
+            item = scene.epoch_list[scene.epoch_list_index]        
             row = layout.row()
             row.label(text="Name:")
             row = layout.row()
             row.prop(item, "name", text="")
         
         
-        if scene.epoch_list_index >= 0 and len(scene.epoch_list) > 0:
+        #if scene.epoch_list_index >= 0 and len(scene.epoch_list) > 0:
             row1 = layout.row()
             layout.alignment = 'LEFT'
             row1 = layout.row()
