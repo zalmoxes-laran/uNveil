@@ -62,7 +62,7 @@ class UNListItem(PropertyGroup):
     icon : StringProperty(
             name="code for icon",
             description="",
-            default="GROUP_UVS")
+            default="RESTRICT_INSTANCED_ON")
 
     descrizione: StringProperty(
             name="Descrizione",
@@ -236,7 +236,39 @@ class SETunNAME(bpy.types.Operator):
         scene.un_list[self.index_number].previous_name = scene.un_list[self.index_number].name
 
         return {'FINISHED'}
-            
+
+
+class UN_listitem_OT_to3D(bpy.types.Operator):
+    bl_idname = "unlistitem.toobj"
+    bl_label = "Use element's name from the list above to rename selected 3D object"
+    bl_options = {"REGISTER", "UNDO"}
+
+    list_type: StringProperty()
+
+    @classmethod
+    def poll(cls, context):
+        obj = context.object
+        if obj is None:
+            pass
+        else:
+            return (obj.type in ['MESH'])
+
+    def execute(self, context):
+        scene = context.scene
+        item_name_picker_cmd = "scene."+self.list_type + "[scene."+self.list_type+"_index]"
+        #print(f"La funzione da avviare: {item_name_picker_cmd}")
+        #item = scene.un_list[scene.un_list_index]
+        item = eval(item_name_picker_cmd)
+        #print(f"oogetto si chiama {item.identificativo}")
+        context.active_object.name = item.identificativo
+        update_icons(context, self.list_type)
+        #if self.list_type == "un_list":
+        #    if context.scene.proxy_display_mode == "EM":
+        #        bpy.ops.emset.emmaterial()
+        #    else:
+        #        bpy.ops.emset.epochmaterial()
+        return {'FINISHED'}
+
 class UNToolsPanel:
     bl_label = "UN manager"
     bl_space_type = "VIEW_3D"
@@ -277,11 +309,24 @@ class UNToolsPanel:
         if scene.un_list_index >= 0 and len(scene.un_list) > 0:
             current_un = scene.un_list[scene.un_list_index].name
             item = scene.un_list[scene.un_list_index]
+
+            box = layout.box()
+            row = box.row(align=True)
+            #row.label(text="US/USV name, description:")
+            #row = box.row()
+            split = row.split()
+            col = split.column()
+            row.prop(item, "identificativo", text="Id")
+            split = row.split()
+            col = split.column()
+            op = col.operator("unlistitem.toobj", icon="PASTEDOWN", text='')
+            op.list_type = "un_list"
+
             row = layout.row()
-            row.label(text="Id:")
-            row = layout.row()
-            row.prop(item, "identificativo", text="")
-            row = layout.row()
+            #row.label(text="Id:")
+            #row = layout.row()
+            #row.prop(item, "identificativo", text="")
+            #row = layout.row()
             row.label(text="Nome:")
             row = layout.row()
             row.prop(item, "nome", text="")
@@ -317,6 +362,7 @@ classes = [
     SETunNAME,
     VIEW3D_PT_un_SetupPanel,
     UN_properties_belonging_ob,
+    UN_listitem_OT_to3D,
     ]
 
 def register():

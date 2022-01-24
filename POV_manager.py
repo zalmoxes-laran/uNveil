@@ -408,11 +408,14 @@ class PANO_UL_List(UIList):
         icons_style = 'OUTLINER'
         #layout.label(text = item.name, icon = item.icon)
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            layout = layout.split(factor=0.7, align=True)
+            layout = layout.split(factor=0.65, align=True)
             layout.prop(pano_element, "name", text="",
                         emboss=False, icon=pano_element.icon)
-            op = layout.menu(Epoch_un_menu.bl_idname,
-                            text=pano_element.active_un_epoch)#, icon='COLOR')
+            layout = layout.split(factor=0.4, align=True)
+            layout.prop(bpy.data.objects[pano_element.name].material_slots[0].material.node_tree.nodes['Mix Shader'].inputs[0], "default_value", text="",
+                        emboss=True)
+            #op = layout.menu(Epoch_un_menu.bl_idname,
+            #                text=pano_element.active_un_epoch)#, icon='COLOR')
             #op.pano_index = index
 
             #icon = '' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
@@ -486,6 +489,11 @@ class PANOListItem(PropertyGroup):
     name : StringProperty(
             name="Name",
             description="A name for this item",
+            default="Untitled")
+
+    title: StringProperty(
+            name="Title",
+            description="Title of the pano for the User Interface",
             default="Untitled")
 
     previous_name : StringProperty(
@@ -1025,7 +1033,10 @@ class PANOToolsPanel:
             row.prop(item, "name", text="")
             op = row.operator("set.panoname", icon="DISC", text="")
             op.index_number = scene.pano_list_index
-
+            row = layout.row()
+            row.label(text="Title:")
+            row = layout.row()
+            row.prop(item, "title", text="")
             row = layout.row()  
             row.label(text="Group:")
             row = layout.row()
@@ -1089,10 +1100,10 @@ class PANOToolsPanel:
 
             op.rm_add = True
             op.group_un_idx = 8000
-            #p = row.operator("un_models.add_remove", text="", emboss=False, icon='REMOVE')
+            op = row.operator("un_models.add_remove", text="", emboss=False, icon='REMOVE')
 
-            #op.rm_add = False
-            #op.group_un_idx = 8000
+            op.rm_add = False
+            op.group_un_idx = 8000
 
 
 class VIEW3D_PT_pov_SetupPanel(Panel, PANOToolsPanel):
