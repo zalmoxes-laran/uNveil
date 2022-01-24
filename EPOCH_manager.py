@@ -255,15 +255,15 @@ class EPOCH_UL_List(UIList):
             #op.group_un_idx = 8000
 
             
-            op = layout.operator(
-                "view.epoch", text="", emboss=False, icon='VIS_SEL_11')
-            op.group_un_idx = index
+            # op = layout.operator(
+            #     "view.epoch", text="", emboss=False, icon='VIS_SEL_11')
+            # op.group_un_idx = index
 
 
-            icon = 'RESTRICT_VIEW_OFF' if epoch_element.publish_item else 'RESTRICT_VIEW_ON'
-            op = layout.operator(
-                "epoch_manager.toggle_publish", text="", emboss=False, icon=icon)
-            op.group_un_idx = index
+            # icon = 'RESTRICT_VIEW_OFF' if epoch_element.publish_item else 'RESTRICT_VIEW_ON'
+            # op = layout.operator(
+            #     "epoch_manager.toggle_publish", text="", emboss=False, icon=icon)
+            # op.group_un_idx = index
 '''
             op = layout.operator(
                 "view.pano", text="", emboss=False, icon='VIS_SEL_11')
@@ -314,21 +314,10 @@ class UN_EPOCH_UL_List(UIList):
             layout.prop(un_element, "un_item", text="",
                         emboss=False, icon='VIS_SEL_11')
 
-            #icon = '' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
             op = layout.operator(
                 "un_models.remove_epoch", text="", emboss=False, icon='CANCEL')
             op.group_un_idx = index
-            op.rm_add = True
-            op.group_un_idx = 8000
-            '''
-            icon = 'RESTRICT_VIEW_OFF' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
-            op = layout.operator(
-                "pov_manager.toggle_publish", text="", emboss=False, icon=icon)
-            op.group_un_idx = index
-            '''
-        #self.layout.prop(context.scene, "test_color", text='Detail Color')
-
-
+            
 
 class EPOCHListItem(PropertyGroup):
     """ Group of properties representing an item in the list """
@@ -372,61 +361,46 @@ class EPOCHToolsPanel:
     def draw(self, context):
         layout = self.layout
         scene = context.scene
-
-        
         row_epoch = layout.row()
         layout.alignment = 'LEFT'
         row_epoch.template_list("EPOCH_UL_List", "", scene,
                           "epoch_list", scene, "epoch_list_index")
-        
-        
-        
         row2 = layout.row()
         row2.label(text="ADD EPOCH:")
         op_epoch = row2.operator("un_models.add", text="", emboss=False, icon='ADD')
 
         if scene.epoch_list_index >= 0 and len(scene.epoch_list) > 0:
             item = scene.epoch_list[scene.epoch_list_index]        
-
             row = layout.row()
             row.label(text="Name:")
             row = layout.row()
             row.prop(item, "name", text="")
         
-        
-        #if scene.epoch_list_index >= 0 and len(scene.epoch_list) > 0:
             row1 = layout.row()
             layout.alignment = 'LEFT'
             row1 = layout.row()
-
             row1.label(text="List of related Narrative Units (UN):")
             row1 = layout.row()
             row1.template_list("UN_EPOCH_UL_List", "", scene.epoch_list[scene.epoch_list_index],
                             "un_list_epoch", scene, "un_inepoch_list_index", rows=3)
             
-            
-           
-            
             row1 = layout.row()
             row1.label(text="Assign selected UN to current EPOCH:")
             op_epoch = row1.operator("un_models.add_remove_epoch", text="", emboss=False, icon='ADD')
 
+            # row1 = layout.row()
+            # layout.alignment = 'LEFT'
+            # row1 = layout.row()
 
-        #if scene.epoch_list_index >= 0 and len(scene.epoch_list) > 0:
-            row1 = layout.row()
-            layout.alignment = 'LEFT'
-            row1 = layout.row()
+            # row1.label(text="List of related Narrative Units (UN):")
+            # row1 = layout.row()
+            # row1.template_list("UN_EPOCH_UL_List", "", scene.epoch_list[scene.epoch_list_index],
+            #                    "un_list_epoch", scene, "un_inepoch_list_index", rows=3)
 
-            row1.label(text="List of related Narrative Units (UN):")
-            row1 = layout.row()
-            row1.template_list("UN_EPOCH_UL_List", "", scene.epoch_list[scene.epoch_list_index],
-                               "un_list_epoch", scene, "un_inepoch_list_index", rows=3)
-
-            row1 = layout.row()
-            row1.label(text="Assign selected UN to current EPOCH:")
-            op_epoch = row1.operator(
-                "un_models.add_remove_epoch", text="", emboss=False, icon='ADD')
-
+            # row1 = layout.row()
+            # row1.label(text="Assign selected UN to current EPOCH:")
+            # op_epoch = row1.operator(
+            #     "un_models.add_remove_epoch", text="", emboss=False, icon='ADD')
 
             op_epoch.rm_add = True
             op_epoch.group_un_idx = 8000
