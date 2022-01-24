@@ -11,7 +11,6 @@ import json
 
 from shutil import copyfile
 
-
 def export_unveil_json(scene, base_dir, network, sem):
     
     for pano in scene.pano_list:
