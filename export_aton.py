@@ -24,15 +24,16 @@ def export_unveil_json(scene, base_dir, network, sem):
             network_node['pos'] = [ob.location[0], ob.location[2], -ob.location[1]]
             #network_node['rot'] = [ob.rotation_euler[0], ob.rotation_euler[2], -ob.rotation_euler[1]]
             network_node['rot'] = [0.0, 0.0, 0.0]
-            network_node['semlist'] = []
+            
+            network_node['semlist'] = {"a":[], "m":[]}
 
             if len(pano.un_list) > 0:
                 for sema in pano.un_list:
                     print(f"stampare {sema.un_item}")
-                    network_node['semlist'].append(str(sema.un_item))
-            
+                    network_node['semlist']['a'].append(str(sema.un_item))
+                    network_node['semlist']['m'].append(str(sema.un_item))
             network.append(network_node)
-
+            
     for un in scene.un_list:
 
         sem_node = {}
