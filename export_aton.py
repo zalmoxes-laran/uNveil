@@ -14,26 +14,60 @@ from shutil import copyfile
 
 def export_unveil_json(scene, base_dir, network, sem):
     
+    
+    
+    
+    
     for pano in scene.pano_list:
+        list_un_pano=[]
+        np=(pano.name)
+        network_node = {}
         if pano.publish_item:
-            network_node = {}
-            print(pano.name)
-            network_node['name'] = pano.name
+        
+            network_node['name'] = np
             network_node['title'] = pano.title
             ob = panolistitem_to_obj(pano)
             network_node['pos'] = [ob.location[0], ob.location[2], -ob.location[1]]
-            #network_node['rot'] = [ob.rotation_euler[0], ob.rotation_euler[2], -ob.rotation_euler[1]]
             network_node['rot'] = [0.0, 0.0, 0.0]
             
-            network_node['semlist'] = {"a":[], "m":[]}
-
-            if len(pano.un_list) > 0:
-                for sema in pano.un_list:
-                    print(f"stampare {sema.un_item}")
-                    network_node['semlist']['a'].append(str(sema.un_item))
-                    network_node['semlist']['m'].append(str(sema.un_item))
-            network.append(network_node)
             
+        #network_node['semlist'] = []
+        if len(pano.un_list) > 0:
+            for sema in pano.un_list:
+                list_un_pano.append(sema.un_item)
+                # print(f"stampare {sema.un_item}")
+                #pano_a=network_node['semlist'].append(str(sema.un_item))
+                
+        i=0
+        network_node['semlist'] = []       
+        for ep in scene.epoch_list:
+            list_epoch=[]
+            list_un_epoch=[]
+            s=str(ep.name)
+            list_epoch.append(s)
+            print(s)
+            #
+            
+            for sema_2 in ep.un_list_epoch:
+                list_un_epoch.append(sema_2.un_item)
+                print(str(list_un_epoch))
+            #for e in list_un_epoch:            
+                #epoch_b= network_node['semlist'].append(str(e))
+                #print(str(epoch_b))
+        
+        
+            intersezione=[]
+            intersezione=set(list_un_epoch)&set(list_un_pano) #comapara le liste
+            print('ok')
+            a = ep.name 
+            network_node['semlist'] ={a:[]}
+            network_node['semlist'][a].append(list(intersezione))
+        i+=1        
+            #else:
+                #print('non sono uguali')
+            
+        network.append(network_node)   
+            #network.append() 
     for un in scene.un_list:
 
         sem_node = {}

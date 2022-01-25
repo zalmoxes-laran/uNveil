@@ -38,105 +38,6 @@ class EPOCH_remove(Operator):
     bl_description = "Remove EPOCH"
     bl_options = {'REGISTER', 'UNDO'}
 
-
-    group_un_idx: IntProperty()
-
-    def execute(self,context):
-        scene=context.scene
-        scene.epoch_list.remove(self.group_un_idx)
-
-        return {'FINISHED'}
-
-class EPOCH_add(Operator):
-    """Add EPOCH"""
-    bl_idname = "un_models.add"
-    bl_label = "Add EPOCH"
-    bl_description = "Add EPOCH"
-    bl_options = {'REGISTER', 'UNDO'}
-
-
-    #group_un_idx: IntProperty()
-
-    def execute(self, context):
-        scene = context.scene
-
-        scene.epoch_list.add()
-        scene.epoch_list_index=len(scene.epoch_list) -1
-
-        return {'FINISHED'}
-class UN_Epoch_remove_UN(Operator):
-    """Remove UN from EPOCH"""
-    bl_idname = "un_models.remove_epoch"
-    bl_label = "Remove EPOCH"
-    bl_description = "Remove EPOCH"
-    bl_options = {'REGISTER', 'UNDO'}
-
-
-    group_un_idx: IntProperty()
-
-    def execute(self, context):
-        scene = context.scene
-        sel_epoch = scene.epoch_list[scene.epoch_list_index]
-        sel_epoch.un_list_epoch.remove(self.group_un_idx)
-        
-        
-        return {'FINISHED'}
-
-class UN_Epoch_add_remove_UN_models(Operator):
-    """Add and remove UN to/from EPOCH"""
-    bl_idname = "un_models.add_remove_epoch"
-    bl_label = "Add and remove UN to/from EPOCH"
-    bl_description = "Add and remove UN to/from EPOCH"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    rm_add : BoolProperty()
-    group_un_idx : IntProperty()
-
-    def execute(self, context_epoch):
-        scene = context_epoch.scene
-        sel_epoch = scene.epoch_list[scene.epoch_list_index]
-        sel_un = scene.un_list[scene.un_list_index]
-
-        if self.rm_add:
-            un_ancora_non_presente = True
-
-            for list_item in sel_epoch.un_list_epoch:
-                if sel_un.identificativo == list_item.un_item:
-                    un_ancora_non_presente = False
-
-            if un_ancora_non_presente:
-                sel_epoch.un_list_epoch.add()
-                print(len(sel_epoch.un_list_epoch)-1)
-                sel_epoch.un_list_epoch[len(sel_epoch.un_list_epoch)-1].un_item = sel_un.identificativo
-                print(f"Added {sel_un.identificativo} to {sel_epoch.name}") #{sel_pano.un_list[len(sel_pano.un_list)-1].un_item}")
-        
-        else:
-            counter = 0
-            while counter < len(sel_epoch.un_list_epoch):
-                if sel_un.identificativo == sel_epoch.un_list_epoch[counter].un_item:
-                    sel_epoch.un_list_epoch.remove(counter)
-                    print(f"Ho rimosso il {sel_un.identificativo}")
-                counter +=1
-            
-        
-        return {'FINISHED'}
-
-class UN_contained_in_epoch(PropertyGroup):
-    """ List of UN """
-
-    un_item: StringProperty(
-        name="Name",
-        description="name of the UN",
-        default="Untitled")
-
-
-class EPOCH_remove(Operator):
-    """Remove EPOCH"""
-    bl_idname = "un_models.rm"
-    bl_label = "Remove EPOCH"
-    bl_description = "Remove EPOCH"
-    bl_options = {'REGISTER', 'UNDO'}
-
     group_un_idx: IntProperty()
 
     def execute(self, context):
@@ -279,9 +180,6 @@ class EPOCHListItem(PropertyGroup):
         name="Res",
         default=1,
         description="Resolution of Panoramic image for this bubble")
-
-    un_list_epoch: CollectionProperty(
-        type=UN_contained_in_epoch)
 
     un_list_epoch: CollectionProperty(
         type=UN_contained_in_epoch)
