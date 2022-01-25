@@ -11,7 +11,17 @@ from .POV_manager import panolistitem_to_obj
 import json
 
 from shutil import copyfile
-
+def listToString(s): 
+    
+    # initialize an empty string
+    str1 = "" 
+    
+    # traverse in the string  
+    for ele in s: 
+        str1 += ele  
+    
+    # return string  
+    return str1 
 
 def export_unveil_json(scene, base_dir, network, sem):
     
@@ -57,13 +67,14 @@ def export_unveil_json(scene, base_dir, network, sem):
                 #print(str(epoch_b))
         
         
-            intersezione=[]
-            intersezione=set(list_un_epoch)&set(list_un_pano) #comapara le liste
-            print('ok')
-            a = ep.name 
-            network_node['semlist'] ={a:[]}
-            network_node['semlist'][a].append(list(intersezione))
-        i+=1        
+                intersezione=[]
+                intersezione=set(list_un_epoch)&set(list_un_pano) #comapara le liste
+                print('ok')
+                a = ep.name
+            
+                network_node['semlist'] = {'{}'.format(a):[]}
+                network_node['semlist'][a].append(listToString(list(intersezione)))
+            i+=1        
             #else:
                 #print('non sono uguali')
             
