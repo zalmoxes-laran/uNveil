@@ -59,7 +59,7 @@ def export_unveil_json(scene, base_dir, network, sem):
                 #list_epoch.append(s)
                 #print(s)
                 #
-                
+                network_node['semlist'] = {'{}'.format(ep.name):[]}
                 for sema_2 in ep.un_list_epoch:
                     list_un_epoch.append(sema_2.un_item)
                 print(str(list_un_epoch))
@@ -72,8 +72,8 @@ def export_unveil_json(scene, base_dir, network, sem):
                 intersezione=set(list_un_epoch)&set(list_un_pano) #comapara le liste
                 print(f'ok: in {ep.name} si trova {intersezione}')
                                 
-                network_node['semlist'] = {'{}'.format(ep.name):[]}
-                network_node['semlist'][ep.name] = list(intersezione)
+                for d in scene.epoch_list:
+                    network_node['semlist'][d.name] = list(intersezione)
                
                 i+=1        
                 #else:
