@@ -40,46 +40,48 @@ def export_unveil_json(scene, base_dir, network, sem):
             ob = panolistitem_to_obj(pano)
             network_node['pos'] = [ob.location[0], ob.location[2], -ob.location[1]]
             network_node['rot'] = [0.0, 0.0, 0.0]
-            
-            
-        #network_node['semlist'] = []
-        if len(pano.un_list) > 0:
-            for sema in pano.un_list:
-                list_un_pano.append(sema.un_item)
-                # print(f"stampare {sema.un_item}")
-                #pano_a=network_node['semlist'].append(str(sema.un_item))
                 
-        i=0
-        network_node['semlist'] = []       
-        for ep in scene.epoch_list:
-            list_epoch=[]
-            list_un_epoch=[]
-            s=str(ep.name)
-            list_epoch.append(s)
-            print(s)
-            #
-            
-            for sema_2 in ep.un_list_epoch:
-                list_un_epoch.append(sema_2.un_item)
+                
+            #network_node['semlist'] = []
+            if len(pano.un_list) > 0:
+                for sema in pano.un_list:
+                    list_un_pano.append(sema.un_item)
+                    # print(f"stampare {sema.un_item}")
+                    #pano_a=network_node['semlist'].append(str(sema.un_item))
+                    
+            i=0
+            network_node['semlist'] = []  
+            #list_epoch=[]     
+            for ep in scene.epoch_list:
+                
+                list_un_epoch=[]
+                #s=str(ep.name)
+                #list_epoch.append(s)
+                #print(s)
+                #
+                
+                for sema_2 in ep.un_list_epoch:
+                    list_un_epoch.append(sema_2.un_item)
                 print(str(list_un_epoch))
-            #for e in list_un_epoch:            
-                #epoch_b= network_node['semlist'].append(str(e))
-                #print(str(epoch_b))
-        
+                #for e in list_un_epoch:            
+                    #epoch_b= network_node['semlist'].append(str(e))
+                    #print(str(epoch_b))
+            
         
                 intersezione=[]
                 intersezione=set(list_un_epoch)&set(list_un_pano) #comapara le liste
-                print('ok')
-                a = ep.name
-            
-                network_node['semlist'] = {'{}'.format(a):[]}
-                network_node['semlist'][a].append(listToString(list(intersezione)))
-            i+=1        
-            #else:
-                #print('non sono uguali')
-            
-        network.append(network_node)   
-            #network.append() 
+                print(f'ok: in {ep.name} si trova {intersezione}')
+                                
+                network_node['semlist'] = {'{}'.format(ep.name):[]}
+                network_node['semlist'][ep.name] = list(intersezione)
+               
+                i+=1        
+                #else:
+                    #print('non sono uguali')
+                
+            network.append(network_node)   
+                #network.append() 
+
     for un in scene.un_list:
 
         sem_node = {}
@@ -136,6 +138,14 @@ class UNVEIL_OT_aton_json_export(bpy.types.Operator):
         
         unveil_scene['distancetext'] = "distante"
 
+        unveil_scene['shift'] = [scene.BL_x_shift,scene.BL_y_shift]
+
+        unveil_scene['title'] = "Area dell'Acropoli"
+
+        unveil_scene['main'] = 0
+
+        unveil_scene['icon'] = "area-acropoli.png"
+
         unveil_scene['network'] = network
 
         unveil_scene['sem'] = sem
@@ -144,7 +154,7 @@ class UNVEIL_OT_aton_json_export(bpy.types.Operator):
         data = json.dumps(unveil_scene, indent=4, ensure_ascii=True)
 
         #'/users/emanueldemetrescu/Desktop/'
-        file_name_with_suffix = "config-"+scene.aton_pano_project_name+".json"
+        file_name_with_suffix = scene.aton_pano_project_name+".json"
         file_name = os.path.join(base_dir, file_name_with_suffix)
 
         # write JSON file
