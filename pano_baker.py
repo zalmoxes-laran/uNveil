@@ -36,6 +36,9 @@ def setup_panorender():
     scene.render.resolution_y = scene.render.resolution_x/2
     scene.render.resolution_percentage = 100
     scene.render.use_overwrite = False
+    scene.cycles.use_denoising = False
+    scene.cycles.max_bounces = 1
+    scene.cycles.use_adaptive_sampling = False
 
 def render_pano(pano_index):
     #ob = pano_ob_in_list

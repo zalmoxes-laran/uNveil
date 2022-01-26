@@ -140,11 +140,13 @@ class UNVEIL_OT_aton_json_export(bpy.types.Operator):
 
         unveil_scene['shift'] = [scene.BL_x_shift,scene.BL_y_shift]
 
-        unveil_scene['title'] = "Area dell'Acropoli"
+        unveil_scene['title'] = scene.aton_pano_project_name
+
+        unveil_scene['descr'] = scene.aton_pano_project_descr
 
         unveil_scene['main'] = 0
 
-        unveil_scene['icon'] = "area-acropoli.png"
+        unveil_scene['icon'] = scene.aton_pano_project_icon
 
         unveil_scene['network'] = network
 
@@ -216,6 +218,18 @@ class Export_Aton_panel:
         row.prop(context.scene, 'aton_pano_project_name', toggle=True, text="")
 
         row = layout.row()
+        row.label(text="Nome scena")
+        row.prop(context.scene, 'aton_pano_project_title', toggle=True, text="")
+    
+        row = layout.row()
+        row.label(text="Descrizione scena")
+        row.prop(context.scene, 'aton_pano_project_descr', toggle=True, text="")
+
+        row = layout.row()
+        row.label(text="Icona scena")
+        row.prop(context.scene, 'aton_pano_project_icon', toggle=True, text="")
+
+        row = layout.row()
         row.prop(context.scene, 'unveil_dir_aton', toggle = True, text ="")
 
 class VIEW3D_PT_un_Export_Aton_panel(Panel, Export_Aton_panel):
@@ -232,6 +246,7 @@ classes = [
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
+
     bpy.types.Scene.unveil_dir_aton = StringProperty(
         name = "Aton directory for uNveil",
         default = "",
@@ -244,8 +259,29 @@ def register():
         description = "Define the suffix of the name of the project",
     )
 
+    bpy.types.Scene.aton_pano_project_title = StringProperty(
+        name = "Title of the scene cluster",
+        default = "",
+        description = "Title of the scene cluster",
+    )
+
+    bpy.types.Scene.aton_pano_project_descr = StringProperty(
+        name = "Descriprion of the scene cluster",
+        default = "",
+        description = "Descriprion of the scene cluster",
+    )
+
+    bpy.types.Scene.aton_pano_project_icon = StringProperty(
+        name = "Icon of the scene cluster",
+        default = "",
+        description = "Icon of the scene cluster",
+    )
+
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)        
     del bpy.types.Scene.unveil_dir_aton
     del bpy.types.Scene.aton_pano_project_name
+    del bpy.types.Scene.aton_pano_project_title
+    del bpy.types.Scene.aton_pano_project_descr
+    del bpy.types.Scene.aton_pano_project_icon
