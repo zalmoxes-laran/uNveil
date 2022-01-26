@@ -11,17 +11,6 @@ from .POV_manager import panolistitem_to_obj
 import json
 
 from shutil import copyfile
-def listToString(s): 
-    
-    # initialize an empty string
-    str1 = "" 
-    
-    # traverse in the string  
-    for ele in s: 
-        str1 += ele  
-    
-    # return string  
-    return str1 
 
 def export_unveil_json(scene, base_dir, network, sem):    
     for pano in scene.pano_list:
@@ -56,20 +45,19 @@ def export_unveil_json(scene, base_dir, network, sem):
             network.append(network_node)
 
     for un in scene.un_list:
-
+        # qui si crea un vocabolario vuoto per il singolo nodo semantico
         sem_node = {}
-        # qui si iniettano i descrittori del un
+
+        # qui si iniettano i descrittori dell'un
         sem_subnode = {}
-
         sem_subnode['title'] = un.nome
-        #sem_subnode['title'] = un.name
         sem_subnode['descr'] = un.descrizione
+        sem_subnode['cover'] = un.media
+        sem_subnode['audio'] = un.audio
 
-        #sem_subnode['descrENG'] = un.description
-        sem_subnode['cover'] = "immagine.jpg"
-        sem_subnode['audio'] = "p11.mp3"
         # e si agganciano al nodo superiore
         sem_node = sem_subnode
+
         # qui si assegna il nome del UN
         sem[un.identificativo] = sem_node
 
@@ -113,7 +101,7 @@ class UNVEIL_OT_aton_json_export(bpy.types.Operator):
 
         unveil_scene['shift'] = [scene.BL_x_shift,scene.BL_y_shift]
 
-        unveil_scene['title'] = scene.aton_pano_project_name
+        unveil_scene['title'] = scene.aton_pano_project_title
 
         unveil_scene['descr'] = scene.aton_pano_project_descr
 
