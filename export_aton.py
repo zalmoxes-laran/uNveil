@@ -23,12 +23,7 @@ def listToString(s):
     # return string  
     return str1 
 
-def export_unveil_json(scene, base_dir, network, sem):
-    
-    
-    
-    
-    
+def export_unveil_json(scene, base_dir, network, sem):    
     for pano in scene.pano_list:
         list_un_pano=[]
         np=(pano.name)
@@ -40,47 +35,25 @@ def export_unveil_json(scene, base_dir, network, sem):
             ob = panolistitem_to_obj(pano)
             network_node['pos'] = [ob.location[0], ob.location[2], -ob.location[1]]
             network_node['rot'] = [0.0, 0.0, 0.0]
-                
-                
-            #network_node['semlist'] = []
+            
             if len(pano.un_list) > 0:
                 for sema in pano.un_list:
                     list_un_pano.append(sema.un_item)
-                    # print(f"stampare {sema.un_item}")
-                    #pano_a=network_node['semlist'].append(str(sema.un_item))
-                    
-            i=0
-            network_node['semlist'] = []  
-            #list_epoch=[]     
-            for ep in scene.epoch_list:
+            
+            network_node['semlist'] = {}
                 
+            for ep in scene.epoch_list:                
                 list_un_epoch=[]
-                #s=str(ep.name)
-                #list_epoch.append(s)
-                #print(s)
-                #
-                network_node['semlist'] = {'{}'.format(ep.name):[]}
+                
                 for sema_2 in ep.un_list_epoch:
                     list_un_epoch.append(sema_2.un_item)
-                print(str(list_un_epoch))
-                #for e in list_un_epoch:            
-                    #epoch_b= network_node['semlist'].append(str(e))
-                    #print(str(epoch_b))
-            
-        
+                
                 intersezione=[]
                 intersezione=set(list_un_epoch)&set(list_un_pano) #comapara le liste
-                print(f'ok: in {ep.name} si trova {intersezione}')
-                                
-                for d in scene.epoch_list:
-                    network_node['semlist'][d.name] = list(intersezione)
-               
-                i+=1        
-                #else:
-                    #print('non sono uguali')
-                
-            network.append(network_node)   
-                #network.append() 
+                print(f'ok {ep.name} in : {intersezione}')
+                t=list(intersezione)
+                network_node['semlist'][ep.name]=t                
+            network.append(network_node)
 
     for un in scene.un_list:
 
