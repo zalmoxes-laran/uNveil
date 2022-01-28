@@ -1,6 +1,9 @@
 '''
-CC-BY-NC 2018 EMANUEL DEMETRESCU
+CC-BY-ND 2022 EMANUEL DEMETRESCU
 emanuel.demetrescu@gmail.com
+
+Contributions by 
+Enzo Cocca - enzo.ccc@gmail.com
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,29 +22,19 @@ emanuel.demetrescu@gmail.com
 bl_info = {
     "name": "uNveil per Blender",
     "author": "Emanuel Demetrescu",
-    "version": (0,9,14),
-    "blender": (2, 93, 5),
+    "version": (1,0,0),
+    "blender": (3, 0, 0),
     "location": "3D View > Toolbox",
     "description": "Multitemporal storytelling",
-    "warning": "alpha",
+    #"warning": "alpha",
     #"wiki_url": "",
     #"tracker_url": "",
     "category": "Tools"
     }
 
-# if "bpy" in locals():
-#     import importlib
-#     importlib.reload(import_uNveil)
- 
-# else:
 import math
 import bpy
-
-# import sys, os
-# sys.path.append(os.path.dirname(__file__)) 
-
 import bpy.props as prop
-
 from bpy.props import (
             StringProperty,
             IntProperty,
@@ -53,7 +46,6 @@ from bpy.types import (
 
 from .blender_pip import Pip
 Pip._ensure_user_site_package()
-
 from .google_credentials import *
 
 from . import (
