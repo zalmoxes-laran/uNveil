@@ -261,46 +261,6 @@ def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col,
                 #pano_list_index_counter += 1
 
         return {'FINISHED'}
-'''
-def read_point_data(context, filepath, shift, name_col, x_col, y_col, z_col, omega_col, phi_col, kappa_col, separator):
-    print("running read point file...")
-    f = open(filepath, 'r', encoding='utf-8')
-    arr=f.readlines()  # store the entire file in a variable
-    f.close()
-    
-    counter = 0
-
-    for p in arr:
-        p0 = p.split(separator)  # use separator variable as separator
-        ItemName = p0[int(name_col)]
-        print(str(ItemName))
-        print(str(p0[1]))
-        x_coor = float(p0[1])
-        y_coor = float(p0[int(y_col)])
-        z_coor = float(p0[int(z_col)])
-         
-        if shift == True:
-            shift_x = context.scene.BL_x_shift
-            shift_y = context.scene.BL_y_shift
-            shift_z = context.scene.BL_z_shift
-            x_coor = x_coor-shift_x
-            y_coor = y_coor-shift_y
-            z_coor = z_coor-shift_z  
-
-        # Generate object at x = lon and y = lat (and z = 0 )
-        o = bpy.data.objects.new( ItemName, None )
-        if counter == 0:
-                newcol = create_new_col_from_file_name(namefile_from_path(filepath))
-                counter += 1
-
-        newcol.objects.link(o)
-        o.location.x = x_coor
-        o.location.y = y_coor
-        o.location.z = z_coor
-        o.show_name = True
-
-    return {'FINISHED'}
-    '''
 
 class ImportCoorPanorami(Operator, ImportHelper):
     """Tool to import panoramas from a txt file"""
@@ -448,11 +408,14 @@ class PANO_UL_List(UIList):
         icons_style = 'OUTLINER'
         #layout.label(text = item.name, icon = item.icon)
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            layout = layout.split(factor=0.7, align=True)
+            layout = layout.split(factor=0.65, align=True)
             layout.prop(pano_element, "name", text="",
                         emboss=False, icon=pano_element.icon)
-            op = layout.menu(Epoch_un_menu.bl_idname,
-                            text=pano_element.active_un_epoch)#, icon='COLOR')
+            layout = layout.split(factor=0.4, align=True)
+            layout.prop(bpy.data.objects[pano_element.name].material_slots[0].material.node_tree.nodes['Mix Shader'].inputs[0], "default_value", text="",
+                        emboss=True)
+            #op = layout.menu(Epoch_un_menu.bl_idname,
+            #                text=pano_element.active_un_epoch)#, icon='COLOR')
             #op.pano_index = index
 
             #icon = '' if pano_element.publish_item else 'RESTRICT_VIEW_ON'
@@ -526,6 +489,11 @@ class PANOListItem(PropertyGroup):
     name : StringProperty(
             name="Name",
             description="A name for this item",
+            default="Untitled")
+
+    title: StringProperty(
+            name="Title",
+            description="Title of the pano for the User Interface",
             default="Untitled")
 
     previous_name : StringProperty(
@@ -1065,7 +1033,10 @@ class PANOToolsPanel:
             row.prop(item, "name", text="")
             op = row.operator("set.panoname", icon="DISC", text="")
             op.index_number = scene.pano_list_index
-
+            row = layout.row()
+            row.label(text="Title:")
+            row = layout.row()
+            row.prop(item, "title", text="")
             row = layout.row()  
             row.label(text="Group:")
             row = layout.row()
