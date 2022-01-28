@@ -22,7 +22,7 @@ Enzo Cocca - enzo.ccc@gmail.com
 bl_info = {
     "name": "uNveil per Blender",
     "author": "Emanuel Demetrescu",
-    "version": (1,0,0),
+    "version": (1,0,1),
     "blender": (3, 0, 0),
     "location": "3D View > Toolbox",
     "description": "Multitemporal storytelling",
