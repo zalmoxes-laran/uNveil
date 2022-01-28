@@ -32,6 +32,30 @@ class UN_contained_in_pov(PropertyGroup):
         description="name of the UN",
         default="Untitled")
 
+class UN_logo_maker(bpy.types.Operator):
+    """Put a logo on nadir"""
+    bl_idname = "un_logo.distribute"
+    bl_label = "Put a logo on nadir"
+    bl_description = "Put a logo on nadir"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+
+        view_layer = context.view_layer
+        #selected_logo = view_layer.objects.active
+        data = bpy.data
+
+        for n in bpy.context.scene.pano_list:
+            bpy.ops.object.duplicate_move_linked(OBJECT_OT_duplicate={"linked":True, "mode":'TRANSLATION'}, TRANSFORM_OT_translate={"value":(0, 0, 0), "orient_type":'GLOBAL', "orient_matrix":((0, 0, 0), (0, 0, 0), (0, 0, 0)), "orient_matrix_type":'GLOBAL', "constraint_axis":(False, False, False), "mirror":False, "use_proportional_edit":False, "proportional_edit_falloff":'SMOOTH', "proportional_size":1, "use_proportional_connected":False, "use_proportional_projected":False, "snap":False, "snap_target":'CLOSEST', "snap_point":(0, 0, 0), "snap_align":False, "snap_normal":(0, 0, 0), "gpencil_strokes":False, "cursor_transform":False, "texture_space":False, "remove_on_cancel":False, "release_confirm":False, "use_accurate":False, "use_automerge_and_split":False})
+            new_logo = view_layer.objects.active
+            new_logo.location[0] = data.objects[n.name].location[0]
+            new_logo.location[1] = data.objects[n.name].location[1]
+            new_logo.location[2] = data.objects[n.name].location[2]
+            new_logo.name = n.name+"_logo"
+            #print(f"Il nuovo logo si chiama: {new_logo.name}")
+
+        return {'FINISHED'}
+
 class UN_OT_remove_UN(bpy.types.Operator):
     """Remove UN from POV"""
     bl_idname = "un_models.remove"
@@ -972,6 +996,8 @@ class PANOToolsPanel:
         row.operator("import_panorami.txt", icon="STICKY_UVS_DISABLE", text='')
         row.operator("remove.pano", icon="ERROR",
                              text='')
+        row.operator("un_logo.distribute", icon="OPTIONS",
+                             text='')
         row = layout.row()
         #row.prop(context.scene, 'PANO_file', toggle = True)
         #row = layout.row()
@@ -1113,6 +1139,7 @@ class VIEW3D_PT_pov_SetupPanel(Panel, PANOToolsPanel):
 
 classes = [
     UN_OT_remove_UN,
+    UN_logo_maker,
     UN_contained_in_pov,
     PANOListItem,
     PANO_UL_List,
