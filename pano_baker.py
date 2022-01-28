@@ -40,6 +40,29 @@ def setup_panorender():
     scene.cycles.max_bounces = 1
     scene.cycles.use_adaptive_sampling = False
 
+def setup_3drender():
+    context = bpy.context
+    scene = context.scene
+    scene.render.engine = 'CYCLES'
+    scene.cycles.samples = 1
+    #scene.cycles.bake_type = 'DIFFUSE'
+    #scene.render.bake.use_pass_color = True
+    #scene.render.bake.use_pass_direct = False
+    #scene.render.bake.use_pass_indirect = False
+    #scene.render.bake.use_selected_to_active = False
+    #scene.render.bake.use_cage = False
+    #scene.render.bake.cage_extrusion = 0.1
+    #scene.render.bake.use_clear = True
+    scene.render.image_settings.file_format = 'JPEG'
+    scene.render.resolution_x = scene.bake_res_out
+    scene.render.resolution_y = scene.render.resolution_x/2
+    scene.render.resolution_percentage = 100
+    scene.render.use_overwrite = False
+    scene.cycles.use_denoising = True
+    scene.cycles.max_bounces = 8
+    scene.cycles.use_adaptive_sampling = True
+    scene.cycles.use_fastgi = True
+
 def render_pano(pano_index):
     #ob = pano_ob_in_list
     context = bpy.context
@@ -62,10 +85,11 @@ def render_pano(pano_index):
 
     #basepath = "D:\QSYNC\SegniProject\Immagini360\Attuale\8k\ "
     basepath = scene.unveil_dir_bake_output
-    pano_name_with_res = pano_name+"-" + str(scene.bake_res_out)[:1] + "k-m"
+    pano_name_with_res = pano_name+"-" + str(scene.bake_res_out)[:1] + "k-"+ scene.epoch_list[scene.epoch_list_index].name
     if not os.path.exists(os.path.join(basepath+pano_name_with_res+".jpg")) or scene.bake_overwrite:
         scene.render.filepath = os.path.join(
             basepath+pano_name_with_res+".jpg")
+        scene.render.image_settings.quality = scene.save_render_quality
         bpy.ops.render.render(write_still=1)
     #bpy.data.objects[pano_name].material_slots[0].material.node_tree.nodes['Mix Shader'].inputs[0].default_value = previous_alpha
     bpy.data.objects[pano_name].material_slots[0].material.node_tree.nodes['Mix Shader'].inputs[0].default_value = 0.68
@@ -80,9 +104,14 @@ class OT_render_pano_operator(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     group_un_idx: IntProperty()
+    render_3d_mode: BoolProperty()
 
     def execute(self, context):
-        setup_panorender()
+        if self.render_3d_mode:
+            setup_3drender()
+        else:
+            setup_panorender()
+
         tot_time = 0
         start_time = time.time()
         pano_index = 0
@@ -119,10 +148,20 @@ class pano_bakerToolsPanel:
         #resolution_pano = scene.RES_pano
 
         row = layout.row()
-        row.operator("render.pano", icon="TEXTURE_DATA",
-                             text='Bake to disk')
+        op = row.operator("render.pano", icon="TEXTURE_DATA",
+                             text='Bake pano to disk')
+        op.render_3d_mode = False
+
+        op = row.operator("render.pano", icon="TEXTURE_DATA",
+                             text='Render 3D to disk')
+        op.render_3d_mode = True
+
+        row = layout.row()      
         row.prop(context.scene, 'bake_res_out', toggle=True)
+        row.prop(context.scene, 'save_render_quality', toggle=True)
+
         row.prop(scene, 'bake_overwrite', text="Overwrite")
+
         row = layout.row()
 
         row.prop(context.scene, 'unveil_dir_bake_output', toggle=True, text="")
@@ -168,6 +207,9 @@ def register():
         description="Overwrite files with bake"
     )
 
+    bpy.types.Scene.save_render_quality = IntProperty(
+        name="Resolution for bake", default=60)
+
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
@@ -176,3 +218,4 @@ def unregister():
     del bpy.types.Scene.unveil_dir_bake_output
     del bpy.types.Scene.bake_res_out
     del bpy.types.Scene.bake_overwrite
+    del bpy.types.Scene.save_render_quality
