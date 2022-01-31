@@ -44,7 +44,7 @@ def setup_3drender():
     context = bpy.context
     scene = context.scene
     scene.render.engine = 'CYCLES'
-    scene.cycles.samples = 1
+    scene.cycles.samples = 100
     #scene.cycles.bake_type = 'DIFFUSE'
     #scene.render.bake.use_pass_color = True
     #scene.render.bake.use_pass_direct = False
@@ -59,7 +59,7 @@ def setup_3drender():
     scene.render.resolution_percentage = 100
     scene.render.use_overwrite = False
     scene.cycles.use_denoising = True
-    scene.cycles.max_bounces = 8
+    scene.cycles.max_bounces =12
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.use_fastgi = True
 
