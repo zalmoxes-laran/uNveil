@@ -816,6 +816,7 @@ class VIEW_pano(bpy.types.Operator):
         data = bpy.data
         context = bpy.context
         scene = context.scene
+        scene.pano_list_index = self.group_un_idx
         pano_list_index = self.group_un_idx#scene.pano_list_index
         current_camera_name = 'CAM_'+scene.pano_list[pano_list_index].name
         current_camera_obj = data.objects[current_camera_name]
