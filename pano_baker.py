@@ -44,22 +44,16 @@ def setup_3drender():
     context = bpy.context
     scene = context.scene
     scene.render.engine = 'CYCLES'
-    scene.cycles.samples = 100
-    #scene.cycles.bake_type = 'DIFFUSE'
-    #scene.render.bake.use_pass_color = True
-    #scene.render.bake.use_pass_direct = False
-    #scene.render.bake.use_pass_indirect = False
-    #scene.render.bake.use_selected_to_active = False
-    #scene.render.bake.use_cage = False
-    #scene.render.bake.cage_extrusion = 0.1
-    #scene.render.bake.use_clear = True
+    scene.cycles.samples = scene.render_samples
     scene.render.image_settings.file_format = 'JPEG'
     scene.render.resolution_x = scene.bake_res_out
     scene.render.resolution_y = scene.render.resolution_x/2
     scene.render.resolution_percentage = 100
     scene.render.use_overwrite = False
     scene.cycles.use_denoising = True
-    scene.cycles.max_bounces =12
+    scene.cycles.max_bounces = 8
+    scene.cycles.diffuse_bounces = 2
+
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.use_fastgi = True
 
@@ -159,6 +153,7 @@ class pano_bakerToolsPanel:
         row = layout.row()      
         row.prop(context.scene, 'bake_res_out', toggle=True)
         row.prop(context.scene, 'save_render_quality', toggle=True)
+        row.prop(context.scene, 'render_samples', toggle=True)
 
         row.prop(scene, 'bake_overwrite', text="Overwrite")
 
@@ -210,6 +205,9 @@ def register():
     bpy.types.Scene.save_render_quality = IntProperty(
         name="Resolution for bake", default=60)
 
+    bpy.types.Scene.render_samples = IntProperty(
+        name="Samples of the render", default=2)
+
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
@@ -219,3 +217,4 @@ def unregister():
     del bpy.types.Scene.bake_res_out
     del bpy.types.Scene.bake_overwrite
     del bpy.types.Scene.save_render_quality
+    del bpy.types.Scene.render_samples

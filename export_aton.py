@@ -43,8 +43,15 @@ def export_unveil_json(scene, base_dir, network, sem):
                 t=list(intersezione)
                 network_node['semlist'][ep.name]=t                
             network.append(network_node)
+    
+    # Filter only Narrative Units taht are cited in epoch list
+    used_un_list = []
+    for each_epoch in scene.epoch_list:
+        for used_un in each_epoch.un_list_epoch:
+            used_un_list.append(used_un.un_item)        
+    used_un_list = list( dict.fromkeys(used_un_list) )
 
-    for un in scene.un_list:
+    for un in scene.used_un_list:
         # qui si crea un vocabolario vuoto per il singolo nodo semantico
         sem_node = {}
 
