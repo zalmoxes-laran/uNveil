@@ -48,25 +48,34 @@ def export_unveil_json(scene, base_dir, network, sem):
     used_un_list = []
     for each_epoch in scene.epoch_list_un:
         for used_un in each_epoch.un_list_epoch:
+            #print(used_un.un_item)
             used_un_list.append(used_un.un_item)        
     used_un_list = list( dict.fromkeys(used_un_list) )
+    #print(used_un_list)
 
-    for un in used_un_list:
-        # qui si crea un vocabolario vuoto per il singolo nodo semantico
-        sem_node = {}
+    for un in scene.un_list:
+        un_da_esportare = False
+        for un_used in used_un_list:
+            if un_used == un.identificativo:
+                un_da_esportare = True
+                
+        #print("Tovata UN da esportare")
+        if un_da_esportare:
+            # qui si crea un vocabolario vuoto per il singolo nodo semantico
+            sem_node = {}
 
-        # qui si iniettano i descrittori dell'un
-        sem_subnode = {}
-        sem_subnode['title'] = un.nome
-        sem_subnode['descr'] = un.descrizione
-        sem_subnode['cover'] = un.media
-        sem_subnode['audio'] = un.audio
+            # qui si iniettano i descrittori dell'un
+            sem_subnode = {}
+            sem_subnode['title'] = un.nome
+            sem_subnode['descr'] = un.descrizione
+            sem_subnode['cover'] = un.media
+            sem_subnode['audio'] = un.audio
 
-        # e si agganciano al nodo superiore
-        sem_node = sem_subnode
+            # e si agganciano al nodo superiore
+            sem_node = sem_subnode
 
-        # qui si assegna il nome del UN
-        sem[un.identificativo] = sem_node
+            # qui si assegna il nome del UN
+            sem[un.identificativo] = sem_node
 
     return network, sem
 

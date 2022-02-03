@@ -205,7 +205,7 @@ class EPOCHToolsPanel:
         row_epoch = layout.row()
         layout.alignment = 'LEFT'
         row_epoch.template_list("EPOCH_UL_List", "", scene,
-                          "epoch_list", scene, "epoch_list_index")
+                          "epoch_list_un", scene, "epoch_list_un_index")
         row2 = layout.row()
         row2.label(text="ADD EPOCH:")
         op_epoch = row2.operator("un_models.add", text="", emboss=False, icon='ADD')
