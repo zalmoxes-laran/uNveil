@@ -42,7 +42,7 @@ class EPOCH_remove(Operator):
 
     def execute(self, context):
         scene = context.scene
-        scene.epoch_list.remove(self.group_un_idx)
+        scene.epoch_list_un.remove(self.group_un_idx)
 
         return {'FINISHED'}
 
@@ -56,8 +56,8 @@ class EPOCH_add(Operator):
 
     def execute(self, context):
         scene = context.scene
-        scene.epoch_list.add()
-        scene.epoch_list_index = len(scene.epoch_list) - 1
+        scene.epoch_list_un.add()
+        scene.epoch_list_un_index = len(scene.epoch_list_un) - 1
         return {'FINISHED'}
 
 
@@ -72,7 +72,7 @@ class UN_Epoch_remove_UN(Operator):
 
     def execute(self, context):
         scene = context.scene
-        sel_epoch = scene.epoch_list[scene.epoch_list_index]
+        sel_epoch = scene.epoch_list_un[scene.epoch_list_un_index]
         sel_epoch.un_list_epoch.remove(self.group_un_idx)
 
         return {'FINISHED'}
@@ -90,7 +90,7 @@ class UN_Epoch_add_remove_UN_models(Operator):
 
     def execute(self, context_epoch):
         scene = context_epoch.scene
-        sel_epoch = scene.epoch_list[scene.epoch_list_index]
+        sel_epoch = scene.epoch_list_un[scene.epoch_list_un_index]
         sel_un = scene.un_list[scene.un_list_index]
 
         if self.rm_add:
@@ -163,7 +163,7 @@ class UN_EPOCH_UL_List(UIList):
             op.group_un_idx = index
             
 
-class EPOCHListItem(PropertyGroup):
+class EPOCHListItemUN(PropertyGroup):
     """ Group of properties representing an item in the list """
 
     name: StringProperty(
@@ -210,8 +210,8 @@ class EPOCHToolsPanel:
         row2.label(text="ADD EPOCH:")
         op_epoch = row2.operator("un_models.add", text="", emboss=False, icon='ADD')
 
-        if scene.epoch_list_index >= 0 and len(scene.epoch_list) > 0:
-            item = scene.epoch_list[scene.epoch_list_index]        
+        if scene.epoch_list_un_index >= 0 and len(scene.epoch_list_un) > 0:
+            item = scene.epoch_list_un[scene.epoch_list_un_index]        
             row = layout.row()
             row.label(text="Name:")
             row = layout.row()
@@ -222,7 +222,7 @@ class EPOCHToolsPanel:
             row1 = layout.row()
             row1.label(text="List of related Narrative Units (UN):")
             row1 = layout.row()
-            row1.template_list("UN_EPOCH_UL_List", "", scene.epoch_list[scene.epoch_list_index],
+            row1.template_list("UN_EPOCH_UL_List", "", scene.epoch_list_un[scene.epoch_list_un_index],
                             "un_list_epoch", scene, "un_inepoch_list_index", rows=3)
             
             row1 = layout.row()
@@ -235,7 +235,7 @@ class EPOCHToolsPanel:
 
             # row1.label(text="List of related Narrative Units (UN):")
             # row1 = layout.row()
-            # row1.template_list("UN_EPOCH_UL_List", "", scene.epoch_list[scene.epoch_list_index],
+            # row1.template_list("UN_EPOCH_UL_List", "", scene.epoch_list_un[scene.epoch_list_un_index],
             #                    "un_list_epoch", scene, "un_inepoch_list_index", rows=3)
 
             # row1 = layout.row()
@@ -265,7 +265,7 @@ classes = [
     UN_Epoch_add_remove_UN_models,
     EPOCH_UL_List,
     UN_EPOCH_UL_List,
-    EPOCHListItem,
+    EPOCHListItemUN,
 
     VIEW3D_PT_epoch_SetupPanel,]
 
@@ -275,13 +275,13 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.Scene.epoch_list = CollectionProperty(type = EPOCHListItem)
-    bpy.types.Scene.epoch_list_index = IntProperty(name = "Index for my_list", default = 0)
+    bpy.types.Scene.epoch_list_un = CollectionProperty(type = EPOCHListItemUN)
+    bpy.types.Scene.epoch_list_un_index = IntProperty(name = "Index for my_list", default = 0)
     bpy.types.Scene.un_inepoch_list_index = IntProperty(name="Index for my_list", default=0)
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    del bpy.types.Scene.epoch_list
-    del bpy.types.Scene.epoch_list_index
+    del bpy.types.Scene.epoch_list_un
+    del bpy.types.Scene.epoch_list_un_index
     del bpy.types.Scene.un_inepoch_list_index

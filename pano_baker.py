@@ -79,7 +79,7 @@ def render_pano(pano_index):
 
     #basepath = "D:\QSYNC\SegniProject\Immagini360\Attuale\8k\ "
     basepath = scene.unveil_dir_bake_output
-    pano_name_with_res = pano_name+"-" + str(scene.bake_res_out)[:1] + "k-"+ scene.epoch_list[scene.epoch_list_index].name
+    pano_name_with_res = pano_name+"-" + str(scene.bake_res_out)[:1] + "k-"+ scene.epoch_list_un[scene.epoch_list_un_index].name
     if not os.path.exists(os.path.join(basepath+pano_name_with_res+".jpg")) or scene.bake_overwrite:
         scene.render.filepath = os.path.join(
             basepath+pano_name_with_res+".jpg")
@@ -184,8 +184,8 @@ classes = [
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    #bpy.types.Scene.epoch_list = CollectionProperty(type=EPOCHListItem)
-    #bpy.types.Scene.epoch_list_index = IntProperty(
+    #bpy.types.Scene.epoch_list_un = CollectionProperty(type=EPOCHListItem)
+    #bpy.types.Scene.epoch_list_un_index = IntProperty(
     #    name="Index for my_list", default=0)
     bpy.types.Scene.unveil_dir_bake_output = StringProperty(
         name="Path to baked panoramas",
@@ -211,8 +211,8 @@ def register():
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    #del bpy.types.Scene.epoch_list
-    #del bpy.types.Scene.epoch_list_index
+    #del bpy.types.Scene.epoch_list_un
+    #del bpy.types.Scene.epoch_list_un_index
     del bpy.types.Scene.unveil_dir_bake_output
     del bpy.types.Scene.bake_res_out
     del bpy.types.Scene.bake_overwrite

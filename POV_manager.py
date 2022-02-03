@@ -623,7 +623,7 @@ def export_panoscene(scene, export_folder, EMviq, nodes, format_file, edges):
  
         if len(ob.EM_ep_belong_ob) >= 2:
             for ob_tagged in ob.EM_ep_belong_ob:
-                for epoch in scene.epoch_list:
+                for epoch in scene.epoch_list_un:
                     if ob_tagged.epoch == epoch.name:
                         epochname1_var = epoch.name.replace(" ", "_")
                         epochname_var = epochname1_var.replace(".", "")
@@ -1074,7 +1074,7 @@ class PANOToolsPanel:
 
             # qui comando selettore del un proxy
             #op = row.operator("select_rm.given_epoch", text="", emboss=False, icon='SELECT_SET')
-            #op.rm_epoch = scene.epoch_list[scene.epoch_list_index].name
+            #op.rm_epoch = scene.epoch_list_un[scene.epoch_list_un_index].name
 
 
             #row = layout.row()

@@ -31,7 +31,7 @@ def export_unveil_json(scene, base_dir, network, sem):
             
             network_node['semlist'] = {}
                 
-            for ep in scene.epoch_list:                
+            for ep in scene.epoch_list_un:                
                 list_un_epoch=[]
                 
                 for sema_2 in ep.un_list_epoch:
@@ -46,7 +46,7 @@ def export_unveil_json(scene, base_dir, network, sem):
     
     # Filter only Narrative Units taht are cited in epoch list
     used_un_list = []
-    for each_epoch in scene.epoch_list:
+    for each_epoch in scene.epoch_list_un:
         for used_un in each_epoch.un_list_epoch:
             used_un_list.append(used_un.un_item)        
     used_un_list = list( dict.fromkeys(used_un_list) )
