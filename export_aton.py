@@ -51,7 +51,7 @@ def export_unveil_json(scene, base_dir, network, sem):
             used_un_list.append(used_un.un_item)        
     used_un_list = list( dict.fromkeys(used_un_list) )
 
-    for un in scene.used_un_list:
+    for un in used_un_list:
         # qui si crea un vocabolario vuoto per il singolo nodo semantico
         sem_node = {}
 
