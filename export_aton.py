@@ -121,7 +121,7 @@ class UNVEIL_OT_aton_json_export(bpy.types.Operator):
 
         unveil_scene['descr'] = scene.aton_pano_project_descr
 
-        unveil_scene['main'] = 0
+        unveil_scene['main'] = scene.aton_pano_num_enter
 
         unveil_scene['icon'] = scene.aton_pano_project_icon
 
@@ -205,6 +205,10 @@ class Export_Aton_panel:
         row = layout.row()
         row.label(text="Icona scena")
         row.prop(context.scene, 'aton_pano_project_icon', toggle=True, text="")
+    
+        row = layout.row()
+        row.label(text="Starting pano")
+        row.prop(context.scene, 'aton_pano_num_enter', toggle=True, text="")
 
         row = layout.row()
         row.prop(context.scene, 'unveil_dir_aton', toggle = True, text ="")
@@ -248,6 +252,12 @@ def register():
         description = "Descriprion of the scene cluster",
     )
 
+    bpy.types.Scene.aton_pano_num_enter = IntProperty(
+        name = "Starting pano number",
+        default = 0,
+        description = "Number of the starting pano for this scene cluster",
+    )
+
     bpy.types.Scene.aton_pano_project_icon = StringProperty(
         name = "Icon of the scene cluster",
         default = "",
@@ -262,3 +272,4 @@ def unregister():
     del bpy.types.Scene.aton_pano_project_title
     del bpy.types.Scene.aton_pano_project_descr
     del bpy.types.Scene.aton_pano_project_icon
+    del bpy.types.Scene.aton_pano_num_enter
