@@ -177,7 +177,7 @@ def item_panolist_from_ob_name(obname):
         counter +=1
     return found, real_name
 
-def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col, omega_col, phi_col, kappa_col, separator, clear_list):
+def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col, omega_col, phi_col, kappa_col, separator, clear_list, multires):
         data = bpy.data
         scene = context.scene
         #minimum_sChildPath, folder_list = read_pano_dir(context)
@@ -207,6 +207,7 @@ def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col,
 
                 existing_pano = False    
                 actual_name = remove_extension(ItemName)
+                
                 if not clear_list:
                     for pano in scene.pano_list:
                         if pano.original_name == remove_extension(ItemName):
@@ -214,6 +215,7 @@ def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col,
                             actual_name = pano.name
                             print(f"{ItemName} esiste già nella lista")
                 existing_model = False
+
                 for model in data.objects:
                     if model.name == actual_name or model.name == "CAM_"+actual_name:
                         existing_model = True
@@ -311,6 +313,12 @@ class ImportCoorPanorami(Operator, ImportHelper):
     clear_previous: BoolProperty(
             name="Clear previous list",
             description="Clear previous list",
+            default=False,
+            )
+
+    use_multires_pano: BoolProperty(
+            name="Use multiresolution panoramas",
+            description="It will expect a multi folder structure near the txt file like 8k, 4k, 2k etc..",
             default=False,
             )
 
@@ -416,7 +424,7 @@ class ImportCoorPanorami(Operator, ImportHelper):
             )
 
     def execute(self, context):
-        return read_pano_data(self,context, self.filepath, self.shift, int(self.col_name), int(self.col_x), int(self.col_y), int(self.col_z), int(self.col_Omega), int(self.col_Phi), int(self.col_Kappa), self.separator, self.clear_previous)
+        return read_pano_data(self,context, self.filepath, self.shift, int(self.col_name), int(self.col_x), int(self.col_y), int(self.col_z), int(self.col_Omega), int(self.col_Phi), int(self.col_Kappa), self.separator, self.clear_previous, self.use_multires_pano)
 
 # Only needed if you want to add into a dynamic menu
 def menu_func_import(self, context):
