@@ -33,7 +33,7 @@ def setup_panorender():
     scene.render.bake.use_clear = True
     scene.render.image_settings.file_format = 'JPEG'
     scene.render.resolution_x = scene.bake_res_out
-    scene.render.resolution_y = scene.render.resolution_x/2
+    scene.render.resolution_y = int(scene.render.resolution_x/2)
     scene.render.resolution_percentage = 100
     scene.render.use_overwrite = False
     scene.cycles.use_denoising = False
