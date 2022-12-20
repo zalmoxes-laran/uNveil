@@ -115,7 +115,9 @@ class UNVEIL_OT_aton_json_export(bpy.types.Operator):
         
         unveil_scene['distancetext'] = "distante"
 
-        unveil_scene['shift'] = [scene.BL_x_shift,scene.BL_y_shift]
+        unveil_scene['shift'] = [scene.BL_un_x_shift,scene.BL_un_y_shift]
+
+        unveil_scene['geoloc'] = [scene.longit_unveil,scene.latit_unveil]
 
         unveil_scene['title'] = scene.aton_pano_project_title
 
@@ -211,6 +213,14 @@ class Export_Aton_panel:
         row.prop(context.scene, 'aton_pano_num_enter', toggle=True, text="")
 
         row = layout.row()
+        row.label(text="latitude")
+        row.prop(context.scene, 'longit_unveil', toggle=True, text="")
+
+        row = layout.row()
+        row.label(text="longitude")
+        row.prop(context.scene, 'latit_unveil', toggle=True, text="")
+
+        row = layout.row()
         row.prop(context.scene, 'unveil_dir_aton', toggle = True, text ="")
 
 class VIEW3D_PT_un_Export_Aton_panel(Panel, Export_Aton_panel):
@@ -258,6 +268,18 @@ def register():
         description = "Number of the starting pano for this scene cluster",
     )
 
+    bpy.types.Scene.latit_unveil = FloatProperty(
+        name = "Latitude of entering pano",
+        default = 0.0,
+        description = "Latitude of entering pano",
+    )
+
+    bpy.types.Scene.longit_unveil = FloatProperty(
+        name = "Longitude of entering pano",
+        default = 0.0,
+        description = "Longitude of entering pano",
+    )
+
     bpy.types.Scene.aton_pano_project_icon = StringProperty(
         name = "Icon of the scene cluster",
         default = "",
@@ -273,3 +295,5 @@ def unregister():
     del bpy.types.Scene.aton_pano_project_descr
     del bpy.types.Scene.aton_pano_project_icon
     del bpy.types.Scene.aton_pano_num_enter
+    del bpy.types.Scene.latit_unveil
+    del bpy.types.Scene.longit_unveil

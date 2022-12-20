@@ -37,10 +37,10 @@ def read_shift_data(context, filepath):
     arr=f.readlines()
     print(str(arr))
     data_coordinates = arr[0].split(' ')
-    scene['BL_x_shift'] = float(data_coordinates[1])
-    scene['BL_y_shift'] = float(data_coordinates[2])
-    scene['BL_z_shift'] = float(data_coordinates[3])
-    scene['BL_epsg'] = data_coordinates[0].replace('EPSG::', '')
+    scene['BL_un_x_shift'] = float(data_coordinates[1])
+    scene['BL_un_y_shift'] = float(data_coordinates[2])
+    scene['BL_un_z_shift'] = float(data_coordinates[3])
+    scene['BL_un_epsg'] = data_coordinates[0].replace('EPSG::', '')
     return {'FINISHED'}
 
 class OBJECT_OT_IMPORTUNSHIFT(bpy.types.Operator):
@@ -61,8 +61,8 @@ class OBJECT_OT_IMPORTUNNTS(bpy.types.Operator):
 
     def execute(self, context):
         scene = context.scene
-        scene['BL_x_shift'] = scene['crs x']
-        scene['BL_y_shift'] = scene['crs y']
+        scene['BL_un_x_shift'] = scene['crs x']
+        scene['BL_un_y_shift'] = scene['crs y']
 
         return {'FINISHED'}
 
@@ -83,13 +83,13 @@ class ToolsPanelSHIFT:
         row.operator("shiftval_from.txtfile", icon="STICKY_UVS_DISABLE", text='import')
         row.operator("export.coordshift", icon="STICKY_UVS_DISABLE", text='export')
         row = layout.row()
-        row.prop(context.scene, 'BL_x_shift', toggle = True)
+        row.prop(context.scene, 'BL_un_x_shift', toggle = True)
         row = layout.row()
-        row.prop(context.scene, 'BL_y_shift', toggle = True)
+        row.prop(context.scene, 'BL_un_y_shift', toggle = True)
         row = layout.row()
-        row.prop(context.scene, 'BL_z_shift', toggle = True)
+        row.prop(context.scene, 'BL_un_z_shift', toggle = True)
         row = layout.row()
-        row.prop(context.scene, 'BL_epsg', toggle = True)
+        row.prop(context.scene, 'BL_un_epsg', toggle = True)
         row = layout.row()        
 
         #addon_updater_ops.update_notice_box_ui(self, context)
@@ -115,24 +115,24 @@ def register():
             bpy.utils.unregister_class(cls)
             bpy.utils.register_class(cls)
             
-    bpy.types.Scene.BL_epsg = StringProperty(
+    bpy.types.Scene.BL_un_epsg = StringProperty(
         name = "EPSG",
         default = "Not set",
         description = "Epsg code"
         )
-    bpy.types.Scene.BL_x_shift = FloatProperty(
+    bpy.types.Scene.BL_un_x_shift = FloatProperty(
         name="X shift",
         default=0.0,
         description="Define the shift on the x axis",
     )
 
-    bpy.types.Scene.BL_y_shift = FloatProperty(
+    bpy.types.Scene.BL_un_y_shift = FloatProperty(
         name="Y shift",
         default=0.0,
         description="Define the shift on the y axis",
     )
 
-    bpy.types.Scene.BL_z_shift = FloatProperty(
+    bpy.types.Scene.BL_un_z_shift = FloatProperty(
         name="Z shift",
         default=0.0,
         description="Define the shift on the z axis",
@@ -141,7 +141,7 @@ def register():
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    del bpy.types.Scene.BL_epsg
-    del bpy.types.Scene.BL_x_shift
-    del bpy.types.Scene.BL_y_shift
-    del bpy.types.Scene.BL_z_shift
+    del bpy.types.Scene.BL_un_epsg
+    del bpy.types.Scene.BL_un_x_shift
+    del bpy.types.Scene.BL_un_y_shift
+    del bpy.types.Scene.BL_un_z_shift

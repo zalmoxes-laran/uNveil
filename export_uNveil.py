@@ -41,9 +41,9 @@ def write_gsv_data(context, filepath, shift, rot, cam, nam, aton):
         z_coor = obj.location[2]
 
         if shift == True:
-            shift_x = context.scene.BL_x_shift
-            shift_y = context.scene.BL_y_shift
-            shift_z = context.scene.BL_z_shift
+            shift_x = context.scene.BL_un_x_shift
+            shift_y = context.scene.BL_un_y_shift
+            shift_z = context.scene.BL_un_z_shift
             x_coor = x_coor+shift_x
             y_coor = y_coor+shift_y
             z_coor = z_coor+shift_z

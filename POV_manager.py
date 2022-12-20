@@ -194,13 +194,13 @@ def read_pano_data(self,context, filepath, shift, name_col, x_col, y_col, z_col,
                 ItemName = p0[name_col]
                 # check if the separator works
                 try:
-                        pos_x = float(p0[x_col])-scene.BL_x_shift
+                        pos_x = float(p0[x_col])-scene.BL_un_x_shift
                 except IndexError:
                         self.report({'ERROR'}, "Uncorrect field separator ?")
                         #print("")
                         return {'FINISHED'}
-                pos_y = float(p0[y_col])-scene.BL_y_shift
-                pos_z = (float(p0[z_col]))-scene.BL_z_shift
+                pos_y = float(p0[y_col])-scene.BL_un_y_shift
+                pos_z = (float(p0[z_col]))-scene.BL_un_z_shift
                 omega = float(p0[omega_col])
                 phi = float(p0[phi_col])
                 kappa = float(p0[kappa_col])
@@ -704,9 +704,9 @@ class PANO_import(bpy.types.Operator):
             p0 = p.split(' ')  # use space as separator
             print(p0[0])
             ItemName = p0[0]
-            pos_x = float(p0[1])-scene.BL_x_shift
-            pos_y = float(p0[2])-scene.BL_y_shift
-            pos_z = (float(p0[3]))-scene.BL_z_shift
+            pos_x = float(p0[1])-scene.BL_un_x_shift
+            pos_y = float(p0[2])-scene.BL_un_y_shift
+            pos_z = (float(p0[3]))-scene.BL_un_z_shift
             omega = float(p0[4])
             phi = float(p0[5])
             kappa = float(p0[6])
@@ -1086,7 +1086,7 @@ class PANOToolsPanel:
 
 
             #row = layout.row()
-            #row.prop(context.scene, 'BL_x_shift', toggle = True)
+            #row.prop(context.scene, 'BL_un_x_shift', toggle = True)
 
         if context.active_object:
             if obj.type in ['MESH']:
