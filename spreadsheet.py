@@ -64,8 +64,12 @@ def init_spreadsheet_service(context):
             print("Le credenziali erano scadute.")
             creds.refresh(Request())
         else:
+            file_credentials = os.path.join(os.path.dirname(os.path.abspath(__name__)),"credentials.json")
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+                file_credentials, SCOPES)
+  
+            #flow = InstalledAppFlow.from_client_secrets_file(
+            #    'credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open(token_file, 'w') as token:
