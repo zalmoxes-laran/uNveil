@@ -23,7 +23,7 @@ bl_info = {
     "name": "uNveil per Blender",
     "author": "Emanuel Demetrescu",
     "version": (1,0,3),
-    "blender": (3, 4, 0),
+    "blender": (3, 4, 1),
     "location": "3D View > Toolbox",
     "description": "Multitemporal storytelling",
     #"warning": "alpha",
