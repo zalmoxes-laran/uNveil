@@ -184,8 +184,6 @@ def register():
     description = "Define the lens of the cameras",
     )
 
-
-
     shift.register()
     POV_manager.register()
     external_modules_install.register()
@@ -198,13 +196,6 @@ def register():
 
 def unregister():
 
-    # addon_updater_ops.unregister(bl_info)
-    for cls in classes:
-        try:
-                bpy.utils.unregister_class(cls)
-        except RuntimeError:
-                pass
-
     shift.unregister()
     POV_manager.unregister()
     external_modules_install.unregister()
@@ -213,6 +204,15 @@ def unregister():
     export_aton.unregister()
     EPOCH_manager.unregister()
     pano_baker.unregister()
+
+    # addon_updater_ops.unregister(bl_info)
+    for cls in classes:
+        try:
+                bpy.utils.unregister_class(cls)
+        except RuntimeError:
+                pass
+
+    
 
     del bpy.types.Scene.RES_pano
     del bpy.types.Scene.camera_type
