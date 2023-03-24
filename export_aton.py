@@ -119,6 +119,8 @@ class UNVEIL_OT_aton_json_export(bpy.types.Operator):
 
         unveil_scene['geoloc'] = [scene.longit_unveil,scene.latit_unveil]
 
+        unveil_scene['orioffset'] = scene.orioffset
+
         unveil_scene['title'] = scene.aton_pano_project_title
 
         unveil_scene['descr'] = scene.aton_pano_project_descr
@@ -221,6 +223,10 @@ class Export_Aton_panel:
         row.prop(context.scene, 'latit_unveil', toggle=True, text="")
 
         row = layout.row()
+        row.label(text="orioffset")
+        row.prop(context.scene, 'orioffset', toggle=True, text="")
+
+        row = layout.row()
         row.prop(context.scene, 'unveil_dir_aton', toggle = True, text ="")
 
 class VIEW3D_PT_un_Export_Aton_panel(Panel, Export_Aton_panel):
@@ -286,6 +292,15 @@ def register():
         description = "Icon of the scene cluster",
     )
 
+    bpy.types.Scene.orioffset = FloatProperty(
+        name = "Orientation offset entering pano",
+        default = 0.0,
+        min = -6.28,
+        max = 6.28,
+        description = "Orientation offset in radiants of entering pano",
+    )
+
+
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)        
@@ -297,3 +312,4 @@ def unregister():
     del bpy.types.Scene.aton_pano_num_enter
     del bpy.types.Scene.latit_unveil
     del bpy.types.Scene.longit_unveil
+    del bpy.types.Scene.orioffset
